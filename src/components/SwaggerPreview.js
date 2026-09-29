@@ -18,23 +18,7 @@ export function SwaggerPreview() {
 
             </div>
 
-            <div id="swagger-preview" class="swagger-placeholder">
-
-                <div class="swagger-placeholder__icon">
-                    API
-                </div>
-
-                <h3>
-                    Здесь появится документация API
-                </h3>
-
-                <p>
-                    После написания корректной
-                    OpenAPI спецификации здесь
-                    отобразится Swagger UI.
-                </p>
-
-            </div>
+            <div id="swagger-preview" class="swagger-container"></div>
 
         </section>
     `;

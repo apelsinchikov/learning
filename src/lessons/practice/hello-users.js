@@ -1,5 +1,5 @@
-export const lesson2 = {
-    id: 2,
+export const helloUsers = {
+    id: "practice-1",
 
     type: "practice",
 
@@ -12,7 +12,7 @@ export const lesson2 = {
     sidebarDescription: "Первый endpoint",
 
     theoryLinks: [
-        1
+        "theory-1"
     ],
 
     theory: {

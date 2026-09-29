@@ -799,3 +799,1288 @@ button {
     color: #6b7280;
     font-size: 14px;
 }
+
+/* =========================================================
+   CodeMirror YAML editor
+   ========================================================= */
+
+.editor {
+    height: 420px;
+    overflow: hidden;
+
+    border-top: 1px solid #e5e7eb;
+
+    background: #ffffff;
+}
+
+.editor .cm-editor {
+    height: 100%;
+
+    font-family:
+        "SFMono-Regular",
+        "SF Mono",
+        Menlo,
+        Monaco,
+        Consolas,
+        "Liberation Mono",
+        monospace;
+
+    font-size: 14px;
+}
+
+.editor .cm-scroller {
+    overflow: auto;
+}
+
+.editor .cm-content {
+    padding: 16px 0;
+}
+
+.editor .cm-line {
+    padding-left: 8px;
+}
+
+/* Номера строк */
+
+.editor .cm-gutters {
+    min-width: 48px;
+
+    border-right: 1px solid #e5e7eb;
+
+    background: #f8fafc;
+    color: #9ca3af;
+}
+
+.editor .cm-gutterElement {
+    padding: 0 10px 0 8px;
+
+    font-size: 12px;
+}
+
+/* Текущая строка */
+
+.editor .cm-activeLine {
+    background: #f8fafc;
+}
+
+.editor .cm-activeLineGutter {
+    background: #f1f5f9;
+}
+
+/* Курсор */
+
+.editor .cm-cursor {
+    border-left-color: #2563eb;
+}
+
+/* Выделение */
+
+.editor .cm-selectionBackground {
+    background: #dbeafe !important;
+}
+
+/* Вертикальные линии отступов */
+
+.editor .cm-indent-markers {
+    display: none !important;
+}
+
+/* Кнопки сворачивания */
+
+.editor .cm-foldGutter {
+    width: 24px;
+}
+
+.editor .cm-foldGutter .cm-gutterElement {
+    padding: 0;
+
+    color: #94a3b8;
+
+    font-size: 14px;
+}
+
+.editor .cm-foldGutter .cm-gutterElement:hover {
+    color: #475569;
+}
+
+/* Скроллбар */
+
+.editor .cm-scroller::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.editor .cm-scroller::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.editor .cm-scroller::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 5px;
+}
+
+.editor .cm-scroller::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* =========================================================
+   CodeMirror scrolling
+   ========================================================= */
+
+.editor .cm-scroller {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Вертикальный скролл появляется только при необходимости */
+
+.editor .cm-scroller::-webkit-scrollbar {
+    width: 8px;
+}
+
+.editor .cm-scroller::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.editor .cm-scroller::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.editor .cm-scroller::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Горизонтальный скролл полностью убираем */
+
+.editor .cm-scroller::-webkit-scrollbar:horizontal {
+    display: none;
+}
+
+.editor .cm-content {
+    padding: 16px 0;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* Убираем визуальные полосы прокрутки CodeMirror */
+
+.editor .cm-scroller {
+    overflow: auto;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.editor .cm-scroller::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+/* Временно полностью отключаем внутреннюю прокрутку CodeMirror */
+
+/* Убираем стандартную рамку CodeMirror при фокусе */
+
+.editor .cm-editor.cm-focused {
+    outline: none !important;
+}
+
+.lesson-navigation {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.lesson-navigation .next-button {
+    white-space: nowrap;
+}
+
+/* ========================================
+   Database Diagram
+   ======================================== */
+
+.database-diagram {
+    margin: 28px 0;
+    border: 1px solid #dfe3e8;
+    border-radius: 12px;
+    background: #f8fafc;
+    overflow: hidden;
+}
+
+.database-diagram__title {
+    padding: 16px 20px;
+    border-bottom: 1px solid #dfe3e8;
+    background: #ffffff;
+
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.database-diagram__canvas {
+    position: relative;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(260px, 320px)
+        minmax(260px, 320px)
+        minmax(260px, 320px);
+
+    grid-template-areas:
+        "personal phone address"
+        "personal mapping device";
+
+    justify-content: center;
+    align-items: start;
+
+    column-gap: 80px;
+    row-gap: 50px;
+
+    padding: 40px 40px 80px;
+
+    min-height: 650px;
+}
+
+
+/* ========================================
+   Tables
+   ======================================== */
+
+.db-table {
+    position: relative;
+
+    width: 320px;
+
+    border: 1px solid #cfd6df;
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 4px 12px rgba(15, 23, 42, 0.06);
+
+    overflow: hidden;
+
+    z-index: 2;
+}
+
+.db-table--personal {
+    grid-area: personal;
+}
+
+.db-table--phones {
+    grid-area: phone;
+}
+
+.db-table--address {
+    grid-area: address;
+}
+
+.db-table--mapping {
+    grid-area: mapping;
+}
+
+.db-table--device {
+    grid-area: device;
+}
+
+.db-table__header {
+    padding: 13px 16px;
+
+    background: #eef2f7;
+    border-bottom: 1px solid #d7dde5;
+
+    font-family: monospace;
+    font-size: 14px;
+    font-weight: 700;
+
+    color: #1f2937;
+}
+
+.db-table__body {
+    padding: 6px 0;
+}
+
+.db-field {
+    display: grid;
+
+    grid-template-columns:
+        28px
+        minmax(0, 1fr)
+        auto;
+
+    align-items: center;
+
+    min-height: 34px;
+
+    padding: 0 14px;
+
+    font-size: 13px;
+}
+
+.db-field + .db-field {
+    border-top: 1px solid #f0f2f5;
+}
+
+.db-field__key {
+    font-size: 12px;
+}
+
+.db-field__name {
+    font-family: monospace;
+    color: #374151;
+}
+
+.db-field__type {
+    font-family: monospace;
+
+    font-size: 12px;
+
+    color: #7c8797;
+}
+
+.db-field--primary {
+    background: #fffdf2;
+}
+
+.db-field--foreign {
+    background: #f4f8ff;
+}
+
+
+/* ========================================
+   Relationships
+   ======================================== */
+
+.db-relationship {
+    position: absolute;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1;
+}
+
+.db-relationship__line {
+    background: #9aa5b1;
+}
+
+.db-relationship__label {
+    position: absolute;
+
+    padding: 3px 8px;
+
+    border-radius: 5px;
+
+    background: #ffffff;
+    border: 1px solid #d8dee6;
+
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: 600;
+
+    color: #667085;
+
+    white-space: nowrap;
+}
+
+
+/*
+ * usersPersonalData → userPhones
+ */
+
+.db-relationship--personal-phone {
+    left: calc(50% - 400px);
+    top: 165px;
+
+    width: 80px;
+}
+
+.db-relationship--personal-phone
+.db-relationship__line {
+    width: 80px;
+    height: 2px;
+}
+
+
+/*
+ * usersPersonalData → userAddress
+ */
+
+.db-relationship--personal-address {
+    left: calc(50% - 40px);
+    top: 165px;
+
+    width: 80px;
+}
+
+.db-relationship--personal-address
+.db-relationship__line {
+    width: 80px;
+    height: 2px;
+}
+
+
+/*
+ * usersPersonalData → mapUserDevice
+ */
+
+.db-relationship--personal-map {
+    left: calc(50% - 400px);
+    top: 410px;
+
+    width: 80px;
+
+    transform: rotate(90deg);
+}
+
+.db-relationship--personal-map
+.db-relationship__line {
+    width: 80px;
+    height: 2px;
+}
+
+
+/*
+ * mapUserDevice → Device
+ */
+
+.db-relationship--map-device {
+    left: calc(50% + 170px);
+    top: 485px;
+
+    width: 80px;
+}
+
+.db-relationship--map-device
+.db-relationship__line {
+    width: 80px;
+    height: 2px;
+}
+
+
+/* ========================================
+   Legend
+   ======================================== */
+
+.db-legend {
+    position: absolute;
+
+    left: 40px;
+    bottom: 24px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+}
+
+.db-legend__item {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    font-size: 12px;
+
+    color: #667085;
+}
+
+
+/* ========================================
+   Responsive
+   ======================================== */
+
+@media (max-width: 1200px) {
+    .database-diagram__canvas {
+        grid-template-columns:
+            minmax(240px, 300px)
+            minmax(240px, 300px);
+
+        grid-template-areas:
+            "personal phone"
+            "personal address"
+            "mapping device";
+
+        column-gap: 50px;
+    }
+
+    .db-table {
+        width: 300px;
+    }
+
+    .db-relationship {
+        display: none;
+    }
+}
+
+@media (max-width: 760px) {
+    .database-diagram__canvas {
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        gap: 24px;
+
+        padding: 30px 20px 80px;
+
+        min-height: auto;
+    }
+
+    .db-table {
+        width: 100%;
+        max-width: 360px;
+    }
+
+    .db-relationship {
+        display: none;
+    }
+
+    .db-legend {
+        position: static;
+
+        width: 100%;
+
+        justify-content: center;
+
+        flex-wrap: wrap;
+
+        margin-top: 10px;
+    }
+}
+
+/* =========================================================
+   Theory lesson layout
+   ========================================================= */
+
+/*
+ * Теоретический урок занимает всю ширину workspace.
+ * На практике остаются три панели.
+ */
+
+.workspace:has(.theory-panel:only-child) {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+
+/* =========================================================
+   Practice task
+   ========================================================= */
+
+.practice-task {
+    margin-top: 24px;
+
+    overflow: hidden;
+
+    border: 1px solid #e0e3ea;
+    border-radius: 10px;
+
+    background: #ffffff;
+}
+
+.practice-task__header {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 16px 18px;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    background: #f7f7ff;
+}
+
+.practice-task__icon {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 8px;
+
+    background: #635bff;
+
+    font-size: 17px;
+}
+
+.practice-task__label {
+    margin-bottom: 3px;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    letter-spacing: 0.07em;
+
+    color: #635bff;
+}
+
+.practice-task__header h3 {
+    margin: 0;
+
+    font-size: 17px;
+    color: #20242c;
+}
+
+.practice-task__body {
+    padding: 20px;
+}
+
+.practice-task__intro {
+    margin-bottom: 22px;
+}
+
+.practice-task__intro p {
+    font-size: 14px;
+    line-height: 1.65;
+
+    color: #4b5563;
+}
+
+
+/* =========================================================
+   Task sections
+   ========================================================= */
+
+.task-section {
+    margin-top: 26px;
+}
+
+.task-section:first-child {
+    margin-top: 0;
+}
+
+.task-section > h4 {
+    margin: 0 0 12px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    color: #20242c;
+}
+
+.task-description {
+    margin-bottom: 14px;
+}
+
+
+/* =========================================================
+   Practice code blocks
+   ========================================================= */
+
+.practice-code {
+    margin: 12px 0;
+
+    overflow: hidden;
+
+    border: 1px solid #252a33;
+    border-radius: 8px;
+
+    background: #171a21;
+}
+
+.practice-code__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 32px;
+
+    padding: 0 12px;
+
+    border-bottom: 1px solid #2a2f38;
+
+    background: #20242c;
+
+    font-family:
+        "SFMono-Regular",
+        Consolas,
+        monospace;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    color: #9ca3af;
+}
+
+.practice-code__copy-label {
+    color: #6f7785;
+}
+
+.practice-code pre {
+    margin: 0;
+
+    padding: 16px;
+
+    overflow-x: auto;
+
+    font-family:
+        "SFMono-Regular",
+        "SF Mono",
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+
+    font-size: 13px;
+    line-height: 1.7;
+
+    white-space: pre;
+
+    color: #e5e7eb;
+}
+
+.practice-code code {
+    padding: 0;
+
+    background: transparent;
+
+    font-family: inherit;
+    font-size: inherit;
+
+    color: inherit;
+}
+
+.practice-code--compact {
+    margin-top: 14px;
+}
+
+
+/* =========================================================
+   Simple syntax highlighting
+   ========================================================= */
+
+.code-key {
+    color: #7dd3fc;
+}
+
+.code-string {
+    color: #a7f3d0;
+}
+
+.code-number {
+    color: #f9a8d4;
+}
+
+.code-value {
+    color: #c4b5fd;
+}
+
+.code-comment {
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   Endpoint
+   ========================================================= */
+
+.endpoint-card {
+    overflow: hidden;
+
+    border: 1px solid #dfe3e8;
+    border-radius: 8px;
+
+    background: #ffffff;
+}
+
+.endpoint-card__route {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 14px 16px;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    background: #f8fafc;
+}
+
+.http-method {
+    padding: 5px 8px;
+
+    border-radius: 5px;
+
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.http-method--get {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.endpoint-card__path {
+    padding: 0;
+
+    background: transparent;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    color: #1f2937;
+}
+
+.endpoint-card__fields {
+    padding: 6px 0;
+}
+
+.endpoint-field {
+    display: grid;
+
+    grid-template-columns: 150px minmax(0, 1fr);
+
+    align-items: center;
+
+    min-height: 38px;
+
+    padding: 0 16px;
+
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.endpoint-field:last-child {
+    border-bottom: 0;
+}
+
+.endpoint-field > span {
+    font-family: monospace;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    color: #667085;
+}
+
+.endpoint-field code {
+    justify-self: start;
+
+    background: #f3f4f6;
+}
+
+
+/* =========================================================
+   Responses
+   ========================================================= */
+
+.responses-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+.response-card {
+    padding: 14px;
+
+    border: 1px solid #e1e5eb;
+    border-radius: 8px;
+
+    background: #ffffff;
+}
+
+.response-card__header {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 8px;
+}
+
+.response-status {
+    min-width: 42px;
+
+    padding: 4px 7px;
+
+    border-radius: 5px;
+
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: 800;
+
+    text-align: center;
+}
+
+.response-status--success {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.response-status--error {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.response-card__header strong {
+    font-size: 13px;
+}
+
+.response-card__text p {
+    margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   Schema tables
+   ========================================================= */
+
+.schema-card {
+    overflow: hidden;
+
+    border: 1px solid #dfe3e8;
+    border-radius: 9px;
+
+    background: #ffffff;
+}
+
+.schema-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 14px 16px;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    background: #f8fafc;
+}
+
+.schema-card__label {
+    display: block;
+
+    margin-bottom: 2px;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    letter-spacing: 0.08em;
+
+    color: #8a919d;
+}
+
+.schema-card__header h4 {
+    margin: 0;
+
+    font-family: monospace;
+
+    font-size: 14px;
+}
+
+.schema-card__type {
+    padding: 4px 8px;
+
+    border-radius: 5px;
+
+    background: #eef2ff;
+
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: 600;
+
+    color: #4f46e5;
+}
+
+.schema-card__description {
+    padding: 14px 16px 0;
+}
+
+.schema-card__description p {
+    margin-bottom: 8px;
+}
+
+.schema-table,
+.comparison-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: 12px;
+}
+
+.schema-table th,
+.schema-table td,
+.comparison-table th,
+.comparison-table td {
+    padding: 10px 12px;
+
+    border-bottom: 1px solid #edf0f3;
+
+    text-align: left;
+}
+
+.schema-table th,
+.comparison-table th {
+    background: #f8fafc;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    color: #8a919d;
+}
+
+.schema-table td {
+    color: #4b5563;
+}
+
+.schema-table tr:last-child td,
+.comparison-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.required-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+
+    background: #dcfce7;
+
+    color: #15803d;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.schema-card__ref {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 12px 16px;
+
+    border-top: 1px solid #e5e7eb;
+
+    background: #fafafa;
+
+    font-size: 11px;
+    color: #667085;
+}
+
+.schema-card__ref code {
+    color: #4f46e5;
+}
+
+
+/* =========================================================
+   Warning
+   ========================================================= */
+
+.task-warning {
+    overflow: hidden;
+
+    border: 1px solid #f0d9a6;
+    border-radius: 9px;
+
+    background: #fffbeb;
+}
+
+.task-warning__header {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 13px 15px;
+
+    border-bottom: 1px solid #f3e4c0;
+
+    background: #fff7dc;
+
+    font-size: 13px;
+
+    color: #92400e;
+}
+
+.task-warning__icon {
+    font-size: 16px;
+}
+
+.task-warning__body {
+    padding: 15px;
+}
+
+.task-warning__body p {
+    color: #6b4f1d;
+}
+
+.forbidden-groups {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-top: 14px;
+}
+
+.forbidden-group {
+    padding: 11px;
+
+    border: 1px solid #eadfbf;
+    border-radius: 7px;
+
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.forbidden-group__name {
+    margin-bottom: 7px;
+
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: 700;
+
+    color: #92400e;
+}
+
+.forbidden-group__fields {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 5px;
+}
+
+.forbidden-group__fields code {
+    background: #fff;
+    border: 1px solid #eadfbf;
+
+    color: #7c2d12;
+}
+
+.task-conclusion {
+    margin-top: 14px;
+
+    padding: 11px 12px;
+
+    border-left: 3px solid #d97706;
+
+    background: rgba(255, 255, 255, 0.55);
+}
+
+
+/* =========================================================
+   Checklist
+   ========================================================= */
+
+.task-checklist {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    padding: 14px 16px;
+
+    border: 1px solid #dfe3e8;
+    border-radius: 8px;
+
+    background: #f8fafc;
+}
+
+.task-checklist__item {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 9px;
+
+    font-size: 12px;
+    line-height: 1.5;
+
+    color: #4b5563;
+}
+
+.task-checklist__item > span:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #e0e7ff;
+
+    color: #4f46e5;
+
+    font-size: 10px;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   Goal
+   ========================================================= */
+
+.task-goal {
+    overflow: hidden;
+
+    border: 1px solid #cfd4ff;
+    border-radius: 9px;
+
+    background: #f7f7ff;
+}
+
+.task-goal__header {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 13px 15px;
+
+    border-bottom: 1px solid #e1e3ff;
+
+    color: #5148c7;
+
+    font-size: 13px;
+}
+
+.task-goal__body {
+    padding: 15px;
+}
+
+.task-goal__body p {
+    margin-bottom: 10px;
+}
+
+.task-goal__body p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   Responsive practice task
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .forbidden-groups {
+        grid-template-columns: 1fr;
+    }
+
+    .endpoint-field {
+        grid-template-columns: 120px minmax(0, 1fr);
+    }
+}

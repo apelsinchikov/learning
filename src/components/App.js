@@ -3,54 +3,61 @@ import { Sidebar } from "./Sidebar.js";
 import { Theory } from "./Theory.js";
 import { Editor } from "./Editor.js";
 import { SwaggerPreview } from "./SwaggerPreview.js";
+import { course } from "../data/course.js";
 
-export function App() {
+export function App(currentLessonIndex = 0) {
+    const currentLesson = course[currentLessonIndex];
+    const hasPreviousLesson = currentLessonIndex > 0;
+    const hasNextLesson = currentLessonIndex < course.length - 1;
+    const isPractice = currentLesson.type === "practice";
+
     return `
         <div class="app">
-
             ${Header()}
 
             <div class="app-layout">
-
-                ${Sidebar()}
+                ${Sidebar(currentLessonIndex)}
 
                 <main class="main-content">
-
                     <div class="page-header">
-
                         <div>
                             <div class="page-header__label">
-                                УРОК 1 ИЗ 7
+                                ${currentLesson.icon}
+                                ${currentLesson.type === "theory" ? "ТЕОРИЯ" : "ПРАКТИКА"}
+                                · УРОК ${currentLessonIndex + 1}
                             </div>
 
-                            <h1>Hello World</h1>
+                            <h1>${currentLesson.title}</h1>
 
-                            <p>
-                                Создадим первую OpenAPI спецификацию
-                                и разберём её структуру.
-                            </p>
+                            <p>${currentLesson.subtitle}</p>
                         </div>
 
-                        <button class="next-button">
-                            Следующий урок →
-                        </button>
+                        <div class="lesson-navigation">
+                            ${
+                                hasPreviousLesson
+                                    ? `<button class="next-button" id="previous-button">← Предыдущий урок</button>`
+                                    : ""
+                            }
 
+                            ${
+                                hasNextLesson
+                                    ? `<button class="next-button" id="next-button">Следующий урок →</button>`
+                                    : ""
+                            }
+                        </div>
                     </div>
 
                     <div class="workspace">
+                        ${Theory(currentLesson)}
 
-                        ${Theory()}
-
-                        ${Editor()}
-
-                        ${SwaggerPreview()}
-
+                        ${
+                            isPractice
+                                ? `${Editor()}${SwaggerPreview()}`
+                                : ""
+                        }
                     </div>
-
                 </main>
-
             </div>
-
         </div>
     `;
 }
