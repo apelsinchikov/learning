@@ -44,18 +44,6 @@ paths:
 
             </div>
 
-            <div id="validation-container">
-                <div class="validation-message">
-
-                    <span class="validation-message__icon">✓</span>
-
-                    <span>
-                        Готово к проверке
-                    </span>
-
-                </div>
-            </div>
-
         </section>
     `;
 }

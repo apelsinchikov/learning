@@ -18,7 +18,7 @@ export function SwaggerPreview() {
 
             </div>
 
-            <div class="swagger-placeholder">
+            <div id="swagger-preview" class="swagger-placeholder">
 
                 <div class="swagger-placeholder__icon">
                     API
