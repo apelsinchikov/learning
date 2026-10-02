@@ -1,4 +1,5 @@
 import { DatabaseDiagram } from "./DatabaseDiagram.js";
+import { format } from "sql-formatter";
 
 export function Theory(lesson) {
     const theory = lesson.theory;
@@ -14,11 +15,28 @@ export function Theory(lesson) {
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;");
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
-    function highlightCode(text, language) {
-        const escaped = escapeHtml(text);
+    function renderInline(text = "") {
+        let result = escapeHtml(text);
+
+        result = result.replace(
+            /`([^`]+)`/g,
+            '<code class="inline-code">$1</code>'
+        );
+
+        result = result.replace(
+            /\*\*([^*]+)\*\*/g,
+            "<strong>$1</strong>"
+        );
+
+        return result;
+    }
+
+    function highlightCode(text, language = "yaml") {
+        const escaped = escapeHtml(text || "");
 
         if (language === "json") {
             return escaped
@@ -40,45 +58,54 @@ export function Theory(lesson) {
                 );
         }
 
+        if (language === "sql") {
+            let result = escaped;
+
+            result = result.replace(
+                /\b(SELECT|FROM|LEFT JOIN|RIGHT JOIN|INNER JOIN|FULL JOIN|JOIN|ON|WHERE|AND|OR|GROUP BY|ORDER BY|INSERT INTO|VALUES|UPDATE|SET|DELETE FROM)\b/gi,
+                '<span class="code-sql-keyword">$1</span>'
+            );
+
+            result = result.replace(
+                /('(?:''|[^'])*')/g,
+                '<span class="code-string">$1</span>'
+            );
+
+            result = result.replace(
+                /\b(\d+)\b/g,
+                '<span class="code-number">$1</span>'
+            );
+
+            return result;
+        }
+
         return escaped
             .split("\n")
             .map(line => {
-                const yamlKey = line.match(/^(\s*)([^:#]+)(:)(.*)$/);
+                const match = line.match(
+                    /^(\s*)([^:#\n]+)(:)(.*)$/
+                );
 
-                if (!yamlKey) {
+                if (!match) {
                     return line;
                 }
 
-                const indentation = yamlKey[1];
-                const key = yamlKey[2];
-                const colon = yamlKey[3];
-                const value = yamlKey[4];
+                const indentation = match[1];
+                const key = match[2];
+                const colon = match[3];
+                const value = match[4];
 
                 let styledValue = value;
 
                 if (value.trim().startsWith("#")) {
-                    styledValue = `
-                        <span class="code-comment">
-                            ${value}
-                        </span>
-                    `;
-                } else if (
-                    /^(\s*['"]?.*?['"]?)$/.test(value) &&
-                    value.trim() !== ""
-                ) {
-                    styledValue = `
-                        <span class="code-string">
-                            ${value}
-                        </span>
-                    `;
+                    styledValue =
+                        `<span class="code-comment">${value}</span>`;
+                } else if (value.trim() !== "") {
+                    styledValue =
+                        `<span class="code-string">${value}</span>`;
                 }
 
-                return `
-                    ${indentation}
-                    <span class="code-key">
-                        ${key}
-                    </span>${colon}${styledValue}
-                `;
+                return `${indentation}<span class="code-key">${key}</span>${colon}${styledValue}`;
             })
             .join("\n");
     }
@@ -101,23 +128,395 @@ export function Theory(lesson) {
                     return "";
                 }
 
+                const isList = lines.every(
+                    line =>
+                        line.startsWith("- ") ||
+                        line.startsWith("• ")
+                );
+
+                if (isList) {
+                    return `
+                        <ul class="theory-list">
+                            ${lines
+                                .map(line => `
+                                    <li>
+                                        ${renderInline(
+                                            line.replace(/^[-•]\s+/, "")
+                                        )}
+                                    </li>
+                                `)
+                                .join("")}
+                        </ul>
+                    `;
+                }
+
                 return `
-                    <p>
-                        ${escapeHtml(lines.join(" "))}
+                    <p class="theory-paragraph">
+                        ${renderInline(lines.join(" "))}
                     </p>
                 `;
             })
             .join("");
     }
 
-    function renderLegacyCode(text) {
-        if (!text) {
-            return "";
+    function renderDefinition(section) {
+        return `
+            <div class="theory-definition">
+
+                <div class="theory-definition__term">
+                    ${renderInline(section.term)}
+                </div>
+
+                <div class="theory-definition__body">
+                    ${renderText(section.text)}
+                </div>
+
+            </div>
+        `;
+    }
+
+    function renderHighlight(section) {
+        return `
+            <div class="theory-highlight">
+
+                <div class="theory-highlight__icon">
+                    ${escapeHtml(section.icon || "💡")}
+                </div>
+
+                <div class="theory-highlight__content">
+
+                    ${
+                        section.title
+                            ? `
+                                <div class="theory-highlight__title">
+                                    ${escapeHtml(section.title)}
+                                </div>
+                            `
+                            : ""
+                    }
+
+                    ${renderText(section.text)}
+
+                </div>
+
+            </div>
+        `;
+    }
+
+    function renderWarning(section) {
+        return `
+            <div class="theory-warning">
+
+                <div class="theory-warning__icon">
+                    ⚠️
+                </div>
+
+                <div class="theory-warning__content">
+
+                    <div class="theory-warning__title">
+                        ${escapeHtml(section.title || "Важно")}
+                    </div>
+
+                    ${renderText(section.text)}
+
+                </div>
+
+            </div>
+        `;
+    }
+
+    function renderCode(section) {
+        let code = section.code || "";
+
+        if (section.language === "sql") {
+            try {
+                code = format(code, {
+                    language: "sql",
+                    tabWidth: 2,
+                    keywordCase: "upper",
+                    linesBetweenQueries: 1
+                });
+            } catch {
+                // Если SQL не удалось отформатировать,
+                // показываем исходный текст.
+            }
         }
 
         return `
-            <div class="code-example">
-                <pre><code>${escapeHtml(text.trim())}</code></pre>
+            <div class="theory-code">
+
+                <div class="theory-code__header">
+
+                    <span>
+                        ${escapeHtml(section.title || "Пример")}
+                    </span>
+
+                    ${
+                        section.language
+                            ? `
+                                <span class="theory-code__language">
+                                    ${escapeHtml(section.language)}
+                                </span>
+                            `
+                            : ""
+                    }
+
+                </div>
+
+                <pre><code>${highlightCode(
+                    code,
+                    section.language
+                )}</code></pre>
+
+            </div>
+        `;
+    }
+
+    function renderCodeExplanation(section) {
+        return `
+            <div class="theory-code-explanation">
+
+                ${
+                    section.title
+                        ? `
+                            <div class="theory-code-explanation__title">
+                                ${escapeHtml(section.title)}
+                            </div>
+                        `
+                        : ""
+                }
+
+                <div class="theory-code-explanation__items">
+
+                    ${section.items
+                        .map((item, index) => `
+                            <div class="theory-code-explanation__item">
+
+                                <div class="theory-code-explanation__number">
+                                    ${index + 1}
+                                </div>
+
+                                <div class="theory-code-explanation__body">
+
+                                    <div class="theory-code-explanation__code">
+                                        <code>
+                                            ${renderInline(item.code)}
+                                        </code>
+                                    </div>
+
+                                    <div class="theory-code-explanation__text">
+                                        ${renderInline(item.text)}
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        `)
+                        .join("")}
+
+                </div>
+
+            </div>
+        `;
+    }
+
+    function renderList(section) {
+        return `
+            <div class="theory-list-block">
+
+                ${
+                    section.title
+                        ? `
+                            <div class="theory-list-block__title">
+                                ${escapeHtml(section.title)}
+                            </div>
+                        `
+                        : ""
+                }
+
+                <ul class="theory-list theory-list--block">
+
+                    ${section.items
+                        .map(item => `
+                            <li>
+                                ${renderInline(item)}
+                            </li>
+                        `)
+                        .join("")}
+
+                </ul>
+
+            </div>
+        `;
+    }
+
+    function renderTable(section) {
+        return `
+            <div class="theory-table-card">
+
+                ${
+                    section.title
+                        ? `
+                            <div class="theory-table-card__header">
+                                ${escapeHtml(section.title)}
+                            </div>
+                        `
+                        : ""
+                }
+
+                <div class="theory-table-card__scroll">
+
+                    <table class="theory-table">
+
+                        <thead>
+                            <tr>
+                                ${section.columns
+                                    .map(column => `
+                                        <th>
+                                            ${escapeHtml(column)}
+                                        </th>
+                                    `)
+                                    .join("")}
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            ${section.rows
+                                .map(row => `
+                                    <tr>
+                                        ${row
+                                            .map((cell, index) => `
+                                                <td>
+                                                    ${
+                                                        index === 0
+                                                            ? `<strong>${renderInline(cell)}</strong>`
+                                                            : renderInline(cell)
+                                                    }
+                                                </td>
+                                            `)
+                                            .join("")}
+                                    </tr>
+                                `)
+                                .join("")}
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        `;
+    }
+
+    function renderSteps(section) {
+        return `
+            <div class="theory-steps">
+
+                ${
+                    section.title
+                        ? `
+                            <div class="theory-steps__title">
+                                ${escapeHtml(section.title)}
+                            </div>
+                        `
+                        : ""
+                }
+
+                <div class="theory-steps__list">
+
+                    ${section.items
+                        .map((item, index) => `
+                            <div class="theory-step">
+
+                                <div class="theory-step__number">
+                                    ${index + 1}
+                                </div>
+
+                                <div class="theory-step__content">
+
+                                    <div class="theory-step__title">
+                                        ${escapeHtml(item.title)}
+                                    </div>
+
+                                    ${renderText(item.text)}
+
+                                    ${
+                                        item.code
+                                            ? `
+                                                <div class="theory-step__code">
+                                                    ${renderInline(item.code)}
+                                                </div>
+                                            `
+                                            : ""
+                                    }
+
+                                </div>
+
+                            </div>
+                        `)
+                        .join("")}
+
+                </div>
+
+            </div>
+        `;
+    }
+
+    function renderEndpoint(section) {
+        return `
+            <div class="theory-endpoint">
+
+                <div class="theory-endpoint__route">
+
+                    <span class="
+                        http-method
+                        http-method--${String(section.method).toLowerCase()}
+                    ">
+                        ${escapeHtml(section.method)}
+                    </span>
+
+                    <code>
+                        ${escapeHtml(section.path)}
+                    </code>
+
+                </div>
+
+                ${
+                    section.description
+                        ? `
+                            <div class="theory-endpoint__description">
+                                ${renderInline(section.description)}
+                            </div>
+                        `
+                        : ""
+                }
+
+                ${
+                    section.parts
+                        ? `
+                            <div class="theory-endpoint__parts">
+
+                                ${section.parts
+                                    .map(part => `
+                                        <div class="theory-endpoint__part">
+
+                                            <code>
+                                                ${escapeHtml(part.name)}
+                                            </code>
+
+                                            <span>
+                                                ${renderInline(part.text)}
+                                            </span>
+
+                                        </div>
+                                    `)
+                                    .join("")}
+
+                            </div>
+                        `
+                        : ""
+                }
+
             </div>
         `;
     }
@@ -125,8 +524,12 @@ export function Theory(lesson) {
     function renderTaskCode(section) {
         return `
             <div class="practice-code">
+
                 <div class="practice-code__header">
-                    <span>${section.language || "code"}</span>
+                    <span>
+                        ${escapeHtml(section.language || "code")}
+                    </span>
+
                     <span class="practice-code__copy-label">
                         пример
                     </span>
@@ -136,6 +539,7 @@ export function Theory(lesson) {
                     section.code,
                     section.language
                 )}</code></pre>
+
             </div>
         `;
     }
@@ -145,7 +549,9 @@ export function Theory(lesson) {
             <div class="schema-card">
 
                 <div class="schema-card__header">
+
                     <div>
+
                         <span class="schema-card__label">
                             SCHEMA
                         </span>
@@ -153,11 +559,13 @@ export function Theory(lesson) {
                         <h4>
                             ${escapeHtml(section.schemaName)}
                         </h4>
+
                     </div>
 
                     <span class="schema-card__type">
                         object
                     </span>
+
                 </div>
 
                 ${
@@ -171,6 +579,7 @@ export function Theory(lesson) {
                 }
 
                 <table class="schema-table">
+
                     <thead>
                         <tr>
                             <th>Property</th>
@@ -180,9 +589,11 @@ export function Theory(lesson) {
                     </thead>
 
                     <tbody>
+
                         ${section.properties
                             .map(property => `
                                 <tr>
+
                                     <td>
                                         <code>
                                             ${escapeHtml(property[0])}
@@ -202,66 +613,30 @@ export function Theory(lesson) {
                                                 : ""
                                         }
                                     </td>
+
                                 </tr>
                             `)
                             .join("")}
+
                     </tbody>
+
                 </table>
 
                 ${
                     section.ref
                         ? `
                             <div class="schema-card__ref">
-                                <span>Используй $ref:</span>
-                                <code>${escapeHtml(section.ref)}</code>
+                                <span>
+                                    Используй <code>$ref</code>:
+                                </span>
+
+                                <code>
+                                    ${escapeHtml(section.ref)}
+                                </code>
                             </div>
                         `
                         : ""
                 }
-
-            </div>
-        `;
-    }
-
-    function renderEndpoint(section) {
-        return `
-            ${
-                section.text
-                    ? `<div class="task-description">${renderText(section.text)}</div>`
-                    : ""
-            }
-
-            <div class="endpoint-card">
-
-                <div class="endpoint-card__route">
-
-                    <span class="http-method http-method--get">
-                        ${escapeHtml(section.method)}
-                    </span>
-
-                    <code class="endpoint-card__path">
-                        ${escapeHtml(section.path)}
-                    </code>
-
-                </div>
-
-                <div class="endpoint-card__fields">
-
-                    ${section.fields
-                        .map(field => `
-                            <div class="endpoint-field">
-                                <span>
-                                    ${escapeHtml(field[0])}
-                                </span>
-
-                                <code>
-                                    ${escapeHtml(field[1])}
-                                </code>
-                            </div>
-                        `)
-                        .join("")}
-
-                </div>
 
             </div>
         `;
@@ -279,7 +654,11 @@ export function Theory(lesson) {
 
                                 <span class="
                                     response-status
-                                    response-status--${response.status === "200" ? "success" : "error"}
+                                    response-status--${
+                                        response.status === "200"
+                                            ? "success"
+                                            : "error"
+                                    }
                                 ">
                                     ${escapeHtml(response.status)}
                                 </span>
@@ -304,6 +683,7 @@ export function Theory(lesson) {
                                 response.code
                                     ? `
                                         <div class="practice-code practice-code--compact">
+
                                             <div class="practice-code__header">
                                                 yaml
                                             </div>
@@ -312,6 +692,7 @@ export function Theory(lesson) {
                                                 response.code,
                                                 "yaml"
                                             )}</code></pre>
+
                                         </div>
                                     `
                                     : ""
@@ -325,11 +706,12 @@ export function Theory(lesson) {
         `;
     }
 
-    function renderWarning(section) {
+    function renderTaskWarning(section) {
         return `
             <div class="task-warning">
 
                 <div class="task-warning__header">
+
                     <span class="task-warning__icon">
                         ⚠️
                     </span>
@@ -337,6 +719,7 @@ export function Theory(lesson) {
                     <strong>
                         ${escapeHtml(section.titleText)}
                     </strong>
+
                 </div>
 
                 <div class="task-warning__body">
@@ -347,6 +730,7 @@ export function Theory(lesson) {
                         section.groups
                             ? `
                                 <div class="forbidden-groups">
+
                                     ${section.groups
                                         .map(group => `
                                             <div class="forbidden-group">
@@ -368,6 +752,7 @@ export function Theory(lesson) {
                                             </div>
                                         `)
                                         .join("")}
+
                                 </div>
                             `
                             : ""
@@ -377,6 +762,7 @@ export function Theory(lesson) {
                         section.comparison
                             ? `
                                 <table class="comparison-table">
+
                                     <thead>
                                         <tr>
                                             <th>Поле</th>
@@ -385,20 +771,27 @@ export function Theory(lesson) {
                                     </thead>
 
                                     <tbody>
+
                                         ${section.comparison
                                             .map(row => `
                                                 <tr>
                                                     <td>
-                                                        <code>${escapeHtml(row[0])}</code>
+                                                        <code>
+                                                            ${escapeHtml(row[0])}
+                                                        </code>
                                                     </td>
 
                                                     <td>
-                                                        <code>${escapeHtml(row[1])}</code>
+                                                        <code>
+                                                            ${escapeHtml(row[1])}
+                                                        </code>
                                                     </td>
                                                 </tr>
                                             `)
                                             .join("")}
+
                                     </tbody>
+
                                 </table>
                             `
                             : ""
@@ -428,7 +821,7 @@ export function Theory(lesson) {
                     .map(item => `
                         <div class="task-checklist__item">
                             <span>✓</span>
-                            <span>${escapeHtml(item)}</span>
+                            <span>${renderInline(item)}</span>
                         </div>
                     `)
                     .join("")}
@@ -473,6 +866,7 @@ export function Theory(lesson) {
                     </span>
 
                     <div>
+
                         <div class="practice-task__label">
                             ПРАКТИЧЕСКОЕ ЗАДАНИЕ
                         </div>
@@ -480,6 +874,7 @@ export function Theory(lesson) {
                         <h3>
                             Твоя задача
                         </h3>
+
                     </div>
 
                 </div>
@@ -532,7 +927,7 @@ export function Theory(lesson) {
 
                                         ${
                                             section.type === "warning"
-                                                ? renderWarning(section)
+                                                ? renderTaskWarning(section)
                                                 : ""
                                         }
 
@@ -560,54 +955,123 @@ export function Theory(lesson) {
         `;
     }
 
+    function renderTheorySection(section) {
+        if (section.type === "definition") {
+            return renderDefinition(section);
+        }
+
+        if (section.type === "highlight") {
+            return renderHighlight(section);
+        }
+
+        if (section.type === "warning") {
+            return renderWarning(section);
+        }
+
+        if (section.type === "code") {
+            return renderCode(section);
+        }
+
+        if (section.type === "code-explanation") {
+            return renderCodeExplanation(section);
+        }
+
+        if (section.type === "list") {
+            return renderList(section);
+        }
+
+        if (section.type === "table") {
+            return renderTable(section);
+        }
+
+        if (section.type === "steps") {
+            return renderSteps(section);
+        }
+
+        if (section.type === "endpoint") {
+            return renderEndpoint(section);
+        }
+
+        if (section.type === "database-diagram") {
+            return DatabaseDiagram();
+        }
+
+        if (section.type === "text") {
+            return `
+                <div class="theory-content">
+                    ${renderText(section.text)}
+                </div>
+            `;
+        }
+
+        /*
+         * Старый формат уроков.
+         * Нужен, чтобы остальные уроки продолжали работать,
+         * пока мы постепенно переводим их на новую структуру.
+         */
+        return `
+            <div class="theory-section">
+
+                <h3>
+                    ${escapeHtml(section.title)}
+                </h3>
+
+                ${renderText(section.text)}
+
+            </div>
+        `;
+    }
+
+    const hasDatabaseDiagramSection =
+        theory.sections?.some(
+            section => section.type === "database-diagram"
+        );
+
     return `
         <section class="panel theory-panel">
 
             <div class="panel-header">
+
                 <div>
+
                     <span class="panel-header__label">
-                        ${lesson.icon}
+                        ${escapeHtml(lesson.icon || "")}
                         ${isPractice ? "ПЕРЕД ПРАКТИКОЙ" : "ТЕОРИЯ"}
                     </span>
 
                     <h2>
-                        ${escapeHtml(theory.title || lesson.title)}
+                        ${escapeHtml(
+                            theory.title || lesson.title
+                        )}
                     </h2>
+
                 </div>
+
             </div>
 
             <div class="panel-body">
 
                 ${
-                    theory.sections
-                        ? theory.sections
-                            .map(section => `
-                                <div class="theory-section">
-
-                                    <h3>
-                                        ${escapeHtml(section.title)}
-                                    </h3>
-
-                                    ${renderText(section.text)}
-
-                                </div>
-                            `)
-                            .join("")
-                        : ""
-                }
-
-                ${
-                    theory.text
+                    theory.intro
                         ? `
-                            <div class="theory-section">
-                                ${renderText(theory.text)}
+                            <div class="theory-intro">
+                                ${renderText(theory.intro)}
                             </div>
                         `
                         : ""
                 }
 
                 ${
-                    lesson.id === "theory-9"
+                    theory.sections
+                        ? theory.sections
+                            .map(renderTheorySection)
+                            .join("")
+                        : ""
+                }
+
+                ${
+                    lesson.id === "theory-9" &&
+                    !hasDatabaseDiagramSection
                         ? DatabaseDiagram()
                         : ""
                 }
@@ -632,8 +1096,17 @@ export function Theory(lesson) {
                     theory.swagger
                         ? `
                             <div class="theory-section">
-                                <h3>Как это работает</h3>
-                                ${renderLegacyCode(theory.swagger)}
+
+                                <h3>
+                                    Как это работает
+                                </h3>
+
+                                ${renderCode({
+                                    title: "Схема",
+                                    language: "text",
+                                    code: theory.swagger
+                                })}
+
                             </div>
                         `
                         : ""
@@ -643,8 +1116,17 @@ export function Theory(lesson) {
                     theory.structure
                         ? `
                             <div class="theory-section">
-                                <h3>Структура</h3>
-                                ${renderLegacyCode(theory.structure)}
+
+                                <h3>
+                                    Структура
+                                </h3>
+
+                                ${renderCode({
+                                    title: "Структура",
+                                    language: "text",
+                                    code: theory.structure
+                                })}
+
                             </div>
                         `
                         : ""
@@ -654,8 +1136,17 @@ export function Theory(lesson) {
                     theory.yaml
                         ? `
                             <div class="theory-section">
-                                <h3>Пример YAML</h3>
-                                ${renderLegacyCode(theory.yaml)}
+
+                                <h3>
+                                    Пример YAML
+                                </h3>
+
+                                ${renderCode({
+                                    title: "OpenAPI-спецификация",
+                                    language: "yaml",
+                                    code: theory.yaml
+                                })}
+
                             </div>
                         `
                         : ""
@@ -665,8 +1156,13 @@ export function Theory(lesson) {
                     theory.explanation
                         ? `
                             <div class="theory-section">
-                                <h3>Разбираем структуру</h3>
+
+                                <h3>
+                                    Разбираем структуру
+                                </h3>
+
                                 ${renderText(theory.explanation)}
+
                             </div>
                         `
                         : ""
@@ -695,6 +1191,7 @@ export function Theory(lesson) {
                 }
 
             </div>
+
         </section>
     `;
 }

@@ -1,3 +1,4 @@
+
 export const usersFromDatabase = {
     id: "practice-9",
     type: "practice",
@@ -68,7 +69,7 @@ export const usersFromDatabase = {
                     │
                     ├── phones[]
                     │
-                    ├── address
+                    ├── address[]
                     │
                     └── devices[]
         `,
@@ -77,6 +78,10 @@ export const usersFromDatabase = {
             intro: `
                 Спроектируй OpenAPI 3.0.3 спецификацию
                 для получения пользователя по его идентификатору.
+
+                Твоя задача — не скопировать таблицы базы данных,
+                а создать отдельную API-модель User,
+                удобную для клиента.
             `,
 
             sections: [
@@ -118,6 +123,8 @@ schema:
   type: integer`,
                     text: `
                         Добавь обязательный path parameter id.
+
+                        Значение id должно иметь тип integer.
                     `
                 },
 
@@ -129,9 +136,12 @@ schema:
                             status: "200",
                             description: "User found",
                             text: `
+                                Если пользователь найден,
+                                API должно вернуть статус 200.
+
                                 Ответ должен содержать
-                                application/json и возвращать
-                                User через $ref.
+                                application/json и использовать
+                                схему User через $ref.
                             `,
                             code: `content:
   application/json:
@@ -140,7 +150,11 @@ schema:
                         },
                         {
                             status: "404",
-                            description: "User not found"
+                            description: "User not found",
+                            text: `
+                                Если пользователя с указанным id
+                                не существует, API должно вернуть 404.
+                            `
                         }
                     ]
                 },
@@ -151,17 +165,25 @@ schema:
                     schemaName: "User",
                     text: `
                         Создай схему User.
+
                         Она должна иметь type: object.
 
                         Все перечисленные свойства должны
                         быть обязательными.
+
+                        Свойства phones, address и devices
+                        должны быть массивами.
+
+                        Каждый элемент массива должен
+                        использовать соответствующую схему
+                        через $ref.
                     `,
                     properties: [
                         ["id", "integer", true],
                         ["firstName", "string", true],
                         ["lastName", "string", true],
                         ["phones", "array", true],
-                        ["address", "object", true],
+                        ["address", "array", true],
                         ["devices", "array", true]
                     ]
                 },
@@ -177,6 +199,9 @@ schema:
 
                         User должен использовать UserPhone
                         через $ref внутри массива phones.
+
+                        Не добавляй сюда поля id, userId
+                        и isPrimary из таблицы userPhones.
                     `,
                     properties: [
                         ["phone", "string", true],
@@ -195,7 +220,10 @@ schema:
                         Все четыре свойства обязательные.
 
                         User должен использовать UserAddress
-                        через $ref.
+                        через $ref внутри массива address.
+
+                        Не добавляй сюда поля id и userId
+                        из таблицы userAddress.
                     `,
                     properties: [
                         ["city", "string", true],
@@ -217,6 +245,11 @@ schema:
 
                         User должен использовать UserDevice
                         через $ref внутри массива devices.
+
+                        В API не возвращай Device.id.
+
+                        Вместо технического id используй
+                        бизнес-поле inventoryNumber.
                     `,
                     properties: [
                         ["name", "string", true],
@@ -227,18 +260,98 @@ schema:
                 },
 
                 {
-                    title: "9. Чего НЕ должно быть в API",
+                    title: "9. Связь пользователя с телефонами",
+                    type: "code",
+                    language: "yaml",
+                    code: `phones:
+  type: array
+  items:
+    $ref: '#/components/schemas/UserPhone'`,
+                    text: `
+                        Связь usersPersonalData → userPhones
+                        является связью 1:N.
+
+                        Один пользователь может иметь
+                        один или несколько телефонов.
+
+                        Поэтому в API phones должен быть массивом.
+
+                        Каждый элемент массива должен
+                        использовать UserPhone через $ref.
+                    `
+                },
+
+                {
+                    title: "10. Связь пользователя с адресами",
+                    type: "code",
+                    language: "yaml",
+                    code: `address:
+  type: array
+  items:
+    $ref: '#/components/schemas/UserAddress'`,
+                    text: `
+                        Связь usersPersonalData → userAddress
+                        также является связью 1:N.
+
+                        Один пользователь может иметь
+                        один или несколько адресов.
+
+                        Поэтому address должен быть массивом.
+
+                        Каждый элемент массива должен
+                        использовать UserAddress через $ref.
+                    `
+                },
+
+                {
+                    title: "11. Связь пользователя с устройствами",
+                    type: "code",
+                    language: "yaml",
+                    code: `devices:
+  type: array
+  items:
+    $ref: '#/components/schemas/UserDevice'`,
+                    text: `
+                        Связь usersPersonalData → mapUserDevice
+                        позволяет получить устройства пользователя.
+
+                        Один пользователь может быть связан
+                        с несколькими устройствами.
+
+                        Таблица mapUserDevice является
+                        внутренней таблицей связи и не должна
+                        появляться в API-модели.
+
+                        В API мы сразу представляем результат
+                        этой связи как массив devices.
+                    `
+                },
+
+                {
+                    title: "12. Чего НЕ должно быть в API",
                     type: "warning",
                     titleText: "Не возвращай внутренние поля базы данных",
                     text: `
+                        Не нужно переносить в API все поля,
+                        которые существуют в базе данных.
+
                         В таблице usersPersonalData существуют
                         поля gender, birthDate и email.
 
-                        Но они НЕ должны появиться
+                        Они НЕ должны появиться
                         в User API Schema.
 
-                        Также не нужно возвращать технические
-                        поля связующих таблиц.
+                        В таблицах userPhones и userAddress
+                        есть технические поля id и userId.
+
+                        В таблице mapUserDevice есть
+                        технические поля id, userId и deviceId.
+
+                        Device.id также является техническим
+                        идентификатором базы данных.
+
+                        Все эти поля должны остаться
+                        внутри базы данных.
                     `,
                     groups: [
                         {
@@ -282,7 +395,7 @@ schema:
                 },
 
                 {
-                    title: "10. Device ID и inventoryNumber",
+                    title: "13. Device ID и inventoryNumber",
                     type: "warning",
                     titleText: "Не перепутай два разных значения",
                     text: `
@@ -294,18 +407,95 @@ schema:
 
                         inventoryNumber — бизнес-значение,
                         которое используется как инвентарный номер.
+
+                        В API не нужно возвращать Device.id.
+
+                        В API нужно вернуть inventoryNumber.
                     `,
                     comparison: [
                         ["Device.id", "5832"],
                         ["Device.inventoryNumber", "IT-LT-004271"]
                     ],
                     conclusion: `
-                        В API нужно вернуть именно inventoryNumber.
+                        В UserDevice используй inventoryNumber,
+                        а не технический Device.id.
                     `
                 },
 
                 {
-                    title: "11. Итоговая структура ответа",
+                    title: "14. Как данные из БД превращаются в User",
+                    type: "table",
+                    columns: [
+                        "Источник в БД",
+                        "API-поле",
+                        "Тип"
+                    ],
+                    rows: [
+                        [
+                            "usersPersonalData.id",
+                            "User.id",
+                            "integer"
+                        ],
+                        [
+                            "usersPersonalData.firstName",
+                            "User.firstName",
+                            "string"
+                        ],
+                        [
+                            "usersPersonalData.lastName",
+                            "User.lastName",
+                            "string"
+                        ],
+                        [
+                            "userPhones.phone",
+                            "User.phones[].phone",
+                            "string"
+                        ],
+                        [
+                            "userPhones.phoneType",
+                            "User.phones[].type",
+                            "string"
+                        ],
+                        [
+                            "userAddress.city",
+                            "User.address[].city",
+                            "string"
+                        ],
+                        [
+                            "userAddress.street",
+                            "User.address[].street",
+                            "string"
+                        ],
+                        [
+                            "userAddress.house",
+                            "User.address[].house",
+                            "string"
+                        ],
+                        [
+                            "userAddress.apartment",
+                            "User.address[].apartment",
+                            "string"
+                        ],
+                        [
+                            "Device.name",
+                            "User.devices[].name",
+                            "string"
+                        ],
+                        [
+                            "Device.operatingSystem",
+                            "User.devices[].operatingSystem",
+                            "string"
+                        ],
+                        [
+                            "Device.inventoryNumber",
+                            "User.devices[].inventoryNumber",
+                            "string"
+                        ]
+                    ]
+                },
+
+                {
+                    title: "15. Итоговая структура ответа",
                     type: "code",
                     language: "json",
                     code: `{
@@ -316,15 +506,32 @@ schema:
     {
       "phone": "+7 999 123-45-67",
       "type": "mobile"
+    },
+    {
+      "phone": "+7 999 765-43-21",
+      "type": "mobile"
     }
   ],
-  "address": {
-    "city": "Moscow",
-    "street": "Tverskaya",
-    "house": "10",
-    "apartment": "42"
-  },
+  "address": [
+    {
+      "city": "Москва",
+      "street": "Лесная",
+      "house": "19",
+      "apartment": "42"
+    },
+    {
+      "city": "Москва",
+      "street": "Тверская",
+      "house": "10",
+      "apartment": "15"
+    }
+  ],
   "devices": [
+    {
+      "name": "iPhone 16 Pro Max",
+      "operatingSystem": "iOS",
+      "inventoryNumber": "IT-PH-001542"
+    },
     {
       "name": "MacBook Air",
       "operatingSystem": "macOS",
@@ -335,24 +542,38 @@ schema:
                     text: `
                         Успешный GET /users/{id} должен
                         возвращать JSON примерно такого вида.
+
+                        Обрати внимание:
+
+                        один пользователь содержит
+                        несколько телефонов;
+
+                        один пользователь содержит
+                        несколько адресов;
+
+                        один пользователь может иметь
+                        несколько устройств.
+
+                        Внутренние таблицы и технические
+                        идентификаторы при этом не видны клиенту.
                     `
                 },
 
                 {
-                    title: "12. Переиспользование схем через $ref",
+                    title: "16. Переиспользование схем через $ref",
                     type: "checklist",
                     items: [
                         "Используй $ref для переиспользуемых схем.",
                         "Не копируй одну и ту же структуру несколько раз.",
-                        "UserPhone должен использоваться через $ref.",
-                        "UserAddress должен использоваться через $ref.",
-                        "UserDevice должен использоваться через $ref.",
+                        "UserPhone должен использоваться через $ref внутри phones.",
+                        "UserAddress должен использоваться через $ref внутри address.",
+                        "UserDevice должен использоваться через $ref внутри devices.",
                         "User должен использоваться через $ref в response."
                     ]
                 },
 
                 {
-                    title: "13. Главная цель",
+                    title: "17. Главная цель",
                     type: "goal",
                     text: `
                         Не просто написать YAML,
@@ -368,7 +589,11 @@ schema:
                         • какие данные являются внутренними;
                         • какие связи 1:N превращаются в массивы;
                         • какие структуры стоит вынести в отдельные schemas;
-                        • какие поля нужно намеренно не возвращать.
+                        • какие поля нужно намеренно не возвращать;
+                        • почему mapUserDevice не должна становиться
+                          отдельным объектом в API;
+                        • почему Device.id не обязательно
+                          должен попадать в API.
                     `
                 }
             ]
@@ -433,7 +658,8 @@ components:
                     },
 
                     address: {
-                        ref: "#/components/schemas/UserAddress"
+                        type: "array",
+                        itemsRef: "#/components/schemas/UserAddress"
                     },
 
                     devices: {
@@ -550,10 +776,21 @@ components:
         Данные из нескольких таблиц были объединены
         в единый User DTO.
 
-        Связи 1:N были представлены массивами,
-        повторяющиеся структуры вынесены в отдельные schemas,
-        а внутренние поля базы данных не попали
+        Связи 1:N были представлены массивами:
+
+        phones[]
+        address[]
+        devices[]
+
+        Повторяющиеся структуры были вынесены
+        в отдельные schemas и связаны через $ref.
+
+        Внутренние поля базы данных не попали
         в публичный API-контракт.
+
+        Device.id также не попал в API —
+        вместо технического идентификатора используется
+        бизнес-значение inventoryNumber.
 
         Это уже гораздо ближе к реальной
         проектной работе с OpenAPI.
