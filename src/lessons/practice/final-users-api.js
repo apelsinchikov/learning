@@ -1,4 +1,3 @@
-
 export const finalUsersApi = {
     id: "practice-8",
 
@@ -309,19 +308,23 @@ components:
                         limit: {
                             in: "query",
                             required: false,
-                            type: "integer"
+                            type: "integer",
+                            minimum: 1,
+                            maximum: 100
                         },
 
                         offset: {
                             in: "query",
                             required: false,
-                            type: "integer"
+                            type: "integer",
+                            minimum: 0
                         },
 
                         search: {
                             in: "query",
                             required: false,
-                            type: "string"
+                            type: "string",
+                            minLength: 1
                         }
                     },
 

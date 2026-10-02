@@ -492,6 +492,32 @@ export function Theory(lesson) {
                 }
 
                 ${
+                    section.fields
+                        ? `
+                            <div class="theory-endpoint__parts">
+
+                                ${section.fields
+                                    .map(field => `
+                                        <div class="theory-endpoint__part">
+
+                                            <code>
+                                                ${escapeHtml(field[0])}
+                                            </code>
+
+                                            <span>
+                                                ${renderInline(field[1])}
+                                            </span>
+
+                                        </div>
+                                    `)
+                                    .join("")}
+
+                            </div>
+                        `
+                        : ""
+                }
+
+                ${
                     section.parts
                         ? `
                             <div class="theory-endpoint__parts">

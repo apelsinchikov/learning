@@ -1,4 +1,3 @@
-
 export const databaseToApi = {
     id: "theory-9",
 
@@ -16,7 +15,8 @@ export const databaseToApi = {
     theory: {
         intro: `
             API не обязан повторять структуру базы данных.
-            Наша задача — понять, **какие данные нужны клиенту**,
+
+            Наша задача — понять, какие данные нужны клиенту,
             получить их из базы и представить в удобной API-модели.
         `,
 
@@ -171,6 +171,9 @@ export const databaseToApi = {
 
                     Аналогично \`userAddress.userId\` позволяет найти
                     адрес конкретного пользователя.
+
+                    А \`mapUserDevice.deviceId\` позволяет найти
+                    соответствующее устройство в таблице \`Device\`.
                 `
             },
 
@@ -182,7 +185,8 @@ export const databaseToApi = {
                 title: "1:N в базе → array в API",
 
                 text: `
-                    В базе несколько строк связаны с одним пользователем.
+                    В базе несколько строк могут быть связаны
+                    с одним пользователем.
 
                     В API те же данные удобно представить
                     как **массив**.
@@ -227,7 +231,7 @@ export const databaseToApi = {
                     [
                         "42",
                         "+7 999 222-22-22",
-                        "mobile"
+                        "work"
                     ]
                 ]
             },
@@ -249,7 +253,7 @@ export const databaseToApi = {
     },
     {
       "phone": "+7 999 222-22-22",
-      "type": "mobile"
+      "type": "work"
     }
   ]
 }
@@ -336,14 +340,14 @@ export const databaseToApi = {
                 term: "Связь 1:N — usersPersonalData → mapUserDevice",
 
                 text: `
-                    У одного пользователя может быть одна или несколько записей
-                    в таблице \`mapUserDevice\`.
+                    У одного пользователя может быть одна или несколько
+                    записей в таблице \`mapUserDevice\`.
 
                     Каждая запись \`mapUserDevice\` относится к одному
-                    и только одному пользователю.
+                    пользователю и одному устройству.
 
                     Например, пользователь с \`id = 42\`
-                    может быть связан с телефоном, ноутбуком и планшетом.
+                    может быть связан с ноутбуком, телефоном и планшетом.
                 `
             },
 
@@ -385,16 +389,19 @@ export const databaseToApi = {
   "id": 42,
   "devices": [
     {
-      "id": 15,
-      "name": "iPhone 16 Pro Max"
+      "name": "iPhone 16 Pro Max",
+      "operatingSystem": "iOS",
+      "inventoryNumber": "INV-015"
     },
     {
-      "id": 27,
-      "name": "MacBook Air"
+      "name": "MacBook Air",
+      "operatingSystem": "macOS",
+      "inventoryNumber": "INV-027"
     },
     {
-      "id": 31,
-      "name": "iPad Pro"
+      "name": "iPad Pro",
+      "operatingSystem": "iPadOS",
+      "inventoryNumber": "INV-031"
     }
   ]
 }
@@ -411,10 +418,10 @@ export const databaseToApi = {
                     на одно и только одно устройство в таблице \`Device\`.
 
                     При этом одно устройство может быть связано
-                    с одной или несколькими записями \`mapUserDevice\`.
+                    с несколькими записями \`mapUserDevice\`.
 
-                    Например, несколько записей \`mapUserDevice\`
-                    могут ссылаться на устройство с \`id = 15\`.
+                    Например, несколько пользователей могут иметь
+                    записи связи с одним устройством.
                 `
             },
 
@@ -451,25 +458,15 @@ export const databaseToApi = {
             {
                 type: "code",
 
-                title: "Как это может выглядеть в API",
+                title: "Что получает API",
 
                 language: "json",
 
                 code: `
 {
-  "id": 15,
-  "name": "Shared Office Printer",
-  "users": [
-    {
-      "id": 42
-    },
-    {
-      "id": 57
-    },
-    {
-      "id": 81
-    }
-  ]
+  "name": "Shared Office Laptop",
+  "operatingSystem": "Windows",
+  "inventoryNumber": "INV-015"
 }
                 `.trim()
             },
@@ -543,16 +540,59 @@ export const databaseToApi = {
                         "Улица адреса"
                     ],
                     [
-                        "mapUserDevice.deviceId",
-                        "`User.devices[].id`",
-                        "Идентификатор устройства"
+                        "userAddress.house",
+                        "`User.address[].house`",
+                        "Номер дома"
+                    ],
+                    [
+                        "userAddress.apartment",
+                        "`User.address[].apartment`",
+                        "Номер квартиры"
                     ],
                     [
                         "Device.name",
                         "`User.devices[].name`",
                         "Название устройства"
+                    ],
+                    [
+                        "Device.operatingSystem",
+                        "`User.devices[].operatingSystem`",
+                        "Операционная система"
+                    ],
+                    [
+                        "Device.inventoryNumber",
+                        "`User.devices[].inventoryNumber`",
+                        "Инвентарный номер"
                     ]
                 ]
+            },
+
+            {
+                type: "highlight",
+
+                icon: "⚠️",
+
+                title: "Что происходит с Device.id",
+
+                text: `
+                    \`Device.id\` нужен базе данных для внутренних связей.
+
+                    Через него \`mapUserDevice.deviceId\`
+                    находит конкретную запись устройства.
+
+                    Но это не означает, что \`Device.id\`
+                    обязательно должен попасть в API.
+
+                    В нашей API-модели клиент получает:
+
+                    \`name\`
+
+                    \`operatingSystem\`
+
+                    \`inventoryNumber\`
+
+                    а внутренний \`Device.id\` наружу не передаётся.
+                `
             },
 
             {
@@ -574,7 +614,7 @@ export const databaseToApi = {
     },
     {
       "phone": "+7 999 222-22-22",
-      "type": "mobile"
+      "type": "work"
     }
   ],
   "address": [
@@ -593,16 +633,19 @@ export const databaseToApi = {
   ],
   "devices": [
     {
-      "id": 15,
-      "name": "iPhone 16 Pro Max"
+      "name": "iPhone 16 Pro Max",
+      "operatingSystem": "iOS",
+      "inventoryNumber": "INV-015"
     },
     {
-      "id": 27,
-      "name": "MacBook Air"
+      "name": "MacBook Air",
+      "operatingSystem": "macOS",
+      "inventoryNumber": "INV-027"
     },
     {
-      "id": 31,
-      "name": "iPad Pro"
+      "name": "iPad Pro",
+      "operatingSystem": "iPadOS",
+      "inventoryNumber": "INV-031"
     }
   ]
 }
@@ -630,6 +673,9 @@ export const databaseToApi = {
 
                     Клиенту не нужно знать, что эти данные
                     физически находятся в пяти разных таблицах.
+
+                    Также клиенту не нужно знать внутренние
+                    идентификаторы и таблицы связей.
                 `
             },
 
@@ -688,6 +734,16 @@ export const databaseToApi = {
                         "email",
                         "Да",
                         "Нет"
+                    ],
+                    [
+                        "Device.id",
+                        "Да",
+                        "Нет"
+                    ],
+                    [
+                        "Device.inventoryNumber",
+                        "Да",
+                        "Да"
                     ]
                 ]
             },
@@ -708,6 +764,10 @@ export const databaseToApi = {
                     \`id\`, \`firstName\`, \`lastName\` и \`phones\`
 
                     остальные поля можно не включать в API-ответ.
+
+                    Точно так же внутренний \`Device.id\`
+                    может использоваться для связей в базе,
+                    но не передаваться клиенту.
                 `
             },
 
@@ -816,8 +876,28 @@ WHERE u.id = 42;
                         "`User.address[].city`"
                     ],
                     [
+                        "userAddress.street",
+                        "`User.address[].street`"
+                    ],
+                    [
+                        "userAddress.house",
+                        "`User.address[].house`"
+                    ],
+                    [
+                        "userAddress.apartment",
+                        "`User.address[].apartment`"
+                    ],
+                    [
                         "Device.name",
                         "`User.devices[].name`"
+                    ],
+                    [
+                        "Device.operatingSystem",
+                        "`User.devices[].operatingSystem`"
+                    ],
+                    [
+                        "Device.inventoryNumber",
+                        "`User.devices[].inventoryNumber`"
                     ]
                 ]
             },
@@ -857,7 +937,7 @@ WHERE u.id = 42;
                         title: "Получаем связанные данные",
 
                         text: `
-                            Находим телефоны, адрес и устройства,
+                            Находим телефоны, адреса и устройства,
                             связанные с этим пользователем.
                         `
                     },
@@ -868,6 +948,10 @@ WHERE u.id = 42;
                         text: `
                             Выбираем только те поля,
                             которые должны попасть в API.
+
+                            Внутренние поля базы, например
+                            \`Device.id\`, могут остаться
+                            только внутри серверной логики.
                         `
                     },
 
@@ -904,6 +988,9 @@ WHERE u.id = 42;
                     **\`inventoryNumber\`** — бизнес-значение,
                     которое может использоваться сотрудниками организации
                     как инвентарный номер.
+
+                    Эти поля имеют разное назначение и не являются
+                    двумя способами записать одно и то же значение.
                 `
             },
 
@@ -942,6 +1029,13 @@ WHERE u.id = 42;
                     это не два разных способа записать одно и то же.
 
                     У этих полей **разное назначение**.
+
+                    \`Device.id\` используется внутри базы
+                    для идентификации и связей.
+
+                    \`inventoryNumber\` может использоваться
+                    как понятный человеку номер устройства
+                    и передаваться в API.
                 `
             },
 
@@ -962,6 +1056,13 @@ WHERE u.id = 42;
 
                     Клиент получает готовую структуру,
                     не зная внутреннего устройства базы данных.
+
+                    Поэтому:
+
+                    **Database Model ≠ API Model**
+
+                    API-модель — это отдельный контракт,
+                    спроектированный для клиента.
                 `
             }
         ]

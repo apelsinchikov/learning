@@ -7,7 +7,8 @@ export const getUser = {
 
     title: "Get User",
 
-    subtitle: "Получим конкретного пользователя по его идентификатору.",
+    subtitle:
+        "Получим конкретного пользователя по его идентификатору.",
 
     sidebarDescription: "GET /users/{id}",
 
@@ -156,10 +157,27 @@ components:
 
     validation: {
         requiredPath: "/users/{id}",
+
         method: "get",
+
         summary: "Get user",
-        response: "200",
-        responseDescription: "User found"
+
+        requiredParameter: {
+            name: "id",
+            in: "path",
+            required: true,
+            type: "integer"
+        },
+
+        responses: {
+            "200": {
+                description: "User found"
+            },
+
+            "404": {
+                description: "User not found"
+            }
+        }
     },
 
     successMessage: `

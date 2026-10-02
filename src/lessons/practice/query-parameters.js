@@ -7,7 +7,8 @@ export const queryParameters = {
 
     title: "Search and filtering",
 
-    subtitle: "Добавим query-параметры для поиска и настройки списка пользователей.",
+    subtitle:
+        "Добавим query-параметры для поиска и настройки списка пользователей.",
 
     sidebarDescription: "Поиск и фильтрация",
 
@@ -59,18 +60,22 @@ export const queryParameters = {
                     required: false
                     schema:
                       type: integer
+                      minimum: 1
+                      maximum: 100
 
                   - name: offset
                     in: query
                     required: false
                     schema:
                       type: integer
+                      minimum: 0
 
                   - name: search
                     in: query
                     required: false
                     schema:
                       type: string
+                      minLength: 1
         `,
 
         task: `
@@ -168,10 +173,40 @@ components:
 
     validation: {
         requiredPath: "/users",
+
         method: "get",
+
         summary: "Get users",
-        response: "200",
-        responseDescription: "Users endpoint works"
+
+        parameters: {
+            limit: {
+                in: "query",
+                required: false,
+                type: "integer",
+                minimum: 1,
+                maximum: 100
+            },
+
+            offset: {
+                in: "query",
+                required: false,
+                type: "integer",
+                minimum: 0
+            },
+
+            search: {
+                in: "query",
+                required: false,
+                type: "string",
+                minLength: 1
+            }
+        },
+
+        responses: {
+            "200": {
+                description: "Users endpoint works"
+            }
+        }
     },
 
     successMessage: `

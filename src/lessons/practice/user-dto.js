@@ -7,7 +7,8 @@ export const userDto = {
 
     title: "User DTO",
 
-    subtitle: "Опишем структуру пользователя с помощью OpenAPI Schema.",
+    subtitle:
+        "Опишем структуру пользователя с помощью OpenAPI Schema.",
 
     sidebarDescription: "Создаём User DTO",
 
@@ -52,9 +53,12 @@ export const userDto = {
                   properties:
                     id:
                       type: integer
+                      minimum: 1
 
                     name:
                       type: string
+                      minLength: 2
+                      maxLength: 100
 
                     email:
                       type: string
@@ -96,6 +100,7 @@ export const userDto = {
 info:
   title: Users API
   version: 1.0.0
+
 paths:
   /users:
     get:
@@ -103,27 +108,70 @@ paths:
       responses:
         '200':
           description: Users endpoint works
-  /users:
+
     post:
       summary: Create user
       responses:
         '201':
-          description: User created`,
+          description: User created
+
+components:
+  schemas: {}`,
 
     validation: {
         requiredPath: "/users",
         method: "post",
         summary: "Create user",
+
         response: "201",
-        responseDescription: "User created"
+        responseDescription: "User created",
+
+        schemas: {
+            User: {
+                type: "object",
+
+                required: [
+                    "id",
+                    "name",
+                    "email"
+                ],
+
+                properties: {
+                    id: {
+                        type: "integer",
+                        minimum: 1
+                    },
+
+                    name: {
+                        type: "string",
+                        minLength: 2,
+                        maxLength: 100
+                    },
+
+                    email: {
+                        type: "string",
+                        format: "email"
+                    }
+                }
+            }
+        }
     },
 
     successMessage: `
         Отлично! Теперь у нашего Users API есть
         полноценная модель User.
 
-        Мы описали структуру объекта,
-        обязательные поля и ограничения их значений.
+        Мы описали:
+
+        • components.schemas.User;
+        • type: object;
+        • properties;
+        • required;
+        • типы данных;
+        • format: email;
+        • minimum;
+        • minLength;
+        • maxLength.
 
         В следующем уроке мы начнём использовать
         эту модель внутри запросов и ответов API.
