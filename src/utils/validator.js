@@ -1,7 +1,11 @@
+
 import { parse } from "yaml";
 import { validate } from "@scalar/openapi-parser";
 
-export async function validateLesson(lesson, yamlText) {
+export async function validateLesson(
+    lesson,
+    yamlText
+) {
     const result = {
         openapiErrors: [],
         taskErrors: []
@@ -35,7 +39,8 @@ export async function validateLesson(lesson, yamlText) {
 
     // 3. Проверяем OpenAPI через Scalar
     try {
-        const scalarResult = await validate(specification);
+        const scalarResult =
+            await validate(specification);
 
         if (!scalarResult.valid) {
             result.openapiErrors.push(
@@ -79,25 +84,222 @@ function validatePracticeLesson(
     validation,
     errors
 ) {
-    const path =
-        specification.paths?.[
-            validation.requiredPath
-        ];
-
-    if (!path) {
-        errors.push(
-            `Добавь endpoint ${validation.method.toUpperCase()} ${validation.requiredPath}.`
+    /*
+     * Новый формат финального задания:
+     *
+     * validation: {
+     *     paths: {
+     *         "/users": {
+     *             get: { ... },
+     *             post: { ... }
+     *         },
+     *
+     *         "/users/{id}": {
+     *             get: { ... },
+     *             put: { ... },
+     *             delete: { ... }
+     *         }
+     *     },
+     *
+     *     schemas: { ... }
+     * }
+     */
+    if (validation.paths) {
+        validatePaths(
+            specification,
+            validation.paths,
+            errors
         );
+
+        if (validation.schemas) {
+            validateSchemas(
+                specification,
+                validation.schemas,
+                errors
+            );
+        }
 
         return;
     }
 
+    /*
+     * Формат для уроков, где один endpoint
+     * содержит несколько операций:
+     *
+     * validation: {
+     *     requiredPath: "/users/{id}",
+     *
+     *     operations: {
+     *         put: { ... },
+     *         delete: { ... }
+     *     }
+     * }
+     */
+    if (validation.operations) {
+        const path =
+            specification.paths?.[
+                validation.requiredPath
+            ];
+
+        if (!path) {
+            const methods =
+                Object.keys(
+                    validation.operations
+                )
+                    .map(method =>
+                        method.toUpperCase()
+                    )
+                    .join(" / ");
+
+            errors.push(
+                `Добавь endpoint ${methods} ${validation.requiredPath}.`
+            );
+
+            return;
+        }
+
+        for (
+            const [
+                method,
+                operationValidation
+            ] of Object.entries(
+                validation.operations
+            )
+        ) {
+            validateOperation(
+                path,
+                validation.requiredPath,
+                method,
+                operationValidation,
+                errors
+            );
+        }
+
+        if (validation.schemas) {
+            validateSchemas(
+                specification,
+                validation.schemas,
+                errors
+            );
+        }
+
+        return;
+    }
+
+    /*
+     * Старый формат:
+     *
+     * validation: {
+     *     requiredPath: "/users",
+     *     method: "post",
+     *     ...
+     * }
+     *
+     * Оставляем для предыдущих уроков.
+     */
+    if (validation.requiredPath) {
+        const path =
+            specification.paths?.[
+                validation.requiredPath
+            ];
+
+        if (!path) {
+            errors.push(
+                `Добавь endpoint ${validation.method?.toUpperCase() || ""} ${validation.requiredPath}.`
+            );
+
+            return;
+        }
+
+        if (validation.method) {
+            validateOperation(
+                path,
+                validation.requiredPath,
+                validation.method,
+                validation,
+                errors
+            );
+        }
+
+        if (validation.schemas) {
+            validateSchemas(
+                specification,
+                validation.schemas,
+                errors
+            );
+        }
+    }
+}
+
+
+function validatePaths(
+    specification,
+    pathsValidation,
+    errors
+) {
+    for (
+        const [
+            pathName,
+            pathValidation
+        ] of Object.entries(
+            pathsValidation
+        )
+    ) {
+        const path =
+            specification.paths?.[
+                pathName
+            ];
+
+        if (!path) {
+            const methods =
+                Object.keys(
+                    pathValidation
+                )
+                    .map(method =>
+                        method.toUpperCase()
+                    )
+                    .join(" / ");
+
+            errors.push(
+                `Добавь endpoint ${methods} ${pathName}.`
+            );
+
+            continue;
+        }
+
+        for (
+            const [
+                method,
+                operationValidation
+            ] of Object.entries(
+                pathValidation
+            )
+        ) {
+            validateOperation(
+                path,
+                pathName,
+                method,
+                operationValidation,
+                errors
+            );
+        }
+    }
+}
+
+
+function validateOperation(
+    path,
+    pathName,
+    method,
+    validation,
+    errors
+) {
     const operation =
-        path[validation.method];
+        path[method];
 
     if (!operation) {
         errors.push(
-            `Добавь метод ${validation.method.toUpperCase()} для ${validation.requiredPath}.`
+            `Добавь метод ${method.toUpperCase()} для ${pathName}.`
         );
 
         return;
@@ -110,7 +312,7 @@ function validatePracticeLesson(
             validation.summary
         ) {
             errors.push(
-                `Для операции укажи summary: ${validation.summary}`
+                `Для ${method.toUpperCase()} ${pathName} укажи summary: ${validation.summary}`
             );
         }
     }
@@ -122,9 +324,27 @@ function validatePracticeLesson(
             validation.operationId
         ) {
             errors.push(
-                `Для операции укажи operationId: ${validation.operationId}`
+                `Для ${method.toUpperCase()} ${pathName} укажи operationId: ${validation.operationId}`
             );
         }
+    }
+
+    // parameters
+    if (validation.parameters) {
+        validateParameters(
+            operation,
+            validation.parameters,
+            errors
+        );
+    }
+
+    // required parameter
+    if (validation.requiredParameter) {
+        validateParameter(
+            operation,
+            validation.requiredParameter,
+            errors
+        );
     }
 
     // responses
@@ -145,22 +365,165 @@ function validatePracticeLesson(
         );
     }
 
-    // parameter
-    if (validation.requiredParameter) {
-        validateParameter(
+    // requestBody
+    if (validation.requestBody) {
+        validateRequestBody(
             operation,
-            validation.requiredParameter,
+            validation.requestBody,
             errors
         );
     }
+}
 
-    // schemas
-    if (validation.schemas) {
-        validateSchemas(
-            specification,
-            validation.schemas,
+
+function validateParameters(
+    operation,
+    parametersValidation,
+    errors
+) {
+    for (
+        const [
+            parameterName,
+            validation
+        ] of Object.entries(
+            parametersValidation
+        )
+    ) {
+        validateParameter(
+            operation,
+            {
+                name: parameterName,
+                ...validation
+            },
             errors
         );
+    }
+}
+
+
+function validateParameter(
+    operation,
+    requiredParameter,
+    errors
+) {
+    const parameters =
+        operation.parameters || [];
+
+    const parameter =
+        parameters.find(
+            item =>
+                item.name ===
+                    requiredParameter.name &&
+                item.in ===
+                    requiredParameter.in
+        );
+
+    if (!parameter) {
+        errors.push(
+            `Добавь параметр ${requiredParameter.name} с in: ${requiredParameter.in}.`
+        );
+
+        return;
+    }
+
+    // required
+    if (
+        requiredParameter.required !==
+        undefined
+    ) {
+        if (
+            parameter.required !==
+            requiredParameter.required
+        ) {
+            errors.push(
+                `Параметр ${requiredParameter.name} должен иметь required: ${requiredParameter.required}.`
+            );
+        }
+    }
+
+    const schema =
+        parameter.schema || {};
+
+    // type
+    if (
+        requiredParameter.type &&
+        schema.type !==
+            requiredParameter.type
+    ) {
+        errors.push(
+            `Параметр ${requiredParameter.name} должен иметь type: ${requiredParameter.type}.`
+        );
+    }
+
+    // format
+    if (
+        requiredParameter.format &&
+        schema.format !==
+            requiredParameter.format
+    ) {
+        errors.push(
+            `Параметр ${requiredParameter.name} должен иметь format: ${requiredParameter.format}.`
+        );
+    }
+
+    // minimum
+    if (
+        requiredParameter.minimum !==
+        undefined
+    ) {
+        if (
+            schema.minimum !==
+            requiredParameter.minimum
+        ) {
+            errors.push(
+                `Параметр ${requiredParameter.name} должен иметь minimum: ${requiredParameter.minimum}.`
+            );
+        }
+    }
+
+    // maximum
+    if (
+        requiredParameter.maximum !==
+        undefined
+    ) {
+        if (
+            schema.maximum !==
+            requiredParameter.maximum
+        ) {
+            errors.push(
+                `Параметр ${requiredParameter.name} должен иметь maximum: ${requiredParameter.maximum}.`
+            );
+        }
+    }
+
+    // minLength
+    if (
+        requiredParameter.minLength !==
+        undefined
+    ) {
+        if (
+            schema.minLength !==
+            requiredParameter.minLength
+        ) {
+            errors.push(
+                `Параметр ${requiredParameter.name} должен иметь minLength: ${requiredParameter.minLength}.`
+            );
+        }
+    }
+
+    // maxLength
+    if (
+        requiredParameter.maxLength !==
+        undefined
+    ) {
+        if (
+            schema.maxLength !==
+            requiredParameter.maxLength
+        ) {
+            errors.push(
+                `Параметр ${requiredParameter.name} должен иметь maxLength: ${requiredParameter.maxLength}.`
+            );
+        }
     }
 }
 
@@ -177,12 +540,13 @@ function validateResponses(
         const [
             status,
             validation
-        ] of Object.entries(responsesValidation)
+        ] of Object.entries(
+            responsesValidation
+        )
     ) {
         const response =
             responses[status];
 
-        // response отсутствует
         if (!response) {
             errors.push(
                 `Добавь ответ с кодом ${status}.`
@@ -203,13 +567,18 @@ function validateResponses(
             }
         }
 
-        // content / mediaType
+        /*
+         * Если response должен содержать
+         * application/json.
+         */
         if (validation.mediaType) {
             const content =
                 response.content || {};
 
             const mediaType =
-                content[validation.mediaType];
+                content[
+                    validation.mediaType
+                ];
 
             if (!mediaType) {
                 errors.push(
@@ -219,7 +588,7 @@ function validateResponses(
                 continue;
             }
 
-            // $ref
+            // schemaRef
             if (validation.schemaRef) {
                 const actualRef =
                     mediaType.schema?.$ref;
@@ -234,25 +603,38 @@ function validateResponses(
                 }
             }
 
+            // arrayItemsRef
+            if (validation.arrayItemsRef) {
+                const schema =
+                    mediaType.schema || {};
+
+                if (
+                    schema.type !==
+                    "array"
+                ) {
+                    errors.push(
+                        `Ответ ${status} должен содержать JSON-массив.`
+                    );
+                } else if (
+                    schema.items?.$ref !==
+                    validation.arrayItemsRef
+                ) {
+                    errors.push(
+                        `Элементы массива ответа ${status} должны использовать $ref: ${validation.arrayItemsRef}.`
+                    );
+                }
+            }
+
             /*
              * Example
              *
              * Проверяем только наличие example.
-             *
-             * Само значение example намеренно
-             * не сравниваем с эталоном.
-             *
-             * Поэтому:
-             *
-             * MacBook Pro → OK
-             * Lenovo ThinkPad → OK
-             * Иван → OK
-             * Петр → OK
-             *
-             * Главное — чтобы example существовал.
              */
             if (validation.example) {
-                if (mediaType.example === undefined) {
+                if (
+                    mediaType.example ===
+                    undefined
+                ) {
                     errors.push(
                         `Ответ ${status} должен содержать example.`
                     );
@@ -294,50 +676,80 @@ function validateResponse(
 }
 
 
-function validateParameter(
+function validateRequestBody(
     operation,
-    requiredParameter,
+    validation,
     errors
 ) {
-    const parameters =
-        operation.parameters || [];
+    const requestBody =
+        operation.requestBody;
 
-    const parameter =
-        parameters.find(
-            item =>
-                item.name ===
-                    requiredParameter.name &&
-                item.in ===
-                    requiredParameter.in
-        );
-
-    if (!parameter) {
+    if (!requestBody) {
         errors.push(
-            `Добавь параметр ${requiredParameter.name} с in: ${requiredParameter.in}.`
+            "Добавь requestBody."
         );
 
         return;
     }
 
+    // required
     if (
-        requiredParameter.required &&
-        parameter.required !== true
+        validation.required &&
+        requestBody.required !== true
     ) {
         errors.push(
-            `Параметр ${requiredParameter.name} должен иметь required: true.`
+            "requestBody должен иметь required: true."
         );
     }
 
-    const actualType =
-        parameter.schema?.type;
+    const content =
+        requestBody.content || {};
 
-    if (
-        requiredParameter.type &&
-        actualType !== requiredParameter.type
-    ) {
-        errors.push(
-            `Параметр ${requiredParameter.name} должен иметь type: ${requiredParameter.type}.`
-        );
+    // mediaType
+    if (validation.mediaType) {
+        const mediaType =
+            content[
+                validation.mediaType
+            ];
+
+        if (!mediaType) {
+            errors.push(
+                `requestBody должен содержать ${validation.mediaType}.`
+            );
+
+            return;
+        }
+
+        // $ref
+        if (validation.schemaRef) {
+            const actualRef =
+                mediaType.schema?.$ref;
+
+            if (
+                actualRef !==
+                validation.schemaRef
+            ) {
+                errors.push(
+                    `Схема requestBody должна использовать $ref: ${validation.schemaRef}.`
+                );
+            }
+        }
+
+        /*
+         * Example
+         *
+         * Проверяем только наличие example.
+         */
+        if (validation.example) {
+            if (
+                mediaType.example ===
+                undefined
+            ) {
+                errors.push(
+                    "requestBody должен содержать example."
+                );
+            }
+        }
     }
 }
 
@@ -362,7 +774,9 @@ function validateSchemas(
         const [
             schemaName,
             validation
-        ] of Object.entries(schemasValidation)
+        ] of Object.entries(
+            schemasValidation
+        )
     ) {
         const schema =
             schemas[schemaName];
@@ -394,7 +808,8 @@ function validateSchema(
     // type
     if (
         validation.type &&
-        schema.type !== validation.type
+        schema.type !==
+            validation.type
     ) {
         errors.push(
             `Схема ${schemaName} должна иметь type: ${validation.type}.`
@@ -481,14 +896,86 @@ function validateProperty(
     validation,
     errors
 ) {
-    // обычный type
+    // type
     if (
         validation.type &&
-        property.type !== validation.type
+        property.type !==
+            validation.type
     ) {
         errors.push(
             `Свойство ${schemaName}.${propertyName} должно иметь type: ${validation.type}.`
         );
+    }
+
+    // format
+    if (
+        validation.format &&
+        property.format !==
+            validation.format
+    ) {
+        errors.push(
+            `Свойство ${schemaName}.${propertyName} должно иметь format: ${validation.format}.`
+        );
+    }
+
+    // minimum
+    if (
+        validation.minimum !==
+        undefined
+    ) {
+        if (
+            property.minimum !==
+            validation.minimum
+        ) {
+            errors.push(
+                `Свойство ${schemaName}.${propertyName} должно иметь minimum: ${validation.minimum}.`
+            );
+        }
+    }
+
+    // maximum
+    if (
+        validation.maximum !==
+        undefined
+    ) {
+        if (
+            property.maximum !==
+            validation.maximum
+        ) {
+            errors.push(
+                `Свойство ${schemaName}.${propertyName} должно иметь maximum: ${validation.maximum}.`
+            );
+        }
+    }
+
+    // minLength
+    if (
+        validation.minLength !==
+        undefined
+    ) {
+        if (
+            property.minLength !==
+            validation.minLength
+        ) {
+            errors.push(
+                `Свойство ${schemaName}.${propertyName} должно иметь minLength: ${validation.minLength}.`
+            );
+        }
+    }
+
+    // maxLength
+    if (
+        validation.maxLength !==
+        undefined
+    ) {
+        if (
+            property.maxLength !==
+            validation.maxLength
+        ) {
+            errors.push(
+                `Свойство ${schemaName}.${propertyName} должно иметь maxLength: ${validation.maxLength}.`
+            );
+        }
     }
 
     // $ref

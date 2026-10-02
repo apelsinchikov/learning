@@ -1,3 +1,4 @@
+
 export const createUser = {
     id: "practice-4",
 
@@ -7,9 +8,11 @@ export const createUser = {
 
     title: "Create User",
 
-    subtitle: "Опишем создание пользователя через POST /users.",
+    subtitle:
+        "Опишем создание пользователя через POST /users.",
 
-    sidebarDescription: "Создаём пользователя",
+    sidebarDescription:
+        "Создаём пользователя",
 
     theoryLinks: [
         "theory-3",
@@ -114,14 +117,28 @@ paths:
 
     post:
       summary: Create user
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+
       responses:
         '201':
           description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
 
 components:
   schemas:
+
     User:
       type: object
+
       properties:
         id:
           type: integer
@@ -139,14 +156,67 @@ components:
       required:
         - id
         - name
+        - email
+
+    UserCreateRequest:
+      type: object
+
+      properties:
+        name:
+          type: string
+
+        email:
+          type: string
+          format: email
+
+      required:
+        - name
         - email`,
 
     validation: {
         requiredPath: "/users",
+
         method: "post",
+
         summary: "Create user",
-        response: "201",
-        responseDescription: "User created"
+
+        requestBody: {
+            required: true,
+            mediaType: "application/json",
+            schemaRef:
+                "#/components/schemas/UserCreateRequest"
+        },
+
+        responses: {
+            "201": {
+                description: "User created",
+                mediaType: "application/json",
+                schemaRef:
+                    "#/components/schemas/User"
+            }
+        },
+
+        schemas: {
+            UserCreateRequest: {
+                type: "object",
+
+                required: [
+                    "name",
+                    "email"
+                ],
+
+                properties: {
+                    name: {
+                        type: "string"
+                    },
+
+                    email: {
+                        type: "string",
+                        format: "email"
+                    }
+                }
+            }
+        }
     },
 
     successMessage: `
@@ -154,7 +224,7 @@ components:
         JSON с данными нового пользователя
         и возвращает созданного User.
 
-        Ты впервые связал endpoint,
-        requestBody, JSON, schemas и $ref.
+        Ты связал endpoint, requestBody,
+        JSON, schemas и $ref.
     `
 };

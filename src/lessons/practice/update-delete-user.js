@@ -1,3 +1,4 @@
+
 export const updateDeleteUser = {
     id: "practice-7",
 
@@ -223,10 +224,50 @@ components:
 
     validation: {
         requiredPath: "/users/{id}",
-        method: "put",
-        summary: "Update user",
-        response: "200",
-        responseDescription: "User updated"
+
+        operations: {
+            put: {
+                summary: "Update user",
+
+                requiredParameter: {
+                    name: "id",
+                    in: "path",
+                    required: true,
+                    type: "integer"
+                },
+
+                responses: {
+                    "200": {
+                        description: "User updated"
+                    },
+
+                    "404": {
+                        description: "User not found"
+                    }
+                }
+            },
+
+            delete: {
+                summary: "Delete user",
+
+                requiredParameter: {
+                    name: "id",
+                    in: "path",
+                    required: true,
+                    type: "integer"
+                },
+
+                responses: {
+                    "204": {
+                        description: "User deleted"
+                    },
+
+                    "404": {
+                        description: "User not found"
+                    }
+                }
+            }
+        }
     },
 
     successMessage: `

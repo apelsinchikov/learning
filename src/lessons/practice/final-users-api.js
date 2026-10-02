@@ -1,3 +1,4 @@
+
 export const finalUsersApi = {
     id: "practice-8",
 
@@ -7,7 +8,8 @@ export const finalUsersApi = {
 
     title: "Final Users API",
 
-    subtitle: "Соберём полноценную OpenAPI-спецификацию Users API.",
+    subtitle:
+        "Соберём полноценную OpenAPI-спецификацию Users API.",
 
     sidebarDescription: "Финальное задание",
 
@@ -34,7 +36,7 @@ export const finalUsersApi = {
 
             Здесь уже не будет готовой структуры,
             которую нужно просто дополнить.
-            
+
             Тебе нужно самостоятельно построить
             спецификацию на основе требований.
         `,
@@ -117,6 +119,8 @@ export const finalUsersApi = {
 
             summary: Get users
 
+            operationId: getUsers
+
             Query-параметры:
 
             limit:
@@ -149,6 +153,8 @@ export const finalUsersApi = {
 
             summary: Create user
 
+            operationId: createUser
+
             requestBody:
 
             required: true
@@ -172,6 +178,8 @@ export const finalUsersApi = {
             Добавь:
 
             summary: Get user
+
+            operationId: getUser
 
             Path parameter:
 
@@ -197,6 +205,8 @@ export const finalUsersApi = {
 
             summary: Update user
 
+            operationId: updateUser
+
             Обязательный path parameter id
             типа integer.
 
@@ -220,6 +230,8 @@ export const finalUsersApi = {
 
             summary: Delete user
 
+            operationId: deleteUser
+
             Обязательный path parameter id
             типа integer.
 
@@ -232,21 +244,19 @@ export const finalUsersApi = {
               description: User not found
 
 
-            ДОПОЛНИТЕЛЬНО
+            OPERATION ID
 
-            Используй operationId
-            для каждой операции.
+            Все операции должны иметь operationId.
 
-            operationId должны быть уникальными
-            и понятными.
-
-            Например:
+            Используй:
 
             getUsers
             createUser
             getUser
             updateUser
             deleteUser
+
+            Все operationId должны быть уникальными.
         `,
 
         structure: `
@@ -288,8 +298,208 @@ components:
   schemas: {}`,
 
     validation: {
-        requiredPath: "/users",
-        method: "get"
+        paths: {
+            "/users": {
+                get: {
+                    summary: "Get users",
+
+                    operationId: "getUsers",
+
+                    parameters: {
+                        limit: {
+                            in: "query",
+                            required: false,
+                            type: "integer"
+                        },
+
+                        offset: {
+                            in: "query",
+                            required: false,
+                            type: "integer"
+                        },
+
+                        search: {
+                            in: "query",
+                            required: false,
+                            type: "string"
+                        }
+                    },
+
+                    responses: {
+                        "200": {
+                            description: "Users found",
+                            mediaType:
+                                "application/json",
+                            arrayItemsRef:
+                                "#/components/schemas/User"
+                        }
+                    }
+                },
+
+                post: {
+                    summary: "Create user",
+
+                    operationId: "createUser",
+
+                    requestBody: {
+                        required: true,
+                        mediaType:
+                            "application/json",
+                        schemaRef:
+                            "#/components/schemas/UserCreateRequest"
+                    },
+
+                    responses: {
+                        "201": {
+                            description: "User created",
+                            mediaType:
+                                "application/json",
+                            schemaRef:
+                                "#/components/schemas/User"
+                        }
+                    }
+                }
+            },
+
+            "/users/{id}": {
+                get: {
+                    summary: "Get user",
+
+                    operationId: "getUser",
+
+                    requiredParameter: {
+                        name: "id",
+                        in: "path",
+                        required: true,
+                        type: "integer"
+                    },
+
+                    responses: {
+                        "200": {
+                            description: "User found",
+                            mediaType:
+                                "application/json",
+                            schemaRef:
+                                "#/components/schemas/User"
+                        },
+
+                        "404": {
+                            description: "User not found"
+                        }
+                    }
+                },
+
+                put: {
+                    summary: "Update user",
+
+                    operationId: "updateUser",
+
+                    requiredParameter: {
+                        name: "id",
+                        in: "path",
+                        required: true,
+                        type: "integer"
+                    },
+
+                    requestBody: {
+                        required: true,
+                        mediaType:
+                            "application/json",
+                        schemaRef:
+                            "#/components/schemas/UserCreateRequest"
+                    },
+
+                    responses: {
+                        "200": {
+                            description: "User updated",
+                            mediaType:
+                                "application/json",
+                            schemaRef:
+                                "#/components/schemas/User"
+                        },
+
+                        "404": {
+                            description: "User not found"
+                        }
+                    }
+                },
+
+                delete: {
+                    summary: "Delete user",
+
+                    operationId: "deleteUser",
+
+                    requiredParameter: {
+                        name: "id",
+                        in: "path",
+                        required: true,
+                        type: "integer"
+                    },
+
+                    responses: {
+                        "204": {
+                            description: "User deleted"
+                        },
+
+                        "404": {
+                            description: "User not found"
+                        }
+                    }
+                }
+            }
+        },
+
+        schemas: {
+            User: {
+                type: "object",
+
+                required: [
+                    "id",
+                    "name",
+                    "email"
+                ],
+
+                properties: {
+                    id: {
+                        type: "integer",
+                        minimum: 1
+                    },
+
+                    name: {
+                        type: "string",
+                        minLength: 2,
+                        maxLength: 100
+                    },
+
+                    email: {
+                        type: "string",
+                        format: "email"
+                    }
+                }
+            },
+
+            UserCreateRequest: {
+                type: "object",
+
+                required: [
+                    "name",
+                    "email"
+                ],
+
+                properties: {
+                    name: {
+                        type: "string",
+                        minLength: 2,
+                        maxLength: 100
+                    },
+
+                    email: {
+                        type: "string",
+                        format: "email"
+                    }
+                }
+            }
+        }
     },
 
     successMessage: `
@@ -309,7 +519,8 @@ components:
         • application/json;
         • parameters;
         • HTTP status codes;
-        • request и response структуры.
+        • request и response структуры;
+        • operationId.
 
         Теперь Swagger UI может использовать
         твою спецификацию как документацию API.
