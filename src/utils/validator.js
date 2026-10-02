@@ -2,7 +2,10 @@ import { parse } from "yaml";
 import { validate } from "@scalar/openapi-parser";
 
 export async function validateLesson(lesson, yamlText) {
-    const errors = [];
+    const result = {
+        openapiErrors: [],
+        taskErrors: []
+    };
 
     let specification;
 
@@ -10,9 +13,11 @@ export async function validateLesson(lesson, yamlText) {
     try {
         specification = parse(yamlText);
     } catch (error) {
-        return [
+        result.openapiErrors.push(
             `Ошибка YAML: ${error.message}`
-        ];
+        );
+
+        return result;
     }
 
     // 2. Проверяем, что YAML содержит объект
@@ -21,18 +26,20 @@ export async function validateLesson(lesson, yamlText) {
         typeof specification !== "object" ||
         Array.isArray(specification)
     ) {
-        return [
+        result.openapiErrors.push(
             "OpenAPI-спецификация должна быть YAML-объектом."
-        ];
+        );
+
+        return result;
     }
 
     // 3. Проверяем OpenAPI через Scalar
     try {
-        const result = await validate(specification);
+        const scalarResult = await validate(specification);
 
-        if (!result.valid) {
-            errors.push(
-                ...(result.errors || []).map(
+        if (!scalarResult.valid) {
+            result.openapiErrors.push(
+                ...(scalarResult.errors || []).map(
                     error =>
                         `Ошибка OpenAPI: ${
                             error.message || error
@@ -41,27 +48,29 @@ export async function validateLesson(lesson, yamlText) {
             );
         }
     } catch (error) {
-        errors.push(
+        result.openapiErrors.push(
             `Ошибка OpenAPI: ${error.message}`
         );
     }
 
-    // Если OpenAPI некорректна,
-    // требования конкретного урока не проверяем.
-    if (errors.length > 0) {
-        return errors;
+    /*
+     * Если сама OpenAPI-спецификация некорректна,
+     * условия конкретного задания пока не проверяем.
+     */
+    if (result.openapiErrors.length > 0) {
+        return result;
     }
 
-    // 4. Проверяем задание конкретного урока
+    // 4. Проверяем условия конкретного урока
     if (lesson.validation) {
         validatePracticeLesson(
             specification,
             lesson.validation,
-            errors
+            result.taskErrors
         );
     }
 
-    return errors;
+    return result;
 }
 
 
@@ -118,31 +127,22 @@ function validatePracticeLesson(
         }
     }
 
-    // response
-    if (validation.response) {
-        const response =
-            operation.responses?.[
-                validation.response
-            ];
-
-        if (!response) {
-            errors.push(
-                `Добавь ответ с кодом ${validation.response}.`
-            );
-
-            return;
-        }
-
-        if (validation.responseDescription) {
-            if (
-                response.description !==
-                validation.responseDescription
-            ) {
-                errors.push(
-                    `Для ответа ${validation.response} укажи description: ${validation.responseDescription}`
-                );
-            }
-        }
+    // responses
+    if (validation.responses) {
+        validateResponses(
+            operation,
+            validation.responses,
+            errors
+        );
+    } else if (validation.response) {
+        /*
+         * Поддержка старого формата validation.
+         */
+        validateResponse(
+            operation,
+            validation,
+            errors
+        );
     }
 
     // parameter
@@ -161,6 +161,135 @@ function validatePracticeLesson(
             validation.schemas,
             errors
         );
+    }
+}
+
+
+function validateResponses(
+    operation,
+    responsesValidation,
+    errors
+) {
+    const responses =
+        operation.responses || {};
+
+    for (
+        const [
+            status,
+            validation
+        ] of Object.entries(responsesValidation)
+    ) {
+        const response =
+            responses[status];
+
+        // response отсутствует
+        if (!response) {
+            errors.push(
+                `Добавь ответ с кодом ${status}.`
+            );
+
+            continue;
+        }
+
+        // description
+        if (validation.description) {
+            if (
+                response.description !==
+                validation.description
+            ) {
+                errors.push(
+                    `Для ответа ${status} укажи description: ${validation.description}`
+                );
+            }
+        }
+
+        // content / mediaType
+        if (validation.mediaType) {
+            const content =
+                response.content || {};
+
+            const mediaType =
+                content[validation.mediaType];
+
+            if (!mediaType) {
+                errors.push(
+                    `Ответ ${status} должен содержать ${validation.mediaType}.`
+                );
+
+                continue;
+            }
+
+            // $ref
+            if (validation.schemaRef) {
+                const actualRef =
+                    mediaType.schema?.$ref;
+
+                if (
+                    actualRef !==
+                    validation.schemaRef
+                ) {
+                    errors.push(
+                        `Схема ответа ${status} должна использовать $ref: ${validation.schemaRef}.`
+                    );
+                }
+            }
+
+            /*
+             * Example
+             *
+             * Проверяем только наличие example.
+             *
+             * Само значение example намеренно
+             * не сравниваем с эталоном.
+             *
+             * Поэтому:
+             *
+             * MacBook Pro → OK
+             * Lenovo ThinkPad → OK
+             * Иван → OK
+             * Петр → OK
+             *
+             * Главное — чтобы example существовал.
+             */
+            if (validation.example) {
+                if (mediaType.example === undefined) {
+                    errors.push(
+                        `Ответ ${status} должен содержать example.`
+                    );
+                }
+            }
+        }
+    }
+}
+
+
+function validateResponse(
+    operation,
+    validation,
+    errors
+) {
+    const response =
+        operation.responses?.[
+            validation.response
+        ];
+
+    if (!response) {
+        errors.push(
+            `Добавь ответ с кодом ${validation.response}.`
+        );
+
+        return;
+    }
+
+    if (validation.responseDescription) {
+        if (
+            response.description !==
+            validation.responseDescription
+        ) {
+            errors.push(
+                `Для ответа ${validation.response} укажи description: ${validation.responseDescription}`
+            );
+        }
     }
 }
 

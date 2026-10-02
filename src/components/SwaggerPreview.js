@@ -18,7 +18,9 @@ export function SwaggerPreview() {
 
             </div>
 
-            <div id="swagger-preview" class="swagger-container"></div>
+            <div class="panel-body swagger-panel__body">
+                <div id="swagger-preview" class="swagger-container"></div>
+            </div>
 
         </section>
     `;

@@ -3344,9 +3344,22 @@ button {
     overflow-y: auto;
 }
 
-.workspace:has(.editor-panel) > .editor-panel .panel-body,
-.workspace:has(.editor-panel) > .swagger-panel .panel-body {
+.workspace:has(.editor-panel) > .editor-panel .panel-body {
     overflow: hidden;
+}
+
+.workspace:has(.editor-panel) > .swagger-panel {
+    min-height: 0;
+}
+
+.workspace:has(.editor-panel) > .swagger-panel .panel-body {
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.workspace:has(.editor-panel) > .swagger-panel .swagger-ui {
+    min-height: 0;
 }
 
 
@@ -3384,4 +3397,24 @@ button {
         height: auto;
         min-height: 620px;
     }
+}
+
+/* =========================================================
+   Swagger UI isolation
+   ========================================================= */
+
+.swagger-panel .swagger-ui {
+    font-family: Arial, sans-serif;
+}
+
+.swagger-panel .swagger-ui button {
+    font-family: inherit;
+}
+
+.swagger-panel .swagger-ui pre {
+    font-family: monospace;
+}
+
+.swagger-panel .swagger-ui code {
+    font-family: monospace;
 }

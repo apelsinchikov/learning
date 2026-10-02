@@ -1,4 +1,3 @@
-
 export const usersFromDatabase = {
     id: "practice-9",
     type: "practice",
@@ -142,11 +141,33 @@ schema:
                                 Ответ должен содержать
                                 application/json и использовать
                                 схему User через $ref.
+
+                                Также добавь example с конкретным
+                                JSON-ответом пользователя.
+
+                                Значения внутри example можешь
+                                выбрать самостоятельно.
                             `,
                             code: `content:
   application/json:
     schema:
-      $ref: '#/components/schemas/User'`
+      $ref: '#/components/schemas/User'
+    example:
+      id: 1
+      firstName: Иван
+      lastName: Иванов
+      phones:
+        - phone: "+79990000000"
+          type: mobile
+      address:
+        - city: Москва
+          street: Ленина
+          house: "10"
+          apartment: "25"
+      devices:
+        - name: MacBook Pro
+          operatingSystem: macOS
+          inventoryNumber: INV-001`
                         },
                         {
                             status: "404",
@@ -495,7 +516,74 @@ schema:
                 },
 
                 {
-                    title: "15. Итоговая структура ответа",
+                    title: "15. Что такое example",
+                    type: "highlight",
+                    text: `
+                        Schema описывает форму данных:
+
+                        какие поля существуют,
+                        какие у них типы,
+                        какие поля обязательные.
+
+                        Example показывает конкретный пример
+                        JSON-ответа, который соответствует этой схеме.
+
+                        Example нужен для документации API,
+                        чтобы клиент мог сразу увидеть,
+                        как реально может выглядеть ответ.
+
+                        В этом задании example обязателен
+                        для ответа 200.
+
+                        При этом конкретные значения
+                        выбираешь ты сам.
+                    `
+                },
+
+                {
+                    title: "16. Example ответа",
+                    type: "code",
+                    language: "yaml",
+                    code: `content:
+  application/json:
+    schema:
+      $ref: '#/components/schemas/User'
+
+    example:
+      id: 1
+      firstName: Иван
+      lastName: Иванов
+      phones:
+        - phone: "+79990000000"
+          type: mobile
+      address:
+        - city: Москва
+          street: Ленина
+          house: "10"
+          apartment: "25"
+      devices:
+        - name: MacBook Pro
+          operatingSystem: macOS
+          inventoryNumber: INV-001`,
+                    text: `
+                        Добавь example непосредственно
+                        внутрь application/json.
+
+                        Example должен описывать
+                        реальный JSON-ответ пользователя.
+
+                        Конкретные значения можешь изменить.
+
+                        Например, вместо MacBook Pro
+                        можно указать Lenovo ThinkPad.
+
+                        Важно наличие example,
+                        а не конкретные значения внутри него.
+                    `
+                },
+
+                {
+                    title: "17. Итоговая структура ответа",
                     type: "code",
                     language: "json",
                     code: `{
@@ -560,7 +648,7 @@ schema:
                 },
 
                 {
-                    title: "16. Переиспользование схем через $ref",
+                    title: "18. Переиспользование схем через $ref",
                     type: "checklist",
                     items: [
                         "Используй $ref для переиспользуемых схем.",
@@ -573,7 +661,7 @@ schema:
                 },
 
                 {
-                    title: "17. Главная цель",
+                    title: "19. Главная цель",
                     type: "goal",
                     text: `
                         Не просто написать YAML,
@@ -593,7 +681,9 @@ schema:
                         • почему mapUserDevice не должна становиться
                           отдельным объектом в API;
                         • почему Device.id не обязательно
-                          должен попадать в API.
+                          должен попадать в API;
+                        • зачем response example нужен
+                          в документации API.
                     `
                 }
             ]
@@ -616,8 +706,51 @@ components:
         summary: "Get user",
         operationId: "getUser",
 
-        response: "200",
-        responseDescription: "User found",
+        responses: {
+            "200": {
+                description: "User found",
+                mediaType: "application/json",
+                schemaRef: "#/components/schemas/User",
+
+                /*
+                 * Само содержимое example validator
+                 * не сравнивает.
+                 *
+                 * Этот объект здесь означает:
+                 * example обязателен.
+                 */
+                example: {
+                    id: 1,
+                    firstName: "Иван",
+                    lastName: "Иванов",
+                    phones: [
+                        {
+                            phone: "+79990000000",
+                            type: "mobile"
+                        }
+                    ],
+                    address: [
+                        {
+                            city: "Москва",
+                            street: "Ленина",
+                            house: "10",
+                            apartment: "25"
+                        }
+                    ],
+                    devices: [
+                        {
+                            name: "MacBook Pro",
+                            operatingSystem: "macOS",
+                            inventoryNumber: "INV-001"
+                        }
+                    ]
+                }
+            },
+
+            "404": {
+                description: "User not found"
+            }
+        },
 
         requiredParameter: {
             name: "id",
@@ -784,6 +917,13 @@ components:
 
         Повторяющиеся структуры были вынесены
         в отдельные schemas и связаны через $ref.
+
+        Response 200 содержит application/json,
+        ссылку на User через $ref и example,
+        который показывает клиенту реальную форму ответа.
+
+        Конкретные значения внутри example
+        могут быть любыми подходящими данными.
 
         Внутренние поля базы данных не попали
         в публичный API-контракт.
