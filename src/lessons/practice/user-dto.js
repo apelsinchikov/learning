@@ -18,19 +18,18 @@ export const userDto = {
     ],
 
     theory: {
-        title: "Описываем структуру User",
+        title: "Описываем пользователя",
 
         text: `
-            До этого момента наш Users API описывал
-            сами операции, но мы ещё не говорили,
-            как выглядит пользователь.
+            Пока мы описывали только операции.
+            Теперь опишем, как выглядит сам пользователь.
 
-            Теперь создадим переиспользуемую схему User
-            внутри components.schemas.
+            Для этого создадим схему User. Она лежит
+            в разделе components → schemas.
         `,
 
         idea: `
-            User будет обычным объектом:
+            User — это объект с тремя полями:
 
             User
             ↓
@@ -40,14 +39,13 @@ export const userDto = {
             name
             email
 
-            А required определит,
-            какие поля обязательны.
+            Список required говорит, какие поля обязательны.
         `,
 
         structure: `
             components:
               schemas:
-                User:
+                Book:
                   type: object
 
                   properties:
@@ -55,44 +53,41 @@ export const userDto = {
                       type: integer
                       minimum: 1
 
-                    name:
+                    title:
                       type: string
                       minLength: 2
-                      maxLength: 100
+                      maxLength: 200
 
-                    email:
+                    publishedAt:
                       type: string
-                      format: email
+                      format: date
 
                   required:
                     - id
-                    - name
-                    - email
+                    - title
+        `,
+
+        explanation: `
+            Это пример схемы Book (книга). Тебе нужна схема User.
+
+            Что есть в примере:
+
+            • type: object — это объект;
+            • properties — список полей, у каждого свой type;
+            • minimum, minLength, maxLength — ограничения;
+            • required — поля, которые обязательно должны быть.
         `,
 
         task: `
-            Добавь в спецификацию схему User.
+            Добавь в components → schemas схему User.
 
-            Она должна находиться здесь:
+            User — это объект (type: object) с тремя полями:
 
-            components:
-              schemas:
-                User:
-
-            User должен быть объектом и содержать
-            следующие свойства:
-
-            • id — integer
-            • name — string
+            • id — integer, минимум 1
+            • name — string, длина от 2 до 100 символов (minLength и maxLength)
             • email — string с format: email
 
-            Все три свойства должны быть обязательными.
-
-            Дополнительно:
-
-            • id должен иметь minimum: 1
-            • name должен иметь minLength: 2
-            • name должен иметь maxLength: 100
+            Все три поля обязательны: перечисли их в required.
         `
     },
 
@@ -116,7 +111,7 @@ paths:
           description: User created
 
 components:
-  schemas: {}`,
+  schemas:`,
 
     validation: {
         requiredPath: "/users",
@@ -158,22 +153,11 @@ components:
     },
 
     successMessage: `
-        Отлично! Теперь у нашего Users API есть
-        полноценная модель User.
+        Отлично! У нашего Users API появилась модель User.
 
-        Мы описали:
+        Ты описал объект, его поля, ограничения и обязательные поля.
 
-        • components.schemas.User;
-        • type: object;
-        • properties;
-        • required;
-        • типы данных;
-        • format: email;
-        • minimum;
-        • minLength;
-        • maxLength.
-
-        В следующем уроке мы начнём использовать
-        эту модель внутри запросов и ответов API.
+        В следующих уроках будем использовать эту схему
+        в запросах и ответах.
     `
 };

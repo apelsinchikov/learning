@@ -54,16 +54,13 @@ export const updateDeleteUser = {
         `,
 
         structure: `
-            /users/{id}:
+            /products/{productId}:
 
-              get:
-                ...
-
-              put:
-                summary: Update user
+              patch:
+                summary: Update product
 
                 parameters:
-                  - name: id
+                  - name: productId
                     in: path
                     required: true
                     schema:
@@ -71,27 +68,17 @@ export const updateDeleteUser = {
 
                 responses:
                   '200':
-                    description: User updated
+                    description: Product updated
 
                   '404':
-                    description: User not found
+                    description: Product not found
+        `,
 
-              delete:
-                summary: Delete user
+        explanation: `
+            Это пример для товара: метод patch (изменить часть записи).
+            Тебе нужны методы put и delete для адреса /users/{id}.
 
-                parameters:
-                  - name: id
-                    in: path
-                    required: true
-                    schema:
-                      type: integer
-
-                responses:
-                  '204':
-                    description: User deleted
-
-                  '404':
-                    description: User not found
+            Параметр id нужно описать в каждой операции отдельно.
         `,
 
         task: `

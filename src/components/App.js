@@ -4,6 +4,7 @@ import { Theory } from "./Theory.js";
 import { Editor } from "./Editor.js";
 import { SwaggerPreview } from "./SwaggerPreview.js";
 import { course } from "../data/course.js";
+import { escapeHtml } from "../utils/textFormat.js";
 
 export function App(currentLessonIndex = 0) {
     const currentLesson = course[currentLessonIndex];
@@ -27,23 +28,9 @@ export function App(currentLessonIndex = 0) {
                                 · УРОК ${currentLessonIndex + 1}
                             </div>
 
-                            <h1>${currentLesson.title}</h1>
+                            <h1>${escapeHtml(currentLesson.title)}</h1>
 
-                            <p>${currentLesson.subtitle}</p>
-                        </div>
-
-                        <div class="lesson-navigation">
-                            ${
-                                hasPreviousLesson
-                                    ? `<button class="next-button" id="previous-button">← Предыдущий урок</button>`
-                                    : ""
-                            }
-
-                            ${
-                                hasNextLesson
-                                    ? `<button class="next-button" id="next-button">Следующий урок →</button>`
-                                    : ""
-                            }
+                            <p>${escapeHtml(currentLesson.subtitle)}</p>
                         </div>
                     </div>
 
@@ -56,6 +43,26 @@ export function App(currentLessonIndex = 0) {
                                 : ""
                         }
                     </div>
+
+                    ${
+                        hasPreviousLesson || hasNextLesson
+                            ? `
+                                <nav class="lesson-navigation">
+                                    ${
+                                        hasPreviousLesson
+                                            ? `<button class="nav-button nav-button--previous" id="previous-button">← Предыдущий урок</button>`
+                                            : "<span></span>"
+                                    }
+
+                                    ${
+                                        hasNextLesson
+                                            ? `<button class="nav-button nav-button--next" id="next-button">Следующий урок →</button>`
+                                            : ""
+                                    }
+                                </nav>
+                            `
+                            : ""
+                    }
                 </main>
             </div>
         </div>

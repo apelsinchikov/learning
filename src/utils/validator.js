@@ -37,6 +37,22 @@ export async function validateLesson(
         return result;
     }
 
+    // Пустой раздел paths: понятное сообщение вместо технической ошибки
+    if (
+        "paths" in specification &&
+        (
+            specification.paths === null ||
+            specification.paths === undefined
+        )
+    ) {
+        result.openapiErrors.push(
+            "Раздел paths пока пустой. Добавь в него адрес, " +
+            "например /users (с отступом в 2 пробела)."
+        );
+
+        return result;
+    }
+
     // 3. Проверяем OpenAPI через Scalar
     try {
         const scalarResult =

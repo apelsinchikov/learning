@@ -1,0 +1,415 @@
+/* =========================
+   EDITOR
+   ========================= */
+
+.editor-panel {
+    background: #111318;
+}
+
+.editor-panel .panel-header {
+    background: #ffffff;
+}
+
+.editor {
+    flex: 1;
+
+    display: flex;
+
+    min-height: 0;
+}
+
+.check-button {
+    padding: 7px 11px;
+
+    border-radius: 6px;
+
+    background: #635bff;
+    color: white;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.check-button:hover {
+    background: #5148d4;
+}
+
+/* =========================
+   SWAGGER
+   ========================= */
+
+.live-indicator {
+    font-size: 9px;
+    font-weight: 700;
+
+    color: #16a34a;
+}
+
+.swagger-placeholder {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+
+    text-align: center;
+}
+
+.swagger-placeholder__icon {
+    width: 54px;
+    height: 54px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 16px;
+
+    border-radius: 10px;
+
+    background: #f0f1f4;
+
+    font-family: monospace;
+    font-size: 13px;
+    font-weight: 700;
+
+    color: #6b7280;
+}
+
+.swagger-placeholder h3 {
+    max-width: 240px;
+
+    margin: 0 0 8px;
+
+    font-size: 14px;
+}
+
+.swagger-placeholder p {
+    max-width: 250px;
+
+    margin: 0;
+
+    font-size: 12px;
+    line-height: 1.5;
+
+    color: #8a919d;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 1250px) {
+    .workspace {
+            grid-template-columns: 1fr 1fr;
+        }
+
+    .swagger-panel {
+            grid-column: 1 / -1;
+    
+            min-height: 400px;
+        }
+}
+
+.swagger-error {
+    padding: 32px;
+    text-align: center;
+}
+
+.swagger-error__icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #fde8e8;
+    color: #c62828;
+
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.swagger-error h3 {
+    margin: 0 0 16px;
+    color: #c62828;
+}
+
+.swagger-error__messages {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    color: #c62828;
+    font-size: 14px;
+}
+
+.swagger-result {
+    padding: 24px;
+}
+
+.swagger-result h3 {
+    margin: 0 0 8px;
+    font-size: 22px;
+}
+
+.swagger-result > p {
+    margin: 0 0 24px;
+    color: #6b7280;
+}
+
+.swagger-result__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 24px;
+}
+
+.swagger-result__method {
+    padding: 6px 10px;
+
+    border-radius: 4px;
+
+    background: #e8f5e9;
+    color: #16803c;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.swagger-result__path {
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.swagger-result__operation {
+    padding: 16px;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+
+    background: #fafafa;
+}
+
+.swagger-result__operation-title {
+    margin-bottom: 8px;
+
+    font-family: monospace;
+    font-weight: 600;
+}
+
+.swagger-result__operation p {
+    margin: 0;
+
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* =========================================================
+   CodeMirror YAML editor
+   ========================================================= */
+
+.editor {
+    height: 420px;
+    overflow: hidden;
+
+    border-top: 1px solid #e5e7eb;
+
+    background: #ffffff;
+}
+
+.editor .cm-editor {
+    height: 100%;
+
+    font-family:
+        "SFMono-Regular",
+        "SF Mono",
+        Menlo,
+        Monaco,
+        Consolas,
+        "Liberation Mono",
+        monospace;
+
+    font-size: 14px;
+}
+
+.editor .cm-scroller {
+    overflow: auto;
+}
+
+.editor .cm-content {
+    padding: 16px 0;
+}
+
+.editor .cm-line {
+    padding-left: 8px;
+}
+
+/* Номера строк */
+
+.editor .cm-gutters {
+    min-width: 48px;
+
+    border-right: 1px solid #e5e7eb;
+
+    background: #f8fafc;
+    color: #9ca3af;
+}
+
+.editor .cm-gutterElement {
+    padding: 0 10px 0 8px;
+
+    font-size: 12px;
+}
+
+/* Текущая строка */
+
+.editor .cm-activeLine {
+    background: #f8fafc;
+}
+
+.editor .cm-activeLineGutter {
+    background: #f1f5f9;
+}
+
+/* Курсор */
+
+.editor .cm-cursor {
+    border-left-color: #2563eb;
+}
+
+/* Выделение */
+
+.editor .cm-selectionBackground {
+    background: #dbeafe !important;
+}
+
+/* Вертикальные линии отступов */
+
+.editor .cm-indent-markers {
+    display: none !important;
+}
+
+/* Кнопки сворачивания */
+
+.editor .cm-foldGutter {
+    width: 24px;
+}
+
+.editor .cm-foldGutter .cm-gutterElement {
+    padding: 0;
+
+    color: #94a3b8;
+
+    font-size: 14px;
+}
+
+.editor .cm-foldGutter .cm-gutterElement:hover {
+    color: #475569;
+}
+
+/* Скроллбар */
+
+.editor .cm-scroller::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.editor .cm-scroller::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.editor .cm-scroller::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 5px;
+}
+
+.editor .cm-scroller::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* =========================================================
+   CodeMirror scrolling
+   ========================================================= */
+
+.editor .cm-scroller {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Вертикальный скролл появляется только при необходимости */
+
+.editor .cm-scroller::-webkit-scrollbar {
+    width: 8px;
+}
+
+.editor .cm-scroller::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.editor .cm-scroller::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.editor .cm-scroller::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Горизонтальный скролл полностью убираем */
+
+.editor .cm-scroller::-webkit-scrollbar:horizontal {
+    display: none;
+}
+
+.editor .cm-content {
+    padding: 16px 0;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* Убираем визуальные полосы прокрутки CodeMirror */
+
+.editor .cm-scroller {
+    overflow: auto;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.editor .cm-scroller::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+/* Временно полностью отключаем внутреннюю прокрутку CodeMirror */
+
+/* Убираем стандартную рамку CodeMirror при фокусе */
+
+.editor .cm-editor.cm-focused {
+    outline: none !important;
+}
+
+.lesson-navigation {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.lesson-navigation .next-button {
+    white-space: nowrap;
+}

@@ -695,10 +695,10 @@ info:
   title: Users API
   version: 1.0.0
 
-paths: {}
+paths:
 
 components:
-  schemas: {}`,
+  schemas:`,
 
     validation: {
         requiredPath: "/users/{id}",

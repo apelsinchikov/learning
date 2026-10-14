@@ -24,6 +24,8 @@ import { finalUsersApi } from "../lessons/practice/final-users-api.js";
 import { databaseToApi } from "../lessons/theory/database-to-api.js";
 import { usersFromDatabase } from "../lessons/practice/users-from-database.js";
 
+import { bestPractices } from "../lessons/theory/best-practices.js";
+
 
 export const course = [
 
@@ -79,6 +81,9 @@ export const course = [
     databaseToApi,
 
     // 18
-    usersFromDatabase
+    usersFromDatabase,
+
+    // 19
+    bestPractices
 
 ];

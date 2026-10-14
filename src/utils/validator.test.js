@@ -77,4 +77,21 @@ paths: {}
             "Добавь endpoint GET /users."
         ]);
     });
+
+    it("для пустого paths даёт понятное сообщение", async () => {
+        const yamlText = `
+openapi: 3.0.3
+info:
+  title: Test API
+  version: 1.0.0
+paths:
+`;
+
+        const result = await validateLesson({}, yamlText);
+
+        expect(result.openapiErrors).toHaveLength(1);
+        expect(result.openapiErrors[0]).toContain(
+            "Раздел paths пока пустой"
+        );
+    });
 });
