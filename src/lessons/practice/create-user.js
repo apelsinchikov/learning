@@ -125,21 +125,9 @@ paths:
 
     post:
       summary: Create user
-
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserCreateRequest'
-
       responses:
-        '201':
-          description: User created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
+        '200':
+          description: Not implemented yet
 
 components:
   schemas:
@@ -163,21 +151,6 @@ components:
 
       required:
         - id
-        - name
-        - email
-
-    UserCreateRequest:
-      type: object
-
-      properties:
-        name:
-          type: string
-
-        email:
-          type: string
-          format: email
-
-      required:
         - name
         - email`,
 
