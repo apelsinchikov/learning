@@ -53,25 +53,34 @@ export async function validateLesson(
         return result;
     }
 
-    // 3. Проверяем OpenAPI через Scalar
-    try {
-        const scalarResult =
-            await validate(specification);
+    /*
+     * В первых уроках спецификация ещё неполная (нет paths),
+     * поэтому полную проверку OpenAPI пропускаем.
+     */
+    const skipSpecValidation =
+        lesson.validation?.skipSpecValidation === true;
 
-        if (!scalarResult.valid) {
+    // 3. Проверяем OpenAPI через Scalar
+    if (!skipSpecValidation) {
+        try {
+            const scalarResult =
+                await validate(specification);
+
+            if (!scalarResult.valid) {
+                result.openapiErrors.push(
+                    ...(scalarResult.errors || []).map(
+                        error =>
+                            `Ошибка OpenAPI: ${
+                                error.message || error
+                            }`
+                    )
+                );
+            }
+        } catch (error) {
             result.openapiErrors.push(
-                ...(scalarResult.errors || []).map(
-                    error =>
-                        `Ошибка OpenAPI: ${
-                            error.message || error
-                        }`
-                )
+                `Ошибка OpenAPI: ${error.message}`
             );
         }
-    } catch (error) {
-        result.openapiErrors.push(
-            `Ошибка OpenAPI: ${error.message}`
-        );
     }
 
     /*
@@ -100,6 +109,35 @@ function validatePracticeLesson(
     validation,
     errors
 ) {
+    /*
+     * Общая часть: версия OpenAPI и раздел info.
+     */
+    if (validation.openapi) {
+        if (!String(specification.openapi || "").startsWith(validation.openapi)) {
+            errors.push(
+                `Добавь строку openapi: ${validation.openapi}`
+            );
+        }
+    }
+
+    if (validation.info) {
+        const info = specification.info;
+
+        if (!info || typeof info !== "object") {
+            errors.push(
+                "Добавь раздел info с названием (title) и версией (version)."
+            );
+        } else {
+            for (const [key, value] of Object.entries(validation.info)) {
+                if (String(info[key] ?? "") !== String(value)) {
+                    errors.push(
+                        `В info укажи ${key}: ${value}`
+                    );
+                }
+            }
+        }
+    }
+
     /*
      * Новый формат финального задания:
      *

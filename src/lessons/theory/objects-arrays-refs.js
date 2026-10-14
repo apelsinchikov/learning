@@ -5,269 +5,213 @@ export const objectsArraysRefs = {
 
     icon: "📖",
 
-    title: "Object, Array и $ref",
+    title: "Списки (array)",
 
-    subtitle: "Научимся описывать вложенные объекты, массивы и переиспользовать схемы.",
+    subtitle: "Как описать не одного пользователя, а много.",
 
-    sidebarDescription: "Object, Array и $ref",
+    sidebarDescription: "Списки в OpenAPI",
 
     theory: {
+        intro: `
+            GET /users должен вернуть не одного пользователя,
+            а целый список. Для списков в OpenAPI есть тип array.
+        `,
+
         sections: [
             {
-                title: "Объект внутри объекта",
+                type: "definition",
+
+                term: "array (список)",
 
                 text: `
-                    В OpenAPI один объект может содержать
-                    другие объекты.
+                    array — это список однотипных элементов.
 
-                    Например, у пользователя может быть
-                    объект address:
-
-                    properties:
-                      name:
-                        type: string
-
-                      address:
-                        type: object
-
-                    Чтобы описать свойства вложенного объекта,
-                    внутри него также используется properties.
+                    Например, список покупок: молоко, хлеб, яблоки.
+                    Каждый элемент — строка, и их несколько.
                 `
             },
 
             {
-                title: "Массив",
+                type: "code",
+
+                title: "Список строк в JSON",
+
+                language: "json",
+
+                code: `
+["молоко", "хлеб", "яблоки"]
+                `.trim()
+            },
+
+            {
+                type: "highlight",
+
+                icon: "📐",
+
+                title: "Квадратные скобки — это список",
 
                 text: `
-                    Массив описывается с помощью:
+                    В JSON список записывают в квадратных скобках,
+                    элементы — через запятую.
 
-                    type: array
-
-                    Но одного type недостаточно.
-
-                    OpenAPI также нужно сообщить,
-                    какие элементы находятся внутри массива.
-
-                    Для этого используется items.
+                    В нашем YAML скобки писать не нужно:
+                    там список описывается отступами.
                 `
             },
 
             {
-                title: "Массив строк",
+                type: "definition",
+
+                term: "items — что лежит в списке",
 
                 text: `
-                    Например, массив строк:
-
-                    tags:
-                      type: array
-                      items:
-                        type: string
-
-                    Это означает:
-
-                    tags — массив,
-                    каждый элемент которого является строкой.
+                    Одного type: array мало.
+                    Нужно сказать, какие элементы лежат внутри списка.
+                    Для этого есть items.
                 `
             },
 
             {
-                title: "Массив объектов",
+                type: "code",
+
+                title: "Схема списка строк",
+
+                language: "yaml",
+
+                code: `
+type: array
+items:
+  type: string
+                `.trim()
+            },
+
+            {
+                type: "code-explanation",
+
+                title: "Как читать этот пример",
+
+                items: [
+                    {
+                        code: "type: array",
+                        text: "Это список."
+                    },
+                    {
+                        code: "items:",
+                        text: "Описание одного элемента списка."
+                    },
+                    {
+                        code: "  type: string",
+                        text: "Каждый элемент — строка."
+                    }
+                ]
+            },
+
+            {
+                type: "highlight",
+
+                icon: "💡",
+
+                title: "Список пользователей",
 
                 text: `
-                    Массив может содержать объекты.
+                    Элементом списка может быть не только строка,
+                    но и целый объект — например, пользователь.
 
-                    Например:
-
-                    users:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                          name:
-                            type: string
-
-                    В этом случае users — массив объектов,
-                    каждый объект содержит id и name.
+                    Чтобы не описывать пользователя заново,
+                    в items ставим ссылку $ref на схему User.
                 `
             },
 
             {
-                title: "Зачем нужен $ref?",
+                type: "code",
+
+                title: "Схема списка пользователей",
+
+                language: "yaml",
+
+                code: `
+type: array
+items:
+  $ref: '#/components/schemas/User'
+                `.trim()
+            },
+
+            {
+                type: "code-explanation",
+
+                title: "Как читать этот пример",
+
+                items: [
+                    {
+                        code: "type: array",
+                        text: "Ответ — это список."
+                    },
+                    {
+                        code: "items:",
+                        text: "Что лежит в списке."
+                    },
+                    {
+                        code: "  $ref: '#/components/schemas/User'",
+                        text: "Каждый элемент — пользователь по схеме User."
+                    }
+                ]
+            },
+
+            {
+                type: "code",
+
+                title: "Как это выглядит в ответе GET /users",
+
+                language: "yaml",
+
+                code: `
+responses:
+  '200':
+    description: Users found
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+                `.trim()
+            },
+
+            {
+                type: "warning",
+
+                title: "Не путай один объект и список",
 
                 text: `
-                    Представим, что схема User используется
-                    в нескольких местах API.
+                    GET /users/42 возвращает одного пользователя:
+                    schema → $ref на User.
 
-                    Можно каждый раз описывать её полностью,
-                    но это приведёт к дублированию.
-
-                    OpenAPI позволяет сослаться
-                    на уже существующую схему с помощью $ref.
+                    GET /users возвращает список:
+                    schema → type: array → items → $ref на User.
                 `
             },
 
             {
-                title: "Ссылка на User",
+                type: "highlight",
+
+                icon: "🎯",
+
+                title: "Главное из урока",
 
                 text: `
-                    Если у нас есть:
+                    array — список однотипных элементов.
 
-                    components:
-                      schemas:
-                        User:
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                            name:
-                              type: string
+                    items — описание одного элемента.
 
-                    На эту схему можно сослаться:
-
-                    $ref: '#/components/schemas/User'
-
-                    Теперь вместо повторного описания
-                    структуры мы используем ссылку.
-                `
-            },
-
-            {
-                title: "$ref внутри массива",
-
-                text: `
-                    $ref особенно полезен для массивов объектов.
-
-                    Например:
-
-                    items:
-                      $ref: '#/components/schemas/User'
-
-                    Полная структура:
-
-                    users:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/User'
-
-                    Это означает, что users —
-                    массив объектов User.
-                `
-            },
-
-            {
-                title: "$ref не создаёт новую схему",
-
-                text: `
-                    Важно понимать разницу.
-
-                    components.schemas.User
-                    создаёт саму схему.
-
-                    $ref:
-                      '#/components/schemas/User'
-
-                    не создаёт новую схему,
-                    а ссылается на уже существующую.
-
-                    Поэтому сначала должна существовать
-                    схема, на которую указывает ссылка.
-                `
-            },
-
-            {
-                title: "Когда использовать $ref",
-
-                text: `
-                    $ref особенно полезен,
-                    когда одна и та же структура используется
-                    в нескольких операциях.
-
-                    Например, User может использоваться:
-
-                    • в ответе GET /users
-                    • в ответе GET /users/{id}
-                    • внутри других объектов
-                    • внутри массива пользователей
-
-                    Вместо копирования структуры
-                    мы используем одну переиспользуемую схему.
-                `
-            },
-
-            {
-                title: "User и массив пользователей",
-
-                text: `
-                    В нашем Users API можно описать:
-
-                    User
-                    — один пользователь.
-
-                    А затем:
-
-                    users:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/User'
-
-                    Таким образом мы можем использовать
-                    одну модель User для описания
-                    списка пользователей.
+                    Список пользователей: type: array и items с $ref на User.
                 `
             }
-        ],
-
-        idea: `
-            Object описывает структуру объекта.
-
-            Array описывает коллекцию значений.
-
-            items описывает элементы массива.
-
-            $ref позволяет повторно использовать
-            уже существующую схему вместо её копирования.
-        `,
-
-        structure: `
-            components:
-              schemas:
-
-                User:
-                  type: object
-
-                  properties:
-                    id:
-                      type: integer
-
-                    name:
-                      type: string
-
-                UserList:
-                  type: array
-
-                  items:
-                    $ref: '#/components/schemas/User'
-        `,
-
-        explanation: `
-            User описывает одного пользователя.
-
-            UserList описывает массив пользователей.
-
-            В UserList используется $ref,
-            поэтому структура User не дублируется.
-
-            Такой подход делает OpenAPI-спецификацию
-            компактнее и удобнее для поддержки.
-        `
+        ]
     },
 
     nextLesson: {
         text: `
-            Теперь применим эти знания на практике
-            и создадим полноценный User DTO.
+            В следующей практике опишем ответ GET /users — список пользователей.
         `
     }
 };

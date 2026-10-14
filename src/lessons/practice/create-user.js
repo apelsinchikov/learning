@@ -16,7 +16,6 @@ export const createUser = {
 
     theoryLinks: [
         "theory-3",
-        "theory-4",
         "theory-5"
     ],
 

@@ -76,3 +76,58 @@ describe("практические уроки", () => {
         }
     );
 });
+
+describe("порядок уроков", () => {
+    it("практика идёт после всех теорий, на которые ссылается", () => {
+        course.forEach((lesson, index) => {
+            for (const id of lesson.theoryLinks || []) {
+                const linkedIndex = course.findIndex(item => item.id === id);
+
+                expect(
+                    linkedIndex,
+                    `${lesson.id} ссылается на ${id}, который стоит позже`
+                ).toBeLessThan(index);
+            }
+        });
+    });
+
+    it("курс начинается с теории про API, а заканчивается best practices", () => {
+        expect(course[0].id).toBe("theory-api-basics");
+        expect(course[course.length - 1].id).toBe("theory-10");
+    });
+});
+
+describe("новые практики принимают правильное решение", () => {
+    const byId = id => course.find(lesson => lesson.id === id);
+
+    it("practice-skeleton: openapi и info", async () => {
+        const result = await validateLesson(
+            byId("practice-skeleton"),
+            "openapi: 3.0.3\ninfo:\n  title: Users API\n  version: 1.0.0\n"
+        );
+
+        expect(result.openapiErrors).toEqual([]);
+        expect(result.taskErrors).toEqual([]);
+    });
+
+    it("practice-users-list: GET /users возвращает массив User", async () => {
+        const lesson = byId("practice-users-list");
+
+        const solved = lesson.initialYaml.replace(
+            `          description: Users endpoint works`,
+            `          description: Users found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'`
+        );
+
+        const result = await validateLesson(lesson, solved);
+
+        expect(result.openapiErrors).toEqual([]);
+        expect(result.taskErrors).toEqual([]);
+    });
+});
+
