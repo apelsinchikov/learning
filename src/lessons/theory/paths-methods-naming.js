@@ -5,233 +5,248 @@ export const pathsMethodsNaming = {
 
     icon: "📖",
 
-    title: "Paths, HTTP-методы и API naming",
+    title: "Адреса, методы и названия",
 
-    subtitle: "Разберём endpoints, HTTP-методы и правила именования ресурсов.",
+    subtitle: "Как описать endpoint и как правильно называть адреса.",
 
     sidebarDescription: "Paths и HTTP-методы",
 
     theory: {
+        intro: `
+            В прошлом уроке мы узнали про адреса и методы.
+            Теперь посмотрим, как записать их в OpenAPI.
+        `,
+
         sections: [
             {
-                title: "Что такое endpoint?",
+                type: "definition",
+
+                term: "Endpoint",
 
                 text: `
-                    Endpoint — это конкретная точка API,
-                    по которой клиент может выполнить определённую операцию.
+                    Endpoint («эндпоинт») — это одно конкретное действие в API.
 
-                    Например:
-
-                    /users
-
-                    — это ресурс пользователей.
-
-                    А комбинация пути и HTTP-метода определяет
-                    конкретную операцию:
-
-                    GET /users
+                    Оно состоит из двух частей: адреса и метода.
+                    Например, GET /users — получить список пользователей.
                 `
             },
 
             {
+                type: "code",
+
                 title: "Раздел paths",
 
+                language: "yaml",
+
+                code: `
+paths:
+  /products:
+    get:
+      summary: Get products
+                `.trim()
+            },
+
+            {
+                type: "code-explanation",
+
+                title: "Как читать этот пример",
+
+                items: [
+                    {
+                        code: "paths:",
+                        text: "Раздел, где перечислены все адреса API."
+                    },
+                    {
+                        code: "  /products:",
+                        text: "Адрес. Он всегда начинается с «/» и лежит внутри paths (отступ 2 пробела)."
+                    },
+                    {
+                        code: "    get:",
+                        text: "Метод. Лежит внутри адреса (отступ 4 пробела)."
+                    },
+                    {
+                        code: "      summary: Get products",
+                        text: "Короткое название операции. Лежит внутри метода (отступ 6 пробелов)."
+                    }
+                ]
+            },
+
+            {
+                type: "highlight",
+
+                icon: "📐",
+
+                title: "Каждый уровень — на 2 пробела глубже",
+
                 text: `
-                    В OpenAPI все endpoints описываются внутри
-                    раздела paths.
+                    paths → адрес → метод → описание метода.
 
-                    Каждый ключ внутри paths — это путь API.
-
-                    Например:
-
-                    paths:
-                      /users:
-                        get:
-                          ...
+                    Чем глубже вложенность, тем больше отступ.
+                    Нажимай Tab, чтобы сдвинуть строку вправо.
                 `
             },
 
             {
-                title: "HTTP-методы",
+                type: "highlight",
+
+                icon: "🔀",
+
+                title: "Один адрес — несколько методов",
 
                 text: `
-                    HTTP-метод определяет, что мы хотим сделать
-                    с ресурсом.
+                    У одного адреса может быть сразу несколько методов.
 
-                    GET — получить данные.
+                    Например, для адреса /users:
 
-                    POST — создать новый ресурс.
+                    - GET /users — получить список пользователей;
+                    - POST /users — создать нового пользователя.
 
-                    PUT — полностью изменить существующий ресурс.
-
-                    PATCH — изменить часть существующего ресурса.
-
-                    DELETE — удалить ресурс.
+                    Поэтому endpoint — это всегда адрес и метод вместе.
                 `
             },
 
             {
-                title: "Один путь — несколько операций",
+                type: "code",
+
+                title: "Два метода у одного адреса",
+
+                language: "yaml",
+
+                code: `
+paths:
+  /products:
+    get:
+      summary: Get products
+
+    post:
+      summary: Create product
+                `.trim()
+            },
+
+            {
+                type: "highlight",
+
+                icon: "👀",
+
+                title: "Смотри на отступы",
 
                 text: `
-                    Один и тот же путь может поддерживать
-                    несколько HTTP-методов.
-
-                    Например:
-
-                    /users
-
-                    GET /users — получить список пользователей.
-
-                    POST /users — создать нового пользователя.
-
-                    Поэтому endpoint определяется не только путём,
-                    но и HTTP-методом.
+                    get и post стоят с одинаковым отступом.
+                    Значит, они соседи, и оба относятся к адресу /products.
                 `
             },
 
             {
-                title: "Как называть ресурсы",
+                type: "highlight",
+
+                icon: "✏️",
+
+                title: "Как называть адреса",
 
                 text: `
-                    В REST API путь обычно описывает ресурс,
-                    а действие определяется HTTP-методом.
+                    В адресе пишем, С ЧЕМ работаем (существительное).
+                    Метод говорит, ЧТО делаем (глагол).
 
-                    Поэтому лучше:
-
-                    GET /users
-
-                    POST /users
-
-                    DELETE /users/42
-
-                    чем:
-
-                    GET /getUsers
-
-                    POST /createUser
-
-                    DELETE /deleteUser/42
-
-                    Сам путь должен описывать ресурс,
-                    а не повторять название действия.
+                    Поэтому глагол в адресе не нужен.
                 `
             },
 
             {
-                title: "Коллекция и конкретный ресурс",
+                type: "table",
+
+                title: "Хорошо и плохо",
+
+                columns: [
+                    "Хорошо",
+                    "Плохо"
+                ],
+
+                rows: [
+                    ["GET /users", "GET /getUsers"],
+                    ["POST /users", "POST /createUser"],
+                    ["DELETE /users/42", "DELETE /deleteUser/42"]
+                ]
+            },
+
+            {
+                type: "table",
+
+                title: "Список и один элемент",
+
+                columns: [
+                    "Адрес",
+                    "Что это",
+                    "Пример"
+                ],
+
+                rows: [
+                    ["/users", "Список всех пользователей", "GET /users"],
+                    ["/users/42", "Один пользователь с номером 42", "GET /users/42"]
+                ]
+            },
+
+            {
+                type: "definition",
+
+                term: "summary и description",
 
                 text: `
-                    Обычно коллекция ресурсов находится
-                    по пути без идентификатора:
+                    summary — короткое название операции. Его видно в Swagger UI в одной строке.
 
-                    /users
-
-                    А конкретный ресурс — с идентификатором:
-
-                    /users/42
-
-                    Например:
-
-                    GET /users
-                    — получить список пользователей.
-
-                    GET /users/42
-                    — получить пользователя с идентификатором 42.
+                    description — подробное пояснение, если одной строки мало.
                 `
             },
 
             {
-                title: "summary и description",
+                type: "code",
+
+                title: "summary и description вместе",
+
+                language: "yaml",
+
+                code: `
+get:
+  summary: Get products
+  description: Returns all products from the catalog
+                `.trim()
+            },
+
+            {
+                type: "definition",
+
+                term: "operationId",
 
                 text: `
-                    Для операции можно указать summary —
-                    короткое название операции.
+                    operationId — уникальное имя операции, как логин у человека.
+                    У двух разных операций не может быть одинаковых operationId.
 
-                    Например:
-
-                    summary: Get users
-
-                    Также можно использовать description,
-                    чтобы дать более подробное описание.
-
-                    summary хорошо подходит для короткого
-                    отображения операции в Swagger UI,
-                    а description — для дополнительных пояснений.
+                    Оно нужно программам, которые создают код по описанию.
+                    Поэтому пишем его понятно: getUsers, getUser, createUser.
                 `
             },
 
             {
-                title: "operationId",
+                type: "highlight",
+
+                icon: "🎯",
+
+                title: "Главное из урока",
 
                 text: `
-                    operationId — уникальное имя операции
-                    внутри OpenAPI-спецификации.
+                    Адрес — это ресурс («с чем работаем»).
+                    Метод — это действие («что делаем»).
 
-                    Например:
-
-                    operationId: getUsers
-
-                    Для другой операции можно использовать:
-
-                    operationId: getUser
-
-                    operationId особенно полезен инструментам,
-                    которые генерируют клиентский код.
-
-                    Поэтому operationId должен быть понятным,
-                    стабильным и уникальным.
+                    В YAML адреса лежат внутри paths, а методы — внутри адресов.
+                    Глубже — значит больше отступ.
                 `
             }
-        ],
-
-        idea: `
-            В REST API путь описывает ресурс,
-            а HTTP-метод описывает операцию над этим ресурсом.
-
-            Например:
-
-            GET /users
-            POST /users
-            GET /users/42
-            DELETE /users/42
-        `,
-
-        structure: `
-            paths:
-              /users:
-                get:
-                  summary: Get users
-
-                post:
-                  summary: Create user
-
-              /users/{id}:
-                get:
-                  summary: Get user
-
-                delete:
-                  summary: Delete user
-        `,
-
-        explanation: `
-            paths содержит доступные пути API.
-
-            Внутри каждого пути находятся HTTP-методы.
-
-            Для каждой операции можно указать
-            summary, description, operationId,
-            параметры, запросы и ответы.
-
-            На следующем практическом уроке мы применим
-            эти знания и расширим наш Users API.
-        `
+        ]
     },
 
     nextLesson: {
         text: `
-            В следующем уроке мы вернёмся к практике
-            и начнём описывать Users API более подробно.
+            В следующем уроке вернёмся к практике и расширим
+            наш Users API.
         `
     }
 };

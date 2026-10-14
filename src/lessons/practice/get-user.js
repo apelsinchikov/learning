@@ -51,12 +51,12 @@ export const getUser = {
         `,
 
         structure: `
-            /users/{id}:
+            /products/{productId}:
               get:
-                summary: Get user
+                summary: Get product
 
                 parameters:
-                  - name: id
+                  - name: productId
                     in: path
                     required: true
                     schema:
@@ -64,10 +64,18 @@ export const getUser = {
 
                 responses:
                   '200':
-                    description: User found
+                    description: Product found
 
                   '404':
-                    description: User not found
+                    description: Product not found
+        `,
+
+        explanation: `
+            Это пример для товара (/products/{productId}). Тебе нужен адрес
+            /users/{id}, а параметр называется id.
+
+            Обрати внимание: имя параметра в фигурных скобках адреса
+            должно совпадать с name в parameters.
         `,
 
         task: `

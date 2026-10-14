@@ -1,0 +1,53 @@
+/* ========================================
+   Database Diagram
+   ======================================== */
+
+.database-diagram {
+    margin: 28px 0;
+    border: 1px solid #dfe3e8;
+    border-radius: 12px;
+    background: #f8fafc;
+    overflow: hidden;
+}
+
+.database-diagram__title {
+    padding: 16px 20px;
+    border-bottom: 1px solid #dfe3e8;
+    background: #ffffff;
+
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* ========================================
+   Tables
+   ======================================== */
+
+/* ========================================
+   Relationships
+   ======================================== */
+
+/*
+ * usersPersonalData → userPhones
+ */
+
+/*
+ * usersPersonalData → userAddress
+ */
+
+/*
+ * usersPersonalData → mapUserDevice
+ */
+
+/*
+ * mapUserDevice → Device
+ */
+
+/* ========================================
+   Legend
+   ======================================== */
+
+/* ========================================
+   Responsive
+   ======================================== */

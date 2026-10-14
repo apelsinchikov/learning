@@ -52,24 +52,32 @@ export const createUser = {
         `,
 
         structure: `
-            /users:
+            /orders:
               post:
-                summary: Create user
+                summary: Create order
 
                 requestBody:
                   required: true
                   content:
                     application/json:
                       schema:
-                        $ref: '#/components/schemas/UserCreateRequest'
+                        $ref: '#/components/schemas/OrderCreateRequest'
 
                 responses:
                   '201':
-                    description: User created
+                    description: Order created
                     content:
                       application/json:
                         schema:
-                          $ref: '#/components/schemas/User'
+                          $ref: '#/components/schemas/Order'
+        `,
+
+        explanation: `
+            Это пример для заказов (/orders). Тебе нужно сделать то же самое
+            для пользователей: свои схемы, свой summary и свои описания.
+
+            Схемы OrderCreateRequest и Order тоже нужно описать в components → schemas.
+            Как это делать, ты уже знаешь по прошлому уроку.
         `,
 
         task: `

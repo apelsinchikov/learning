@@ -21,8 +21,9 @@ https://apelsinchikov.github.io/learning/
 
 ## Возможности
 
-- 📚 18 последовательных уроков
-- 📝 интерактивный YAML-редактор на CodeMirror
+- 📚 19 последовательных уроков (теория, практика и памятка Best practices)
+- 📝 интерактивный YAML-редактор на CodeMirror с «умным» Enter и Tab-отступами
+- 🙅 примеры в теории нельзя скопировать в редактор: «Неа! Пиши сам!»
 - ✅ автоматическая проверка OpenAPI
 - 🔎 проверка конкретных условий каждого практического задания
 - 🚦 отдельное отображение ошибок OpenAPI и ошибок задания
@@ -66,45 +67,34 @@ https://apelsinchikov.github.io/learning/
 
 ```text
 learning/
-├── .github/
-│   └── workflows/
-│       └── deploy.yml
+├── .github/workflows/
+│   ├── deploy.yml        # тесты, сборка и публикация на GitHub Pages
+│   └── test.yml          # тесты на pull request
 │
 ├── src/
-│   ├── components/
-│   │   ├── App.js
-│   │   ├── DatabaseDiagram.js
-│   │   ├── Editor.js
-│   │   ├── Header.js
-│   │   ├── Sidebar.js
-│   │   ├── SwaggerPreview.js
-│   │   └── Theory.js
-│   │
-│   ├── data/
-│   │   └── course.js
-│   │
+│   ├── components/       # App, Sidebar, Theory, Editor, SwaggerPreview...
+│   ├── data/course.js    # порядок уроков
+│   ├── editor/           # CodeMirror: создание редактора, умный Enter
 │   ├── lessons/
-│   │   ├── theory/
-│   │   └── practice/
-│   │
-│   ├── mock/
-│   │   └── mockApi.js
-│   │
+│   │   ├── theory/       # теоретические уроки
+│   │   └── practice/     # практические уроки
+│   ├── mock/mockApi.js   # mock API для Swagger UI
+│   ├── styles/           # CSS по модулям (main.css подключает их)
+│   ├── ui/               # Swagger, Mermaid, навигация, защита от копирования
 │   ├── utils/
-│   │   └── validator.js
-│   │
+│   │   ├── textFormat.js # превращение текста уроков в HTML
+│   │   └── validator.js  # проверка заданий
 │   └── main.js
 │
 ├── index.html
 ├── package.json
-├── package-lock.json
 ├── vite.config.mjs
 └── README.md
 ```
 
 ## Уроки
 
-Курс состоит из 18 уроков.
+Курс состоит из 19 уроков.
 
 ### Основы OpenAPI
 
@@ -145,6 +135,10 @@ learning/
 17. Database to API
 18. Users from Database
 
+### Памятка
+
+19. Best practices
+
 ## Как запустить локально
 
 Требуется установленный Node.js и npm.
@@ -178,6 +172,14 @@ npm run dev
 ```text
 http://localhost:5173/
 ```
+
+## Тесты
+
+```bash
+npm test
+```
+
+Тесты проверяют валидатор, форматирование текста уроков, правила отступов редактора и структуру курса. Они запускаются на каждый pull request и перед деплоем.
 
 ## Production build
 
@@ -284,7 +286,9 @@ src/lessons/theory/
 src/lessons/practice/
 ```
 
-Теоретический урок содержит материал для изучения.
+Теоретический урок содержит материал для изучения. Примеры кода пишите в секциях `type: "code"` или в тексте блоками с тройными кавычками (```yaml): так сохраняются отступы.
+
+В примерах не показывайте готовое решение практики — используйте другой ресурс (например, `/products`).
 
 Практический урок дополнительно содержит начальную OpenAPI YAML-спецификацию и условия, которые проверяет validator.
 
@@ -342,6 +346,12 @@ src/data/course.js
 
 ```text
 src/utils/validator.js
+```
+
+Форматирование текста уроков:
+
+```text
+src/utils/textFormat.js
 ```
 
 Mock API:

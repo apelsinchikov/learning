@@ -19,41 +19,49 @@ export const helloUsers = {
         title: "Первый шаг",
 
         text: `
-            В предыдущем уроке мы разобрались, что OpenAPI
-            описывает API.
+            Теперь создадим первый адрес нашего Users API.
 
-            Теперь создадим первую операцию нашего Users API.
-
-            Пока не будем создавать DTO, схемы и сложные структуры.
-            Наша задача — просто описать существование endpoint
-            GET /users и его успешный ответ.
+            Пока без схем и сложных вещей. Мы только скажем,
+            что адрес GET /users существует и отвечает успешно.
         `,
 
         idea: `
             GET /users означает:
 
-            «у нашего API существует операция GET,
-            доступная по адресу /users».
+            «У нашего API есть адрес /users,
+            и к нему можно отправить запрос GET».
         `,
 
         structure: `
             paths:
-              /users:
+              /ping:
                 get:
-                  summary: Get users
+                  summary: Ping
                   responses:
                     '200':
-                      description: Users endpoint works
+                      description: Server is alive
+        `,
+
+        explanation: `
+            Это пример для другого адреса — /ping.
+            Тебе нужно сделать то же самое, но для /users.
+
+            Смотри на отступы: каждый уровень вложенности
+            сдвинут на 2 пробела.
         `,
 
         task: `
-            Добавь в спецификацию endpoint GET /users.
+            Добавь в спецификацию адрес GET /users.
 
-            Для операции укажи:
+            Для него укажи:
 
             • summary: Get users
-            • успешный ответ с кодом 200
+            • ответ с кодом '200' (код пиши в кавычках, как в примере)
             • description ответа: Users endpoint works
+
+            Подсказка: поставь курсор в конец строки paths: и нажми Enter.
+            Редактор сам сделает отступ. Если нужно сдвинуть строку,
+            используй Tab (вправо) и Shift + Tab (влево).
         `
     },
 
@@ -61,7 +69,7 @@ export const helloUsers = {
 info:
   title: Users API
   version: 1.0.0
-paths: {}`,
+paths:`,
 
     validation: {
         requiredPath: "/users",
@@ -72,9 +80,8 @@ paths: {}`,
     },
 
     successMessage: `
-        Отлично! Ты создал первый endpoint своего Users API.
+        Отлично! Ты описал первый адрес своего Users API.
 
-        Swagger UI построил документацию на основе
-        написанной тобой OpenAPI-спецификации.
+        Swagger UI построил документацию по тому, что ты написал.
     `
 };

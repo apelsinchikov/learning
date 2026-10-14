@@ -50,32 +50,31 @@ export const queryParameters = {
         `,
 
         structure: `
-            /users:
+            /products:
               get:
-
                 parameters:
 
-                  - name: limit
+                  - name: page
                     in: query
                     required: false
                     schema:
                       type: integer
                       minimum: 1
-                      maximum: 100
 
-                  - name: offset
+                  - name: category
                     in: query
                     required: false
-                    schema:
-                      type: integer
-                      minimum: 0
-
-                  - name: search
-                    in: query
-                    required: false
+                    description: Filter by category
                     schema:
                       type: string
                       minLength: 1
+        `,
+
+        explanation: `
+            Это пример для товаров. Каждый параметр начинается с «- name:»,
+            а остальные ключи (in, required, schema) стоят под name с тем же отступом.
+
+            Тебе нужны другие параметры: limit, offset и search.
         `,
 
         task: `
