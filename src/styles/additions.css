@@ -1,0 +1,253 @@
+/* =========================================================
+   Примеры кода внутри текста урока (отступы сохраняются)
+   ========================================================= */
+
+.theory-snippet {
+    margin: 14px 0 22px;
+    padding: 14px 16px;
+    overflow-x: auto;
+
+    border: 1px solid #dce3eb;
+    border-radius: 10px;
+    background: #f8fafc;
+
+    color: #243244;
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    tab-size: 2;
+    white-space: pre;
+}
+
+.theory-snippet code,
+.panel-body .theory-snippet code {
+    padding: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+}
+
+.theory-snippet .code-key {
+    color: #2f5f9d;
+    font-weight: 600;
+}
+
+.theory-snippet .code-string {
+    color: #287b52;
+}
+
+.theory-snippet .code-comment {
+    color: #8993a2;
+}
+
+.theory-snippet .code-number,
+.theory-snippet .code-value {
+    color: #8a4a86;
+}
+
+/* пробелы в коротких фрагментах кода не должны схлопываться */
+
+.theory-code-explanation__code code,
+.theory-step__code {
+    white-space: pre-wrap;
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+}
+
+/* =========================================================
+   Заголовки: воздух сверху и снизу
+   ========================================================= */
+
+.theory-section > h3,
+.panel-body h3 {
+    margin: 32px 0 12px;
+    line-height: 1.3;
+}
+
+.panel-body > h3:first-child,
+.theory-section:first-child > h3 {
+    margin-top: 0;
+}
+
+.task-section > h4 {
+    margin: 0 0 12px;
+}
+
+.task-section {
+    margin-top: 28px;
+}
+
+.theory-steps__title {
+    margin-top: 28px;
+    margin-bottom: 12px;
+}
+
+.theory-code-explanation__title,
+.theory-list-block__title {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+.theory-table-card__header {
+    margin-top: 0;
+}
+
+.theory-highlight__title,
+.theory-warning__title {
+    margin-bottom: 10px;
+}
+
+.theory-definition {
+    margin-top: 30px;
+}
+
+.theory-intro + .theory-definition,
+.panel-body > .theory-definition:first-child {
+    margin-top: 0;
+}
+
+/* =========================================================
+   Навигация между уроками (внизу страницы)
+   ========================================================= */
+
+.lesson-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    margin-top: 28px;
+    padding-top: 20px;
+
+    border-top: 1px solid #e5e7eb;
+}
+
+.lesson-navigation--top {
+    margin: 0 0 16px;
+    padding: 0 0 14px;
+
+    border-top: 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.lesson-navigation--top .nav-button {
+    padding: 8px 14px;
+    font-size: 13px;
+}
+
+.nav-button {
+    padding: 11px 18px;
+
+    border: 1px solid #e1e3e8;
+    border-radius: 8px;
+
+    background: white;
+    color: #374151;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.nav-button:hover {
+    background: #f9fafb;
+}
+
+.nav-button--next {
+    margin-left: auto;
+
+    border-color: #635bff;
+    background: #635bff;
+    color: white;
+}
+
+.nav-button--next:hover {
+    background: #5148e0;
+}
+
+/* =========================================================
+   Сообщения
+   ========================================================= */
+
+.copy-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    z-index: 1000;
+
+    padding: 11px 18px;
+
+    border-radius: 10px;
+    background: #171a21;
+    color: white;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    opacity: 0;
+    transform: translate(-50%, 10px);
+    pointer-events: none;
+
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.copy-toast--visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+.success-banner {
+    display: flex;
+    gap: 12px;
+
+    margin: 16px;
+    padding: 14px 16px;
+
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    background: #f0fdf4;
+}
+
+.success-banner__icon {
+    flex: 0 0 auto;
+
+    width: 26px;
+    height: 26px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: #16803c;
+    color: white;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.success-banner__text .theory-paragraph {
+    margin: 0 0 6px;
+    color: #14532d;
+    font-size: 13px;
+}
+
+.success-banner__text .theory-list {
+    margin: 6px 0;
+}
+
+.success-banner__text .theory-list li {
+    color: #14532d;
+}

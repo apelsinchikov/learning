@@ -21,8 +21,9 @@ https://apelsinchikov.github.io/learning/
 
 ## Возможности
 
-- 📚 18 последовательных уроков
-- 📝 интерактивный YAML-редактор на CodeMirror
+- 📚 21 последовательный урок (теория, практика и памятка Best practices)
+- 📝 интерактивный YAML-редактор на CodeMirror с «умным» Enter и Tab-отступами
+- 🙅 примеры в теории нельзя скопировать в редактор: «Неа! Пиши сам!»
 - ✅ автоматическая проверка OpenAPI
 - 🔎 проверка конкретных условий каждого практического задания
 - 🚦 отдельное отображение ошибок OpenAPI и ошибок задания
@@ -66,84 +67,78 @@ https://apelsinchikov.github.io/learning/
 
 ```text
 learning/
-├── .github/
-│   └── workflows/
-│       └── deploy.yml
+├── .github/workflows/
+│   ├── deploy.yml        # тесты, сборка и публикация на GitHub Pages
+│   └── test.yml          # тесты на pull request
 │
 ├── src/
-│   ├── components/
-│   │   ├── App.js
-│   │   ├── DatabaseDiagram.js
-│   │   ├── Editor.js
-│   │   ├── Header.js
-│   │   ├── Sidebar.js
-│   │   ├── SwaggerPreview.js
-│   │   └── Theory.js
-│   │
-│   ├── data/
-│   │   └── course.js
-│   │
+│   ├── components/       # App, Sidebar, Theory, Editor, SwaggerPreview...
+│   ├── data/course.js    # порядок уроков
+│   ├── editor/           # CodeMirror: создание редактора, умный Enter
 │   ├── lessons/
-│   │   ├── theory/
-│   │   └── practice/
-│   │
-│   ├── mock/
-│   │   └── mockApi.js
-│   │
+│   │   ├── theory/       # теоретические уроки
+│   │   └── practice/     # практические уроки
+│   ├── mock/mockApi.js   # mock API для Swagger UI
+│   ├── styles/           # CSS по модулям (main.css подключает их)
+│   ├── ui/               # Swagger, Mermaid, навигация, защита от копирования
 │   ├── utils/
-│   │   └── validator.js
-│   │
+│   │   ├── textFormat.js # превращение текста уроков в HTML
+│   │   └── validator.js  # проверка заданий
 │   └── main.js
 │
 ├── index.html
 ├── package.json
-├── package-lock.json
 ├── vite.config.mjs
 └── README.md
 ```
 
 ## Уроки
 
-Курс состоит из 18 уроков.
+Курс состоит из 21 урока. Он рассчитан на людей без технического опыта
+(например, из бизнеса): новые понятия вводятся по одному, а практика
+всегда идёт после теории, которая для неё нужна.
 
-### Основы OpenAPI
+### Hello World
 
-1. OpenAPI Basics
-2. Hello Users
-3. Paths, Methods & Naming
-4. Users API
+1. API и OpenAPI (теория)
+2. YAML и отступы (теория)
+3. Заготовка описания: openapi и info (практика)
+4. Первый адрес GET /users (практика)
 
-### Schema
+### Адреса и методы
 
-5. Schemas & Properties
-6. Objects, Arrays & `$ref`
-7. User DTO
+5. Адреса, методы и названия (теория)
+6. Добавляем POST /users (практика)
 
-### Request / Response
+### Данные
 
-8. Request & Response JSON
-9. Create User
+7. Схемы и свойства (теория)
+8. Схема User (практика)
 
-### Parameters
+### Запросы и ответы
 
-10. Parameters
-11. Get User
-12. Query Parameters
+9. Запрос, ответ и JSON (теория)
+10. Создаём пользователя (практика)
+11. Списки: array (теория)
+12. Ответ со списком (практика)
 
-### HTTP
+### Параметры
 
-13. Status Codes
-14. Update & Delete User
+13. Параметры (теория)
+14. GET /users/{id} (практика)
+15. Поиск и фильтрация (практика)
 
-### Хорошая спецификация
+### Коды ответов
 
-15. Good Specification
-16. Final Users API
+16. Коды ответов и ошибки (теория)
+17. Изменение и удаление (практика)
 
-### Database → API
+### Собираем
 
-17. Database to API
-18. Users from Database
+18. Итоговый Users API (практика)
+19. Из базы данных в API (теория)
+20. Users API из базы данных (практика)
+21. Best practices (памятка)
 
 ## Как запустить локально
 
@@ -178,6 +173,14 @@ npm run dev
 ```text
 http://localhost:5173/
 ```
+
+## Тесты
+
+```bash
+npm test
+```
+
+Тесты проверяют валидатор, форматирование текста уроков, правила отступов редактора и структуру курса. Они запускаются на каждый pull request и перед деплоем.
 
 ## Production build
 
@@ -284,7 +287,9 @@ src/lessons/theory/
 src/lessons/practice/
 ```
 
-Теоретический урок содержит материал для изучения.
+Теоретический урок содержит материал для изучения. Примеры кода пишите в секциях `type: "code"` или в тексте блоками с тройными кавычками (```yaml): так сохраняются отступы.
+
+В примерах не показывайте готовое решение практики — используйте другой ресурс (например, `/products`).
 
 Практический урок дополнительно содержит начальную OpenAPI YAML-спецификацию и условия, которые проверяет validator.
 
@@ -342,6 +347,12 @@ src/data/course.js
 
 ```text
 src/utils/validator.js
+```
+
+Форматирование текста уроков:
+
+```text
+src/utils/textFormat.js
 ```
 
 Mock API:

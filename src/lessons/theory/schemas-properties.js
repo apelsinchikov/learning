@@ -5,319 +5,348 @@ export const schemasProperties = {
 
     icon: "📖",
 
-    title: "Schemas и Properties",
+    title: "Схемы и свойства",
 
-    subtitle: "Разберём, как описывать структуру данных в OpenAPI.",
+    subtitle: "Как описать, из чего состоят данные.",
 
     sidebarDescription: "Схемы и свойства",
 
     theory: {
+        intro: `
+            Адрес и метод говорят, что можно сделать.
+            Но ещё нужно описать данные: какие у пользователя есть поля.
+            Для этого в OpenAPI есть схемы (schemas).
+        `,
+
         sections: [
             {
-                title: "Зачем нужны schemas?",
+                type: "definition",
+
+                term: "Схема (schema)",
 
                 text: `
-                    Endpoint описывает операцию API,
-                    но нам также нужно описывать данные,
-                    с которыми эта операция работает.
+                    Схема — это описание того, как устроены данные:
+                    какие в них поля и какого они типа.
 
-                    Например, Users API может возвращать
-                    объект пользователя:
+                    Это как анкета: в ней написано, какие поля заполнить
+                    и что в каждом писать — текст или число.
+                `
+            },
 
+            {
+                type: "code",
+
+                title: "Данные, которые нужно описать (JSON)",
+
+                language: "json",
+
+                code: `
+{
+  "id": 7,
+  "name": "Notebook",
+  "price": 4.5,
+  "inStock": true
+}
+                `.trim()
+            },
+
+            {
+                type: "highlight",
+
+                icon: "📦",
+
+                title: "Где лежат схемы",
+
+                text: `
+                    Схемы кладём в раздел components → schemas.
+                    Каждой схеме даём имя, например Product.
+
+                    Потом на неё можно сослаться из любого места в спецификации.
+                `
+            },
+
+            {
+                type: "code",
+
+                title: "Схема Product (пока пустая)",
+
+                language: "yaml",
+
+                code: `
+components:
+  schemas:
+    Product:
+      type: object
+                `.trim()
+            },
+
+            {
+                type: "code-explanation",
+
+                title: "Что здесь написано",
+
+                items: [
                     {
-                      "id": 42,
-                      "name": "Alex",
-                      "email": "alex@example.com"
+                        code: "components:",
+                        text: "Раздел для всего, что мы хотим использовать повторно."
+                    },
+                    {
+                        code: "  schemas:",
+                        text: "Внутри components: список наших схем."
+                    },
+                    {
+                        code: "    Product:",
+                        text: "Имя схемы. Мы выбрали его сами."
+                    },
+                    {
+                        code: "      type: object",
+                        text: "Это объект — набор полей (как в JSON выше)."
                     }
+                ]
+            },
 
-                    Чтобы описать такую структуру,
-                    в OpenAPI используются schemas.
+            {
+                type: "definition",
+
+                term: "properties",
+
+                text: `
+                    properties — это список полей объекта.
+                    Для каждого поля указываем его имя и type.
                 `
             },
 
             {
-                title: "components.schemas",
+                type: "code",
+
+                title: "Схема с полями",
+
+                language: "yaml",
+
+                code: `
+Product:
+  type: object
+  properties:
+    id:
+      type: integer
+    name:
+      type: string
+    price:
+      type: number
+    inStock:
+      type: boolean
+                `.trim()
+            },
+
+            {
+                type: "highlight",
+
+                icon: "📐",
+
+                title: "Как читать отступы",
 
                 text: `
-                    Переиспользуемые схемы обычно размещаются
-                    внутри components.schemas.
+                    id, name, price и inStock стоят с одним отступом — значит, все они лежат внутри properties.
 
-                    Например:
-
-                    components:
-                      schemas:
-                        User:
-                          type: object
-
-                    Здесь мы создаём схему с именем User.
-
-                    В дальнейшем разные endpoints смогут
-                    использовать эту схему.
+                    type у каждого поля сдвинут ещё на 2 пробела — значит, он относится к этому полю.
                 `
             },
 
             {
-                title: "type: object",
+                type: "table",
+
+                title: "Основные типы данных (пока их хватит)",
+
+                columns: [
+                    "type",
+                    "Что это",
+                    "Пример значения"
+                ],
+
+                rows: [
+                    ["string", "Текст", "Notebook"],
+                    ["integer", "Целое число", "42"],
+                    ["number", "Любое число, в том числе с точкой", "4.5"],
+                    ["boolean", "Да или нет", "true / false"],
+                    ["object", "Объект с полями", "Набор полей, как анкета"]
+                ]
+            },
+
+            {
+                type: "definition",
+
+                term: "required",
 
                 text: `
-                    Если схема описывает объект,
-                    используется:
+                    Поле в properties ещё не значит, что оно обязательное.
 
-                    type: object
-
-                    Например:
-
-                    User:
-                      type: object
-
-                    Но пока это только пустой объект.
-                    Чтобы описать его поля, используются properties.
+                    Чтобы сделать поле обязательным, запиши его имя
+                    в список required.
                 `
             },
 
             {
-                title: "properties",
+                type: "code",
+
+                title: "Обязательные поля",
+
+                language: "yaml",
+
+                code: `
+Product:
+  type: object
+  properties:
+    id:
+      type: integer
+    name:
+      type: string
+    price:
+      type: number
+  required:
+    - id
+    - name
+                `.trim()
+            },
+
+            {
+                type: "highlight",
+
+                icon: "⚠️",
+
+                title: "Не путай properties и required",
 
                 text: `
-                    properties описывает поля объекта.
+                    В примере выше описаны три поля: id, name и price.
 
-                    Например:
+                    Но обязательные только id и name.
+                    Поле price можно не присылать.
 
-                    User:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        name:
-                          type: string
-                        email:
-                          type: string
-
-                    Теперь OpenAPI знает,
-                    какие свойства может содержать User.
+                    properties — какие поля бывают.
+                    required — какие из них обязательны.
                 `
             },
 
             {
-                title: "Основные типы данных",
+                type: "highlight",
+
+                icon: "👀",
+
+                title: "Отступы у required",
 
                 text: `
-                    Для свойств используются типы данных.
+                    required стоит на одном уровне с properties и type,
+                    то есть внутри Product, а не внутри properties.
 
-                    string — строка.
-
-                    integer — целое число.
-
-                    number — число с плавающей точкой.
-
-                    boolean — true или false.
-
-                    object — объект.
-
-                    array — массив.
-
-                    Например:
-
-                    age:
-                      type: integer
-
-                    name:
-                      type: string
-
-                    active:
-                      type: boolean
+                    Элементы списка начинаются с «- » и сдвинуты на 2 пробела.
                 `
             },
 
             {
-                title: "required",
+                type: "definition",
+
+                term: "format",
 
                 text: `
-                    Само наличие свойства в properties
-                    не означает, что оно обязательно.
+                    Иногда одного type мало. Для строки можно уточнить,
+                    что в ней лежит, с помощью format.
 
-                    Для обязательных свойств используется
-                    массив required.
-
-                    Например:
-
-                    required:
-                      - id
-                      - name
-
-                    Это означает, что id и name должны
-                    присутствовать в объекте.
-
-                    Свойство email при этом может существовать
-                    в properties, но не быть обязательным.
+                    Чаще всего встречаются: email, date, date-time, uuid, uri.
                 `
             },
 
             {
-                title: "Важно: properties ≠ required",
+                type: "code",
+
+                title: "Пример format",
+
+                language: "yaml",
+
+                code: `
+contactEmail:
+  type: string
+  format: email
+                `.trim()
+            },
+
+            {
+                type: "definition",
+
+                term: "Ограничения",
 
                 text: `
-                    Это одна из важных особенностей OpenAPI.
+                    Можно задать, какие значения допустимы.
 
-                    Например:
+                    Для строк: minLength (минимум символов) и maxLength (максимум).
 
-                    properties:
-                      name:
-                        type: string
-                      email:
-                        type: string
-
-                    required:
-                      - name
-
-                    Здесь описаны два свойства:
-
-                    name
-                    email
-
-                    Но обязательным является только name.
-
-                    email является допустимым свойством,
-                    но его наличие не требуется.
+                    Для чисел: minimum (не меньше) и maximum (не больше).
                 `
             },
 
             {
-                title: "format",
+                type: "code",
 
-                text: `
-                    Для некоторых строк можно дополнительно
-                    указать формат.
+                title: "Пример ограничений",
 
-                    Например:
+                language: "yaml",
 
-                    email:
-                      type: string
-                      format: email
-
-                    Возможные форматы помогают инструментам
-                    лучше понимать назначение значения.
-
-                    Часто используются:
-
-                    email
-                    date
-                    date-time
-                    uuid
-                    uri
-                `
+                code: `
+quantity:
+  type: integer
+  minimum: 0
+  maximum: 100
+                `.trim()
             },
 
             {
-                title: "Ограничения",
+                type: "definition",
+
+                term: "description и example",
 
                 text: `
-                    Для значений можно задавать ограничения.
-
-                    Для строк:
-
-                    minLength
-                    maxLength
-
-                    Для чисел:
-
-                    minimum
-                    maximum
-
-                    Например:
-
-                    age:
-                      type: integer
-                      minimum: 0
-                      maximum: 120
-
-                    Такие ограничения помогают точнее описывать
-                    допустимые данные.
-                `
-            },
-
-            {
-                title: "description, example и default",
-
-                text: `
-                    Свойства и схемы можно дополнительно
-                    документировать.
-
-                    description — описание значения.
+                    description — пояснение для человека: что это за поле.
 
                     example — пример значения.
 
-                    default — значение по умолчанию.
+                    Они не влияют на проверку, но делают документацию понятнее.
+                `
+            },
 
-                    Например:
+            {
+                type: "code",
 
-                    name:
-                      type: string
-                      description: User display name
-                      example: Alex
+                title: "Пример description и example",
 
-                    Эти поля помогают разработчикам
-                    понимать назначение данных.
+                language: "yaml",
+
+                code: `
+name:
+  type: string
+  description: Product name
+  example: Notebook
+                `.trim()
+            },
+
+            {
+                type: "highlight",
+
+                icon: "🎯",
+
+                title: "Главное из урока",
+
+                text: `
+                    Схема описывает данные: type: object — это объект,
+                    properties — его поля, required — обязательные поля.
+
+                    Схемы лежат в components → schemas.
                 `
             }
-        ],
-
-        idea: `
-            Schema описывает структуру данных.
-
-            components.schemas.User
-            ↓
-            type: object
-            ↓
-            properties
-            ↓
-            id, name, email
-
-            required отдельно определяет,
-            какие свойства обязательны.
-        `,
-
-        structure: `
-            components:
-              schemas:
-                User:
-                  type: object
-
-                  properties:
-                    id:
-                      type: integer
-
-                    name:
-                      type: string
-
-                    email:
-                      type: string
-                      format: email
-
-                  required:
-                    - id
-                    - name
-        `,
-
-        explanation: `
-            components.schemas используется для создания
-            переиспользуемых моделей данных.
-
-            Внутри схемы type определяет общий тип данных,
-            properties описывает свойства объекта,
-            а required определяет обязательные свойства.
-
-            В следующем уроке мы разберём,
-            как использовать объекты, массивы
-            и ссылки $ref между схемами.
-        `
+        ]
     },
 
     nextLesson: {
         text: `
-            В следующем уроке разберём объекты, массивы
-            и $ref, а затем применим эти знания
-            на практике при создании User DTO.
+            Сначала применим схемы на практике: опишем пользователя.
+            А потом узнаем, как схемы использовать в запросах и ответах.
         `
     }
 };

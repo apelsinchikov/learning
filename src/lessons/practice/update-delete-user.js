@@ -23,10 +23,9 @@ export const updateDeleteUser = {
         title: "Изменяем и удаляем пользователя",
 
         text: `
-            Мы уже умеем получать пользователя
-            по его идентификатору.
+            Мы уже умеем получать одного пользователя по номеру.
 
-            Теперь добавим ещё две операции:
+            Теперь добавим ещё две операции для того же адреса:
 
             PUT /users/{id}
 
@@ -54,16 +53,13 @@ export const updateDeleteUser = {
         `,
 
         structure: `
-            /users/{id}:
+            /products/{productId}:
 
-              get:
-                ...
-
-              put:
-                summary: Update user
+              patch:
+                summary: Update product
 
                 parameters:
-                  - name: id
+                  - name: productId
                     in: path
                     required: true
                     schema:
@@ -71,27 +67,17 @@ export const updateDeleteUser = {
 
                 responses:
                   '200':
-                    description: User updated
+                    description: Product updated
 
                   '404':
-                    description: User not found
+                    description: Product not found
+        `,
 
-              delete:
-                summary: Delete user
+        explanation: `
+            Это пример для товара: метод patch (изменить часть записи).
+            Тебе нужны методы put и delete для адреса /users/{id}.
 
-                parameters:
-                  - name: id
-                    in: path
-                    required: true
-                    schema:
-                      type: integer
-
-                responses:
-                  '204':
-                    description: User deleted
-
-                  '404':
-                    description: User not found
+            Параметр id нужно описать в каждой операции отдельно.
         `,
 
         task: `
@@ -130,9 +116,11 @@ export const updateDeleteUser = {
             404:
               description: User not found
 
-            Пока не добавляй requestBody
-            в PUT — это будет частью дальнейшего
-            развития финальной спецификации.
+            Тело запроса (requestBody) для PUT пока не нужно —
+            добавим его в итоговом задании.
+
+            Напоминаем про коды: 200 — успешно изменено,
+            204 — удалено и ответа нет, 404 — пользователя нет.
         `
     },
 

@@ -1,0 +1,96 @@
+/* =========================================================
+   Мобильная версия
+   ========================================================= */
+
+@media (max-width: 900px) {
+    html,
+    body {
+            min-width: 0;
+        }
+
+    .app-layout {
+            flex-direction: column;
+        }
+
+    .sidebar {
+            width: 100%;
+            padding: 14px;
+    
+            border-right: 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+    .lesson-list {
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+    .sidebar__progress {
+            display: none;
+        }
+
+    .main-content {
+            padding: 16px;
+        }
+
+    .page-header h1 {
+            font-size: 22px;
+        }
+
+    .workspace,
+    .workspace:has(.editor-panel) {
+            display: flex;
+            flex-direction: column;
+    
+            height: auto;
+            min-height: 0;
+        }
+
+    .workspace:has(.editor-panel) > .panel,
+    .workspace > .panel {
+            height: auto;
+            min-height: 0;
+        }
+
+    .workspace:has(.editor-panel) > .editor-panel {
+            min-height: 360px;
+        }
+
+    .workspace:has(.editor-panel) > .swagger-panel {
+            min-height: 420px;
+        }
+
+    .editor-panel .editor {
+            min-height: 300px;
+        }
+
+    .swagger-panel .swagger-ui .wrapper {
+            padding: 0 8px;
+        }
+
+    .swagger-panel .swagger-ui .opblock-summary {
+            flex-wrap: wrap;
+        }
+
+    .lesson-navigation {
+            flex-direction: column-reverse;
+            align-items: stretch;
+        }
+
+    .nav-button--next {
+            margin-left: 0;
+        }
+}
+
+/* блок кода не должен получать фон «инлайн-кода» */
+
+.theory-code pre code,
+.practice-code pre code {
+    padding: 0;
+    background: none;
+}
+
+.theory-highlight .theory-list:last-child,
+.theory-warning .theory-list:last-child {
+    margin-bottom: 0;
+}

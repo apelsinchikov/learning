@@ -1,0 +1,158 @@
+/* =========================
+   SIDEBAR
+   ========================= */
+
+.sidebar {
+    width: 280px;
+    flex-shrink: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 24px 14px;
+
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+}
+
+.sidebar__section-title {
+    padding: 0 10px 12px;
+
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+
+    color: #9ca3af;
+}
+
+.lesson-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.lesson {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 9px 10px;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #4b5563;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.lesson:hover {
+    background: #f5f6fa;
+}
+
+.lesson--active {
+    background: #eeefff;
+    color: #4038b9;
+}
+
+.lesson__number {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 7px;
+
+    background: #f0f1f4;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.lesson--active .lesson__number {
+    background: #635bff;
+    color: white;
+}
+
+.lesson__content {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+.lesson__content strong {
+    overflow: hidden;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.lesson__content small {
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+.lesson--active .lesson__content small {
+    color: #7771c9;
+}
+
+/* =========================
+   PROGRESS
+   ========================= */
+
+.sidebar__progress {
+    margin-top: auto;
+
+    padding: 16px 10px 0;
+
+    border-top: 1px solid #edf0f3;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.progress-header strong {
+    color: #374151;
+}
+
+.progress-bar {
+    height: 6px;
+
+    overflow: hidden;
+
+    border-radius: 3px;
+
+    background: #e5e7eb;
+}
+
+.progress-bar__value {
+    width: 0;
+    height: 100%;
+
+    border-radius: 3px;
+
+    background: #635bff;
+}
