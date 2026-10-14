@@ -14,12 +14,16 @@ export function initNavigation(currentIndex, goToLesson) {
     };
 
     document
-        .querySelector("#next-button")
-        ?.addEventListener("click", () => go(currentIndex + 1));
+        .querySelectorAll(".nav-button--next")
+        .forEach(button =>
+            button.addEventListener("click", () => go(currentIndex + 1))
+        );
 
     document
-        .querySelector("#previous-button")
-        ?.addEventListener("click", () => go(currentIndex - 1));
+        .querySelectorAll(".nav-button--previous")
+        .forEach(button =>
+            button.addEventListener("click", () => go(currentIndex - 1))
+        );
 
     document.querySelectorAll(".lesson").forEach(button => {
         button.addEventListener("click", () => {

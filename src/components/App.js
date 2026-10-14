@@ -12,6 +12,32 @@ export function App(currentLessonIndex = 0) {
     const hasNextLesson = currentLessonIndex < course.length - 1;
     const isPractice = currentLesson.type === "practice";
 
+    /*
+     * Кнопки «Предыдущий / Следующий урок» показываем и сверху
+     * (чтобы не листать длинный урок), и снизу (когда дочитал).
+     */
+    function renderLessonNavigation(position) {
+        if (!hasPreviousLesson && !hasNextLesson) {
+            return "";
+        }
+
+        return `
+            <nav class="lesson-navigation lesson-navigation--${position}">
+                ${
+                    hasPreviousLesson
+                        ? `<button class="nav-button nav-button--previous">← Предыдущий урок</button>`
+                        : "<span></span>"
+                }
+
+                ${
+                    hasNextLesson
+                        ? `<button class="nav-button nav-button--next">Следующий урок →</button>`
+                        : ""
+                }
+            </nav>
+        `;
+    }
+
     return `
         <div class="app">
             ${Header()}
@@ -34,6 +60,8 @@ export function App(currentLessonIndex = 0) {
                         </div>
                     </div>
 
+                    ${renderLessonNavigation("top")}
+
                     <div class="workspace">
                         ${Theory(currentLesson)}
 
@@ -44,25 +72,7 @@ export function App(currentLessonIndex = 0) {
                         }
                     </div>
 
-                    ${
-                        hasPreviousLesson || hasNextLesson
-                            ? `
-                                <nav class="lesson-navigation">
-                                    ${
-                                        hasPreviousLesson
-                                            ? `<button class="nav-button nav-button--previous" id="previous-button">← Предыдущий урок</button>`
-                                            : "<span></span>"
-                                    }
-
-                                    ${
-                                        hasNextLesson
-                                            ? `<button class="nav-button nav-button--next" id="next-button">Следующий урок →</button>`
-                                            : ""
-                                    }
-                                </nav>
-                            `
-                            : ""
-                    }
+                    ${renderLessonNavigation("bottom")}
                 </main>
             </div>
         </div>
