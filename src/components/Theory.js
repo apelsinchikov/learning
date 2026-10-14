@@ -823,6 +823,30 @@ export function Theory(lesson) {
                                                 : ""
                                         }
 
+                                        ${
+                                            section.type === "text"
+                                                ? `<div class="theory-content">${renderText(section.text)}</div>`
+                                                : ""
+                                        }
+
+                                        ${
+                                            section.type === "table"
+                                                ? renderTable({
+                                                    ...section,
+                                                    title: ""
+                                                })
+                                                : ""
+                                        }
+
+                                        ${
+                                            section.type === "highlight"
+                                                ? renderHighlight({
+                                                    ...section,
+                                                    title: ""
+                                                })
+                                                : ""
+                                        }
+
                                     </section>
                                 `)
                                 .join("")
