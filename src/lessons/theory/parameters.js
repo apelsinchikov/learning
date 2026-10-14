@@ -5,307 +5,222 @@ export const parameters = {
 
     icon: "📖",
 
-    title: "Parameters",
+    title: "Параметры",
 
-    subtitle: "Разберём path, query и header параметры в OpenAPI.",
+    subtitle: "Как уточнить запрос: какого пользователя найти и сколько показать.",
 
-    sidebarDescription: "Path, Query и Header",
+    sidebarDescription: "Параметры запроса",
 
     theory: {
+        intro: `
+            Иногда мало сказать «получить пользователя».
+            Нужно уточнить: какого именно? Для таких уточнений
+            в запросе есть параметры.
+        `,
+
         sections: [
             {
-                title: "Что такое parameter?",
+                type: "definition",
+
+                term: "Параметр",
 
                 text: `
-                    Parameter — это дополнительное значение,
-                    которое клиент передаёт API вместе с запросом.
+                    Параметр — это дополнительное значение,
+                    которое программа отправляет вместе с запросом.
 
-                    Параметры позволяют уточнить,
-                    какой именно ресурс нужен
-                    или как должна выполняться операция.
-
-                    В OpenAPI параметры имеют разные места
-                    передачи.
+                    Например: номер пользователя или сколько записей показать.
                 `
             },
 
             {
-                title: "Path parameter",
+                type: "table",
+
+                title: "Два главных вида параметров",
+
+                columns: [
+                    "Вид",
+                    "Где находится",
+                    "Пример"
+                ],
+
+                rows: [
+                    ["path (путь)", "Прямо в адресе", "/users/42"],
+                    ["query (запрос)", "В конце адреса, после знака ?", "/users?limit=10"]
+                ]
+            },
+
+            {
+                type: "highlight",
+
+                icon: "🔢",
+
+                title: "Path-параметр: «какой именно»",
 
                 text: `
-                    Path parameter находится непосредственно
-                    в URL.
+                    В адресе /users/{id} в фигурных скобках стоит «пустое место».
+                    Вместо {id} программа подставит реальный номер.
 
-                    Например:
-
-                    /users/{id}
-
-                    Здесь {id} — параметр пути.
-
-                    Запрос:
-
-                    GET /users/42
-
-                    означает, что id имеет значение 42.
+                    GET /users/42 — получить пользователя с номером 42.
                 `
             },
 
             {
-                title: "Описание path parameter",
+                type: "code",
+
+                title: "Описание path-параметра",
+
+                language: "yaml",
+
+                code: `
+/users/{id}:
+  get:
+    summary: Get user
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+                `.trim()
+            },
+
+            {
+                type: "code-explanation",
+
+                title: "Как читать этот пример",
+
+                items: [
+                    {
+                        code: "parameters:",
+                        text: "Список параметров этой операции."
+                    },
+                    {
+                        code: "  - name: id",
+                        text: "Дефис начинает новый параметр. Имя — id, как в адресе {id}."
+                    },
+                    {
+                        code: "    in: path",
+                        text: "Где находится: в пути (адресе)."
+                    },
+                    {
+                        code: "    required: true",
+                        text: "Обязательный. Без номера адрес неполный."
+                    },
+                    {
+                        code: "    schema:",
+                        text: "Какого типа значение."
+                    },
+                    {
+                        code: "      type: integer",
+                        text: "Целое число."
+                    }
+                ]
+            },
+
+            {
+                type: "warning",
+
+                title: "Дефис и отступы",
 
                 text: `
-                    В OpenAPI path parameter описывается
-                    через parameters.
-
-                    Например:
-
-                    parameters:
-                      - name: id
-                        in: path
-                        required: true
-                        schema:
-                          type: integer
-
-                    Для path-параметра required
-                    должен быть true,
-                    потому что без него путь
-                    /users/{id} не является полным.
+                    Дефис «-» в YAML — начало элемента списка.
+                    Остальные строки параметра (in, required, schema)
+                    стоят под name с тем же отступом.
                 `
             },
 
             {
-                title: "Query parameter",
+                type: "highlight",
+
+                icon: "🔍",
+
+                title: "Query-параметр: «как показать»",
 
                 text: `
-                    Query parameter находится после знака ?
+                    Query-параметры стоят после знака ? и нужны для уточнений:
+                    сколько записей показать, что искать.
 
-                    Например:
+                    GET /users?limit=10 — показать только 10 пользователей.
 
-                    /users?limit=10
-
-                    Здесь:
-
-                    limit
-
-                    — query-параметр.
-
-                    Query-параметры часто используются
-                    для фильтрации, поиска, сортировки
-                    и ограничения количества результатов.
+                    Несколько параметров соединяются знаком &:
+                    /users?limit=10&search=alex
                 `
             },
 
             {
-                title: "Описание query parameter",
+                type: "code",
+
+                title: "Описание query-параметра",
+
+                language: "yaml",
+
+                code: `
+parameters:
+  - name: limit
+    in: query
+    required: false
+    schema:
+      type: integer
+                `.trim()
+            },
+
+            {
+                type: "highlight",
+
+                icon: "✅",
+
+                title: "Обязательный или нет",
 
                 text: `
-                    В OpenAPI query parameter выглядит так:
+                    Path-параметр всегда обязательный (required: true).
 
-                    parameters:
-                      - name: limit
-                        in: query
-                        required: false
-                        schema:
-                          type: integer
-
-                    В отличие от path parameter,
-                    query parameter может быть необязательным.
+                    Query-параметр обычно необязательный (required: false):
+                    без него запрос тоже работает.
                 `
             },
 
             {
-                title: "Path и Query — разница",
+                type: "table",
 
-                text: `
-                    Сравним:
+                title: "Поля параметра",
 
-                    /users/{id}
+                columns: [
+                    "Поле",
+                    "Что значит"
+                ],
 
-                    и:
-
-                    /users?id=42
-
-                    В первом случае id является
-                    частью пути ресурса.
-
-                    Во втором случае id передаётся
-                    как query-параметр.
-
-                    Для получения конкретного пользователя
-                    обычно используется:
-
-                    /users/{id}
-
-                    А query-параметры хорошо подходят
-                    для дополнительных условий поиска.
-                `
+                rows: [
+                    ["name", "Имя параметра"],
+                    ["in", "Где он: path или query"],
+                    ["required", "Обязательный или нет"],
+                    ["schema", "Какого типа значение"],
+                    ["description", "Пояснение для людей"]
+                ]
             },
 
             {
-                title: "Query-параметры для списка",
+                type: "highlight",
+
+                icon: "🎯",
+
+                title: "Главное из урока",
 
                 text: `
-                    Для GET /users можно использовать:
+                    Параметры уточняют запрос.
 
-                    /users?limit=20&offset=40
+                    Path — часть адреса: /users/42.
+                    Query — после знака ?: /users?limit=10.
 
-                    Например:
-
-                    limit
-                    — сколько пользователей вернуть.
-
-                    offset
-                    — с какого элемента начать.
-
-                    Также можно добавить:
-
-                    search
-                    — строку поиска.
-                `
-            },
-
-            {
-                title: "Header parameter",
-
-                text: `
-                    Parameter может находиться
-                    и в HTTP-заголовке.
-
-                    Для этого используется:
-
-                    in: header
-
-                    Например:
-
-                    parameters:
-                      - name: X-Request-ID
-                        in: header
-                        required: false
-                        schema:
-                          type: string
-
-                    Такой параметр не отображается
-                    в URL запроса.
-                `
-            },
-
-            {
-                title: "Основные поля parameter",
-
-                text: `
-                    При описании параметра обычно используются:
-
-                    name
-                    — имя параметра.
-
-                    in
-                    — где находится параметр:
-                    path, query, header или cookie.
-
-                    required
-                    — обязательный параметр или нет.
-
-                    schema
-                    — тип значения.
-
-                    description
-                    — описание параметра.
-
-                    example
-                    — пример значения.
-                `
-            },
-
-            {
-                title: "Параметры и schema",
-
-                text: `
-                    Parameter и schema выполняют
-                    разные задачи.
-
-                    Parameter описывает,
-                    где и как передаётся значение.
-
-                    Schema описывает,
-                    какого типа это значение
-                    и какие ограничения у него есть.
-
-                    Например:
-
-                    name: limit
-                    in: query
-
-                    говорит, что limit —
-                    query-параметр.
-
-                    А:
-
-                    schema:
-                      type: integer
-
-                    говорит, что значение limit —
-                    целое число.
+                    Каждый параметр описываем через name, in, required и schema.
                 `
             }
-        ],
-
-        idea: `
-            Path parameter:
-
-            /users/{id}
-
-            Query parameter:
-
-            /users?limit=10
-
-            Header parameter:
-
-            X-Request-ID: abc-123
-
-            Parameter описывает способ передачи
-            дополнительного значения в API.
-        `,
-
-        structure: `
-            /users/{id}:
-
-              get:
-
-                parameters:
-                  - name: id
-                    in: path
-                    required: true
-                    schema:
-                      type: integer
-
-                  - name: limit
-                    in: query
-                    required: false
-                    schema:
-                      type: integer
-        `,
-
-        explanation: `
-            Path parameter является частью URL.
-
-            Query parameter передаётся после ?.
-
-            Header parameter передаётся
-            в HTTP-заголовке.
-
-            Поле in определяет расположение параметра,
-            а schema описывает его тип.
-
-            В следующем практическом уроке
-            мы используем path parameter
-            для получения конкретного пользователя.
-        `
+        ]
     },
 
     nextLesson: {
         text: `
-            В следующем уроке создадим GET /users/{id}
-            и добавим обязательный path parameter id.
+            В следующей практике добавим GET /users/{id} —
+            получить одного пользователя по номеру.
         `
     }
 };

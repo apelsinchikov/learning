@@ -5,273 +5,264 @@ export const requestResponseJson = {
 
     icon: "📖",
 
-    title: "Request, Response и JSON",
+    title: "Запрос, ответ и JSON",
 
-    subtitle: "Разберём, как API принимает и возвращает данные.",
+    subtitle: "Как описать, какие данные API получает и отдаёт.",
 
-    sidebarDescription: "Request, Response и JSON",
+    sidebarDescription: "Запрос, ответ, JSON",
 
     theory: {
+        intro: `
+            Мы умеем описывать адреса и поля пользователя.
+            Теперь соединим их: покажем, какие данные
+            идут в API и какие возвращаются обратно.
+        `,
+
         sections: [
             {
-                title: "Request и Response",
+                type: "definition",
+
+                term: "Request и Response",
 
                 text: `
-                    При работе с API клиент отправляет request —
-                    запрос к серверу.
+                    Request («запрос») — это то, что программа отправляет в API.
 
-                    Сервер обрабатывает запрос
-                    и возвращает response — ответ.
+                    Response («ответ») — это то, что API отправляет обратно.
 
-                    Например:
-
-                    клиент
-                      ↓
-                    GET /users
-                      ↓
-                    сервер
-                      ↓
-                    response
+                    Как в кафе: заказ — это запрос, а поднос с едой — ответ.
                 `
             },
 
             {
-                title: "Request",
+                type: "definition",
+
+                term: "JSON",
 
                 text: `
-                    Request содержит информацию,
-                    которую клиент отправляет серверу.
+                    Данные между программами обычно передают в формате JSON.
 
-                    В зависимости от операции это могут быть:
-
-                    • параметры URL
-                    • query-параметры
-                    • заголовки
-                    • тело запроса
-
-                    Например, при создании пользователя
-                    серверу нужно передать данные нового пользователя.
+                    Это текст, где данные записаны парами «имя: значение»
+                    в фигурных скобках.
                 `
             },
 
             {
-                title: "Response",
+                type: "code",
+
+                title: "Пример JSON с пользователем",
+
+                language: "json",
+
+                code: `
+{
+  "id": 42,
+  "name": "Alex",
+  "email": "alex@example.com"
+}
+                `.trim()
+            },
+
+            {
+                type: "highlight",
+
+                icon: "💡",
+
+                title: "JSON и схема — это пара",
 
                 text: `
-                    Response содержит результат обработки запроса.
-
-                    В ответе обычно есть:
-
-                    • HTTP status code
-                    • заголовки
-                    • тело ответа
-
-                    Например, после создания пользователя
-                    сервер может вернуть созданного User.
+                    JSON — сами данные.
+                    Схема (например, User) — описание: какие поля
+                    должны быть в этих данных.
                 `
             },
 
             {
-                title: "JSON",
+                type: "definition",
+
+                term: "$ref — ссылка на схему",
 
                 text: `
-                    JSON — один из основных форматов,
-                    используемых для передачи данных между API
-                    и клиентом.
+                    Схему User мы описали один раз в components → schemas.
+                    Чтобы не писать её заново в каждом месте,
+                    на неё можно сослаться через $ref.
 
-                    Например:
+                    Это как ссылка в интернете: не копируем страницу,
+                    а просто показываем, где она лежит.
+                `
+            },
 
+            {
+                type: "code",
+
+                title: "Как выглядит ссылка",
+
+                language: "yaml",
+
+                code: `
+$ref: '#/components/schemas/User'
+                `.trim()
+            },
+
+            {
+                type: "highlight",
+
+                icon: "🧭",
+
+                title: "Как читать эту ссылку",
+
+                text: `
+                    '#/components/schemas/User' — это путь внутри
+                    самого файла: components → schemas → User.
+
+                    Знак # значит «в этом же файле».
+                    Ссылку пишем в кавычках.
+                `
+            },
+
+            {
+                type: "definition",
+
+                term: "Тело ответа",
+
+                text: `
+                    Кроме кода и пояснения, ответ может содержать данные.
+                    Их называют «телом ответа».
+
+                    В OpenAPI тело описывается в разделе content:
+                    сначала формат данных (application/json — это JSON),
+                    потом schema — какая схема у данных.
+                `
+            },
+
+            {
+                type: "code",
+
+                title: "Ответ 200 с одним пользователем",
+
+                language: "yaml",
+
+                code: `
+responses:
+  '200':
+    description: User found
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/User'
+                `.trim()
+            },
+
+            {
+                type: "code-explanation",
+
+                title: "Как читать этот пример",
+
+                items: [
                     {
-                      "id": 42,
-                      "name": "Alex",
-                      "email": "alex@example.com"
+                        code: "'200':",
+                        text: "Код ответа. Всё хорошо."
+                    },
+                    {
+                        code: "    content:",
+                        text: "Тело ответа — сами данные."
+                    },
+                    {
+                        code: "      application/json:",
+                        text: "Формат данных: JSON."
+                    },
+                    {
+                        code: "        schema:",
+                        text: "Какие поля в этих данных."
+                    },
+                    {
+                        code: "          $ref: '#/components/schemas/User'",
+                        text: "Берём схему User из components."
                     }
+                ]
+            },
 
-                    Это JSON-объект с тремя свойствами.
+            {
+                type: "definition",
+
+                term: "requestBody — тело запроса",
+
+                text: `
+                    Когда мы создаём пользователя (POST), нужно отправить
+                    его данные: имя и email. Это «тело запроса».
+
+                    Оно описывается так же, как тело ответа: content,
+                    формат, schema. Только называется requestBody.
                 `
             },
 
             {
-                title: "application/json",
+                type: "code",
+
+                title: "Запрос на создание пользователя",
+
+                language: "yaml",
+
+                code: `
+post:
+  summary: Create user
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/UserCreateRequest'
+  responses:
+    '201':
+      description: User created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+                `.trim()
+            },
+
+            {
+                type: "highlight",
+
+                icon: "👀",
+
+                title: "Две разные схемы",
 
                 text: `
-                    В OpenAPI формат данных указывается
-                    через content.
+                    При создании пользователя мы отправляем только name и email.
+                    Номер (id) назначит сервер.
 
-                    Например:
+                    Поэтому для запроса нужна одна схема (UserCreateRequest),
+                    а для ответа другая (User — вместе с id).
 
-                    content:
-                      application/json:
-
-                    application/json означает,
-                    что тело запроса или ответа
-                    передаётся в формате JSON.
+                    required: true означает, что тело запроса обязательно.
                 `
             },
 
             {
-                title: "requestBody",
+                type: "highlight",
+
+                icon: "🎯",
+
+                title: "Главное из урока",
 
                 text: `
-                    Если данные передаются в теле запроса,
-                    в OpenAPI используется requestBody.
+                    Request — что отправляем, response — что получаем.
 
-                    Например, при создании пользователя:
+                    Данные обычно в формате JSON.
 
-                    requestBody:
-                      content:
-                        application/json:
-                          schema:
-                            ...
-                    
-                    Здесь мы говорим,
-                    что POST-запрос принимает JSON
-                    в теле запроса.
-                `
-            },
+                    requestBody — тело запроса, content → application/json → schema — тело ответа.
 
-            {
-                title: "Schema внутри requestBody",
-
-                text: `
-                    В requestBody можно указать,
-                    какую структуру данных ожидает API.
-
-                    Например:
-
-                    schema:
-                      $ref: '#/components/schemas/UserCreateRequest'
-
-                    Теперь API ожидает структуру,
-                    описанную схемой UserCreateRequest.
-                `
-            },
-
-            {
-                title: "Schema внутри response",
-
-                text: `
-                    Аналогичным образом можно описать
-                    тело ответа.
-
-                    Например:
-
-                    responses:
-                      '200':
-                        description: User found
-                        content:
-                          application/json:
-                            schema:
-                              $ref: '#/components/schemas/User'
-
-                    Это означает, что успешный ответ
-                    содержит JSON, соответствующий схеме User.
-                `
-            },
-
-            {
-                title: "Request DTO и Response DTO",
-
-                text: `
-                    Структура данных для создания пользователя
-                    может отличаться от структуры пользователя,
-                    который возвращает API.
-
-                    Например:
-
-                    UserCreateRequest
-
-                    может содержать:
-
-                    name
-                    email
-
-                    А User дополнительно содержит:
-
-                    id
-                    name
-                    email
-
-                    Поэтому для разных операций часто создают
-                    отдельные схемы.
-                `
-            },
-
-            {
-                title: "Почему это важно",
-
-                text: `
-                    Явное описание request и response позволяет
-                    разработчикам заранее понимать,
-                    какие данные принимает и возвращает API.
-
-                    Swagger UI может показать эти структуры
-                    непосредственно в документации.
-
-                    А другие инструменты могут использовать
-                    эти схемы для генерации кода и проверки данных.
+                    $ref — ссылка на готовую схему, чтобы не писать её заново.
                 `
             }
-        ],
-
-        idea: `
-            Request — что клиент отправляет API.
-
-            Response — что API возвращает клиенту.
-
-            JSON — формат передаваемых данных.
-
-            requestBody описывает тело запроса.
-
-            content: application/json указывает,
-            что тело содержит JSON.
-
-            schema описывает структуру этого JSON.
-        `,
-
-        structure: `
-            post:
-              summary: Create user
-
-              requestBody:
-                content:
-                  application/json:
-                    schema:
-                      $ref: '#/components/schemas/UserCreateRequest'
-
-              responses:
-                '201':
-                  description: User created
-                  content:
-                    application/json:
-                      schema:
-                        $ref: '#/components/schemas/User'
-        `,
-
-        explanation: `
-            requestBody используется для описания
-            тела входящего запроса.
-
-            responses описывает возможные ответы.
-
-            Внутри content указывается формат данных,
-            например application/json.
-
-            schema определяет структуру данных,
-            а $ref позволяет использовать
-            уже существующую схему.
-
-            В следующем практическом уроке мы создадим
-            POST /users с полноценным JSON-запросом
-            и JSON-ответом.
-        `
+        ]
     },
 
     nextLesson: {
         text: `
-            В следующем уроке создадим отдельную схему
-            UserCreateRequest и научимся принимать
-            нового пользователя через POST /users.
+            В следующей практике создадим POST /users:
+            принимаем нового пользователя и возвращаем созданного.
         `
     }
 };

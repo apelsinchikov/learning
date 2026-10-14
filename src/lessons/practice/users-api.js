@@ -12,7 +12,6 @@ export const usersApi = {
     sidebarDescription: "Описываем Users API",
 
     theoryLinks: [
-        "theory-1",
         "theory-2"
     ],
 
@@ -67,7 +66,7 @@ export const usersApi = {
             Для него укажи:
 
             • summary: Create user
-            • ответ с кодом '201'
+            • ответ с кодом '201' (создано — см. шпаргалку кодов в теории)
             • description ответа: User created
 
             Метод post должен стоять с таким же отступом, как get.

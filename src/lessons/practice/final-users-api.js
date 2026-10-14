@@ -13,14 +13,12 @@ export const finalUsersApi = {
     sidebarDescription: "Финальное задание",
 
     theoryLinks: [
-        "theory-1",
         "theory-2",
         "theory-3",
         "theory-4",
         "theory-5",
         "theory-6",
-        "theory-7",
-        "theory-8"
+        "theory-7"
     ],
 
     theory: {

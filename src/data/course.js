@@ -1,15 +1,19 @@
-import { openapiBasics } from "../lessons/theory/openapi-basics.js";
+import { apiBasics } from "../lessons/theory/api-basics.js";
+import { yamlBasics } from "../lessons/theory/yaml-basics.js";
+import { skeleton } from "../lessons/practice/skeleton.js";
 import { helloUsers } from "../lessons/practice/hello-users.js";
 
 import { pathsMethodsNaming } from "../lessons/theory/paths-methods-naming.js";
 import { usersApi } from "../lessons/practice/users-api.js";
 
 import { schemasProperties } from "../lessons/theory/schemas-properties.js";
-import { objectsArraysRefs } from "../lessons/theory/objects-arrays-refs.js";
 import { userDto } from "../lessons/practice/user-dto.js";
 
 import { requestResponseJson } from "../lessons/theory/request-response-json.js";
 import { createUser } from "../lessons/practice/create-user.js";
+
+import { objectsArraysRefs } from "../lessons/theory/objects-arrays-refs.js";
+import { usersList } from "../lessons/practice/users-list.js";
 
 import { parameters } from "../lessons/theory/parameters.js";
 import { getUser } from "../lessons/practice/get-user.js";
@@ -18,7 +22,6 @@ import { queryParameters } from "../lessons/practice/query-parameters.js";
 import { statusCodes } from "../lessons/theory/status-codes.js";
 import { updateDeleteUser } from "../lessons/practice/update-delete-user.js";
 
-import { goodSpecification } from "../lessons/theory/good-specification.js";
 import { finalUsersApi } from "../lessons/practice/final-users-api.js";
 
 import { databaseToApi } from "../lessons/theory/database-to-api.js";
@@ -30,60 +33,65 @@ import { bestPractices } from "../lessons/theory/best-practices.js";
 export const course = [
 
     // 1
-    openapiBasics,
+    apiBasics,
 
     // 2
-    helloUsers,
+    yamlBasics,
 
     // 3
-    pathsMethodsNaming,
+    skeleton,
 
     // 4
-    usersApi,
+    helloUsers,
 
     // 5
-    schemasProperties,
+    pathsMethodsNaming,
 
     // 6
-    objectsArraysRefs,
+    usersApi,
 
     // 7
-    userDto,
+    schemasProperties,
 
     // 8
-    requestResponseJson,
+    userDto,
 
     // 9
-    createUser,
+    requestResponseJson,
 
     // 10
-    parameters,
+    createUser,
 
     // 11
-    getUser,
+    objectsArraysRefs,
 
     // 12
-    queryParameters,
+    usersList,
 
     // 13
-    statusCodes,
+    parameters,
 
     // 14
-    updateDeleteUser,
+    getUser,
 
     // 15
-    goodSpecification,
+    queryParameters,
 
     // 16
-    finalUsersApi,
+    statusCodes,
 
     // 17
-    databaseToApi,
+    updateDeleteUser,
 
     // 18
-    usersFromDatabase,
+    finalUsersApi,
 
     // 19
-    bestPractices
+    databaseToApi,
 
+    // 20
+    usersFromDatabase,
+
+    // 21
+    bestPractices
 ];

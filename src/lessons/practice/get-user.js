@@ -13,8 +13,6 @@ export const getUser = {
     sidebarDescription: "GET /users/{id}",
 
     theoryLinks: [
-        "theory-3",
-        "theory-4",
         "theory-6"
     ],
 

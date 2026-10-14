@@ -5,16 +5,15 @@ export const userDto = {
 
     icon: "🛠️",
 
-    title: "User DTO",
+    title: "Схема User",
 
     subtitle:
-        "Опишем структуру пользователя с помощью OpenAPI Schema.",
+        "Опишем, из каких полей состоит пользователь.",
 
-    sidebarDescription: "Создаём User DTO",
+    sidebarDescription: "Описываем пользователя",
 
     theoryLinks: [
-        "theory-3",
-        "theory-4"
+        "theory-3"
     ],
 
     theory: {

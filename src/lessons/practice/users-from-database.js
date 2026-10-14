@@ -7,7 +7,6 @@ export const usersFromDatabase = {
     sidebarDescription: "API поверх БД",
 
     theoryLinks: [
-        "theory-1",
         "theory-3",
         "theory-4",
         "theory-5",
