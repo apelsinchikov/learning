@@ -4,12 +4,39 @@ import { Theory } from "./Theory.js";
 import { Editor } from "./Editor.js";
 import { SwaggerPreview } from "./SwaggerPreview.js";
 import { course } from "../data/course.js";
+import { escapeHtml } from "../utils/textFormat.js";
 
 export function App(currentLessonIndex = 0) {
     const currentLesson = course[currentLessonIndex];
     const hasPreviousLesson = currentLessonIndex > 0;
     const hasNextLesson = currentLessonIndex < course.length - 1;
     const isPractice = currentLesson.type === "practice";
+
+    /*
+     * Кнопки «Предыдущий / Следующий урок» показываем и сверху
+     * (чтобы не листать длинный урок), и снизу (когда дочитал).
+     */
+    function renderLessonNavigation(position) {
+        if (!hasPreviousLesson && !hasNextLesson) {
+            return "";
+        }
+
+        return `
+            <nav class="lesson-navigation lesson-navigation--${position}">
+                ${
+                    hasPreviousLesson
+                        ? `<button class="nav-button nav-button--previous">← Предыдущий урок</button>`
+                        : "<span></span>"
+                }
+
+                ${
+                    hasNextLesson
+                        ? `<button class="nav-button nav-button--next">Следующий урок →</button>`
+                        : ""
+                }
+            </nav>
+        `;
+    }
 
     return `
         <div class="app">
@@ -27,25 +54,13 @@ export function App(currentLessonIndex = 0) {
                                 · УРОК ${currentLessonIndex + 1}
                             </div>
 
-                            <h1>${currentLesson.title}</h1>
+                            <h1>${escapeHtml(currentLesson.title)}</h1>
 
-                            <p>${currentLesson.subtitle}</p>
-                        </div>
-
-                        <div class="lesson-navigation">
-                            ${
-                                hasPreviousLesson
-                                    ? `<button class="next-button" id="previous-button">← Предыдущий урок</button>`
-                                    : ""
-                            }
-
-                            ${
-                                hasNextLesson
-                                    ? `<button class="next-button" id="next-button">Следующий урок →</button>`
-                                    : ""
-                            }
+                            <p>${escapeHtml(currentLesson.subtitle)}</p>
                         </div>
                     </div>
+
+                    ${renderLessonNavigation("top")}
 
                     <div class="workspace">
                         ${Theory(currentLesson)}
@@ -56,6 +71,8 @@ export function App(currentLessonIndex = 0) {
                                 : ""
                         }
                     </div>
+
+                    ${renderLessonNavigation("bottom")}
                 </main>
             </div>
         </div>

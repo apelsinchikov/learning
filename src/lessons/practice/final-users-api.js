@@ -13,31 +13,27 @@ export const finalUsersApi = {
     sidebarDescription: "Финальное задание",
 
     theoryLinks: [
-        "theory-1",
         "theory-2",
         "theory-3",
         "theory-4",
         "theory-5",
         "theory-6",
-        "theory-7",
-        "theory-8"
+        "theory-7"
     ],
 
     theory: {
         title: "Финальная спецификация",
 
         text: `
-            В этом задании нужно самостоятельно собрать
-            полноценную спецификацию Users API.
+            Это итоговое задание. Ты соберёшь всё описание Users API
+            сам, с нуля, по списку требований — как на реальной работе.
 
-            Мы объединим практически все элементы,
-            которые изучили в курсе.
+            Здесь нет готового примера: всё, что нужно, ты уже
+            делал в прошлых практиках.
 
-            Здесь уже не будет готовой структуры,
-            которую нужно просто дополнить.
-
-            Тебе нужно самостоятельно построить
-            спецификацию на основе требований.
+            Совет: не пытайся написать всё сразу. Иди по списку
+            сверху вниз и нажимай «Проверить» после каждого пункта —
+            так проще найти, где ошибка.
         `,
 
         idea: `
@@ -55,7 +51,7 @@ export const finalUsersApi = {
             Создай полноценную OpenAPI 3.0.3 спецификацию
             Users API.
 
-            ОБЩАЯ ЧАСТЬ
+            1. ОБЩАЯ ЧАСТЬ (название и версия)
 
             Используй:
 
@@ -66,7 +62,7 @@ export const finalUsersApi = {
               version: 1.0.0
 
 
-            USER SCHEMA
+            2. СХЕМА User
 
             Создай:
 
@@ -92,7 +88,7 @@ export const finalUsersApi = {
             Все три свойства обязательные.
 
 
-            USER CREATE REQUEST
+            3. СХЕМА UserCreateRequest (для создания)
 
             Создай:
 
@@ -112,7 +108,7 @@ export const finalUsersApi = {
             Оба свойства обязательные.
 
 
-            GET /users
+            4. GET /users (список)
 
             Добавь:
 
@@ -146,7 +142,7 @@ export const finalUsersApi = {
             через $ref.
 
 
-            POST /users
+            5. POST /users (создать)
 
             Добавь:
 
@@ -172,7 +168,7 @@ export const finalUsersApi = {
             через $ref.
 
 
-            GET /users/{id}
+            6. GET /users/{id} (получить одного)
 
             Добавь:
 
@@ -198,7 +194,7 @@ export const finalUsersApi = {
             Успешный ответ должен возвращать JSON User.
 
 
-            PUT /users/{id}
+            7. PUT /users/{id} (изменить)
 
             Добавь:
 
@@ -223,7 +219,7 @@ export const finalUsersApi = {
             Успешный ответ должен возвращать JSON User.
 
 
-            DELETE /users/{id}
+            8. DELETE /users/{id} (удалить)
 
             Добавь:
 
@@ -243,7 +239,7 @@ export const finalUsersApi = {
               description: User not found
 
 
-            OPERATION ID
+            9. OPERATION ID (уникальные имена операций)
 
             Все операции должны иметь operationId.
 
@@ -291,10 +287,10 @@ info:
   title: Users API
   version: 1.0.0
 
-paths: {}
+paths:
 
 components:
-  schemas: {}`,
+  schemas:`,
 
     validation: {
         paths: {

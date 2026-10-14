@@ -12,48 +12,65 @@ export const helloUsers = {
     sidebarDescription: "Первый endpoint",
 
     theoryLinks: [
-        "theory-1"
+        "theory-api-basics",
+        "theory-yaml"
     ],
 
     theory: {
-        title: "Первый шаг",
+        title: "Первый адрес",
 
         text: `
-            В предыдущем уроке мы разобрались, что OpenAPI
-            описывает API.
+            Теперь добавим в описание первый адрес — GET /users.
 
-            Теперь создадим первую операцию нашего Users API.
-
-            Пока не будем создавать DTO, схемы и сложные структуры.
-            Наша задача — просто описать существование endpoint
-            GET /users и его успешный ответ.
+            Для каждого адреса нужно сказать, что API ответит.
+            Ответ описывается в разделе responses.
         `,
 
         idea: `
-            GET /users означает:
+            responses — список возможных ответов API.
 
-            «у нашего API существует операция GET,
-            доступная по адресу /users».
+            У каждого ответа есть код — число, которое говорит,
+            как всё прошло. Код 200 значит «всё хорошо».
+
+            description — короткое пояснение к ответу человеческим языком.
         `,
 
         structure: `
             paths:
-              /users:
+              /ping:
                 get:
-                  summary: Get users
+                  summary: Ping
                   responses:
                     '200':
-                      description: Users endpoint works
+                      description: Server is alive
+        `,
+
+        explanation: `
+            Это пример для другого адреса — /ping. Тебе нужно сделать
+            то же самое, но для /users.
+
+            paths — раздел со всеми адресами.
+            /ping — адрес (всегда начинается с «/»).
+            get — метод, «получить данные».
+            summary — короткое название операции.
+            responses → '200' → description — ответ и его пояснение.
+
+            Код 200 пишем в кавычках: '200'.
+            Каждый уровень вложенности сдвинут на 2 пробела.
         `,
 
         task: `
-            Добавь в спецификацию endpoint GET /users.
+            Добавь в раздел paths адрес GET /users.
 
-            Для операции укажи:
+            Для него укажи:
 
             • summary: Get users
-            • успешный ответ с кодом 200
+            • ответ с кодом '200' (в кавычках, как в примере)
             • description ответа: Users endpoint works
+
+            Подсказка: поставь курсор в конец строки paths: и нажми Enter.
+            Редактор сам сделает отступ. Если нужно сдвинуть строку,
+            используй Tab (вправо) и Shift + Tab (влево).
         `
     },
 
@@ -61,7 +78,7 @@ export const helloUsers = {
 info:
   title: Users API
   version: 1.0.0
-paths: {}`,
+paths:`,
 
     validation: {
         requiredPath: "/users",
@@ -72,9 +89,8 @@ paths: {}`,
     },
 
     successMessage: `
-        Отлично! Ты создал первый endpoint своего Users API.
+        Отлично! Ты описал первый адрес своего Users API.
 
-        Swagger UI построил документацию на основе
-        написанной тобой OpenAPI-спецификации.
+        Swagger UI построил документацию по тому, что ты написал.
     `
 };

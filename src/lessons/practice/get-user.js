@@ -13,8 +13,6 @@ export const getUser = {
     sidebarDescription: "GET /users/{id}",
 
     theoryLinks: [
-        "theory-3",
-        "theory-4",
         "theory-6"
     ],
 
@@ -22,15 +20,13 @@ export const getUser = {
         title: "Получение конкретного пользователя",
 
         text: `
-            До этого момента GET /users описывал
-            получение списка пользователей.
+            Мы уже описали список пользователей — GET /users.
 
-            Теперь добавим отдельную операцию:
+            Теперь научимся получать одного пользователя по номеру.
+            Для этого нужен адрес /users/{id}: вместо {id}
+            подставляется номер, например /users/42.
 
-            GET /users/{id}
-
-            Она будет использовать path parameter,
-            чтобы указать конкретного пользователя.
+            Этот номер называется path-параметром — частью адреса.
         `,
 
         idea: `
@@ -51,12 +47,12 @@ export const getUser = {
         `,
 
         structure: `
-            /users/{id}:
+            /products/{productId}:
               get:
-                summary: Get user
+                summary: Get product
 
                 parameters:
-                  - name: id
+                  - name: productId
                     in: path
                     required: true
                     schema:
@@ -64,10 +60,18 @@ export const getUser = {
 
                 responses:
                   '200':
-                    description: User found
+                    description: Product found
 
                   '404':
-                    description: User not found
+                    description: Product not found
+        `,
+
+        explanation: `
+            Это пример для товара (/products/{productId}). Тебе нужен адрес
+            /users/{id}, а параметр называется id.
+
+            Обрати внимание: имя параметра в фигурных скобках адреса
+            должно совпадать с name в parameters.
         `,
 
         task: `
@@ -93,10 +97,8 @@ export const getUser = {
             404:
               description: User not found
 
-            Пока не добавляй content и schema
-            в ответы — мы уже использовали их
-            для POST /users и вернёмся к ним
-            при дальнейшей доработке API.
+            Содержимое ответов (content и schema) пока не нужно:
+            описываем только коды и пояснения.
         `
     },
 

@@ -1,0 +1,129 @@
+/* ---------------------------------------------------------
+   Mermaid database diagram
+   --------------------------------------------------------- */
+
+.database-diagram__legend {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    margin-top: 8px;
+    color: #6e7887;
+    font-size: 10px;
+}
+
+.database-diagram__legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.database-diagram__legend-item strong {
+    color: #46617d;
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+    font-size: 10px;
+}
+
+/* ---------------------------------------------------------
+   Practice layout:
+   theory scrolls independently,
+   editor + Swagger stay in place
+   --------------------------------------------------------- */
+
+.workspace:has(.editor-panel) {
+    height: calc(100vh - 210px);
+    min-height: 560px;
+    align-items: stretch;
+}
+
+.workspace:has(.editor-panel) > .panel {
+    min-height: 0;
+    height: 100%;
+}
+
+.workspace:has(.editor-panel) > .panel .panel-body {
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.workspace:has(.editor-panel) > .theory-panel .panel-body {
+    overflow-y: auto;
+}
+
+.workspace:has(.editor-panel) > .editor-panel .panel-body {
+    overflow: hidden;
+}
+
+.workspace:has(.editor-panel) > .swagger-panel {
+    min-height: 0;
+}
+
+.workspace:has(.editor-panel) > .swagger-panel .panel-body {
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.workspace:has(.editor-panel) > .swagger-panel .swagger-ui {
+    min-height: 0;
+}
+
+/* ---------------------------------------------------------
+   Practice code blocks become light cards too
+   --------------------------------------------------------- */
+
+.workspace .practice-code pre {
+    background: #f8fafc;
+}
+
+.workspace .practice-code__copy-label {
+    color: #8a94a3;
+}
+
+/* ---------------------------------------------------------
+   Responsive
+   --------------------------------------------------------- */
+
+@media (max-width: 1250px) {
+    .workspace:has(.editor-panel) {
+            height: calc(100vh - 210px);
+            min-height: 560px;
+        }
+}
+
+@media (max-width: 900px) {
+    .workspace:has(.editor-panel) {
+            height: auto;
+            min-height: 0;
+        }
+
+    .workspace:has(.editor-panel) > .panel {
+            height: auto;
+            min-height: 620px;
+        }
+}
+
+/* =========================================================
+   Swagger UI isolation
+   ========================================================= */
+
+.swagger-panel .swagger-ui {
+    font-family: Arial, sans-serif;
+}
+
+.swagger-panel .swagger-ui button {
+    font-family: inherit;
+}
+
+.swagger-panel .swagger-ui pre {
+    font-family: monospace;
+}
+
+.swagger-panel .swagger-ui code {
+    font-family: monospace;
+}

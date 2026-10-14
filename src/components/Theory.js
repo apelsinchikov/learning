@@ -1,5 +1,12 @@
 import { DatabaseDiagram } from "./DatabaseDiagram.js";
 import { format } from "sql-formatter";
+import {
+    escapeHtml,
+    renderInline,
+    renderText,
+    highlightCode,
+    dedentText
+} from "../utils/textFormat.js";
 
 export function Theory(lesson) {
     const theory = lesson.theory;
@@ -9,155 +16,6 @@ export function Theory(lesson) {
     }
 
     const isPractice = lesson.type === "practice";
-
-    function escapeHtml(text = "") {
-        return String(text)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-
-    function renderInline(text = "") {
-        let result = escapeHtml(text);
-
-        result = result.replace(
-            /`([^`]+)`/g,
-            '<code class="inline-code">$1</code>'
-        );
-
-        result = result.replace(
-            /\*\*([^*]+)\*\*/g,
-            "<strong>$1</strong>"
-        );
-
-        return result;
-    }
-
-    function highlightCode(text, language = "yaml") {
-        const escaped = escapeHtml(text || "");
-
-        if (language === "json") {
-            return escaped
-                .replace(
-                    /(&quot;[^&]*?&quot;)(\s*:)/g,
-                    '<span class="code-key">$1</span>$2'
-                )
-                .replace(
-                    /(:\s*)(&quot;[^&]*?&quot;)/g,
-                    '$1<span class="code-string">$2</span>'
-                )
-                .replace(
-                    /\b(true|false|null)\b/g,
-                    '<span class="code-value">$1</span>'
-                )
-                .replace(
-                    /\b(\d+(?:\.\d+)?)\b/g,
-                    '<span class="code-number">$1</span>'
-                );
-        }
-
-        if (language === "sql") {
-            let result = escaped;
-
-            result = result.replace(
-                /\b(SELECT|FROM|LEFT JOIN|RIGHT JOIN|INNER JOIN|FULL JOIN|JOIN|ON|WHERE|AND|OR|GROUP BY|ORDER BY|INSERT INTO|VALUES|UPDATE|SET|DELETE FROM)\b/gi,
-                '<span class="code-sql-keyword">$1</span>'
-            );
-
-            result = result.replace(
-                /('(?:''|[^'])*')/g,
-                '<span class="code-string">$1</span>'
-            );
-
-            result = result.replace(
-                /\b(\d+)\b/g,
-                '<span class="code-number">$1</span>'
-            );
-
-            return result;
-        }
-
-        return escaped
-            .split("\n")
-            .map(line => {
-                const match = line.match(
-                    /^(\s*)([^:#\n]+)(:)(.*)$/
-                );
-
-                if (!match) {
-                    return line;
-                }
-
-                const indentation = match[1];
-                const key = match[2];
-                const colon = match[3];
-                const value = match[4];
-
-                let styledValue = value;
-
-                if (value.trim().startsWith("#")) {
-                    styledValue =
-                        `<span class="code-comment">${value}</span>`;
-                } else if (value.trim() !== "") {
-                    styledValue =
-                        `<span class="code-string">${value}</span>`;
-                }
-
-                return `${indentation}<span class="code-key">${key}</span>${colon}${styledValue}`;
-            })
-            .join("\n");
-    }
-
-    function renderText(text) {
-        if (!text) {
-            return "";
-        }
-
-        return String(text)
-            .trim()
-            .split(/\n\s*\n/)
-            .map(block => {
-                const lines = block
-                    .split("\n")
-                    .map(line => line.trim())
-                    .filter(Boolean);
-
-                if (lines.length === 0) {
-                    return "";
-                }
-
-                const isList = lines.every(
-                    line =>
-                        line.startsWith("- ") ||
-                        line.startsWith("• ")
-                );
-
-                if (isList) {
-                    return `
-                        <ul class="theory-list">
-                            ${lines
-                                .map(line => `
-                                    <li>
-                                        ${renderInline(
-                                            line.replace(/^[-•]\s+/, "")
-                                        )}
-                                    </li>
-                                `)
-                                .join("")}
-                        </ul>
-                    `;
-                }
-
-                return `
-                    <p class="theory-paragraph">
-                        ${renderInline(lines.join(" "))}
-                    </p>
-                `;
-            })
-            .join("");
-    }
 
     function renderDefinition(section) {
         return `
@@ -226,7 +84,7 @@ export function Theory(lesson) {
     }
 
     function renderCode(section) {
-        let code = section.code || "";
+        let code = dedentText(section.code);
 
         if (section.language === "sql") {
             try {
@@ -299,9 +157,7 @@ export function Theory(lesson) {
                                 <div class="theory-code-explanation__body">
 
                                     <div class="theory-code-explanation__code">
-                                        <code>
-                                            ${renderInline(item.code)}
-                                        </code>
+                                        <code>${renderInline(item.code)}</code>
                                     </div>
 
                                     <div class="theory-code-explanation__text">
@@ -443,9 +299,7 @@ export function Theory(lesson) {
                                     ${
                                         item.code
                                             ? `
-                                                <div class="theory-step__code">
-                                                    ${renderInline(item.code)}
-                                                </div>
+                                                <div class="theory-step__code"><code>${escapeHtml(item.code)}</code></div>
                                             `
                                             : ""
                                     }
@@ -562,7 +416,7 @@ export function Theory(lesson) {
                 </div>
 
                 <pre><code>${highlightCode(
-                    section.code,
+                    dedentText(section.code),
                     section.language
                 )}</code></pre>
 
@@ -879,7 +733,7 @@ export function Theory(lesson) {
         }
 
         if (typeof task === "string") {
-            return renderText(task);
+            task = { intro: task };
         }
 
         return `
@@ -1082,6 +936,16 @@ export function Theory(lesson) {
                         ? `
                             <div class="theory-intro">
                                 ${renderText(theory.intro)}
+                            </div>
+                        `
+                        : ""
+                }
+
+                ${
+                    theory.text
+                        ? `
+                            <div class="theory-intro">
+                                ${renderText(theory.text)}
                             </div>
                         `
                         : ""
