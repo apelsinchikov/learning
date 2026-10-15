@@ -94,3 +94,14 @@
 .theory-warning .theory-list:last-child {
     margin-bottom: 0;
 }
+
+@media (max-width: 700px) {
+    .header {
+        padding: 0 12px;
+    }
+
+    .header__subtitle,
+    .auth-user {
+        display: none;
+    }
+}

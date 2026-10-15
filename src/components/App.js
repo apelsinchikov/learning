@@ -40,7 +40,7 @@ export function App(currentLessonIndex = 0, { progress, user } = {}) {
 
     return `
         <div class="app">
-            ${Header()}
+            ${Header({ user })}
 
             <div class="app-layout">
                 ${Sidebar(currentLessonIndex, progress)}

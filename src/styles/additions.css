@@ -251,3 +251,156 @@
 .success-banner__text .theory-list li {
     color: #14532d;
 }
+
+/* =========================================================
+   Вход и профиль
+   ========================================================= */
+
+.header__auth {
+    margin-left: auto;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.auth-user {
+    max-width: 180px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    font-size: 14px;
+    color: #d1d5db;
+}
+
+.auth-button {
+    padding: 8px 16px;
+
+    border: 1px solid #635bff;
+    border-radius: 8px;
+
+    background: #635bff;
+    color: white;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.auth-button:hover {
+    background: #5148e0;
+}
+
+.auth-button--ghost {
+    border-color: #4b5563;
+    background: transparent;
+    color: #d1d5db;
+}
+
+.auth-button--ghost:hover {
+    background: #272b35;
+}
+
+.auth-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-modal__backdrop {
+    position: absolute;
+    inset: 0;
+
+    background: rgba(17, 24, 39, 0.55);
+}
+
+.auth-modal__card {
+    position: relative;
+
+    width: min(420px, calc(100vw - 32px));
+
+    padding: 28px;
+
+    border-radius: 14px;
+
+    background: white;
+    color: #1f2937;
+
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.auth-modal__card h2 {
+    margin: 0 0 8px;
+}
+
+.auth-modal__card p {
+    margin: 0 0 20px;
+
+    line-height: 1.5;
+    color: #4b5563;
+}
+
+.auth-modal__close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+
+    border: 0;
+
+    background: none;
+
+    font-size: 26px;
+    color: #6b7280;
+
+    cursor: pointer;
+}
+
+.auth-modal__providers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.auth-provider {
+    padding: 12px 16px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+
+    background: white;
+    color: #1f2937;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.auth-provider:hover {
+    background: #f3f4f6;
+}
+
+.sync-notice {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 1100;
+
+    max-width: 320px;
+
+    padding: 10px 14px;
+
+    border-radius: 8px;
+
+    background: #1f2937;
+    color: white;
+
+    font-size: 13px;
+}
