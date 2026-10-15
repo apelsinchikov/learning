@@ -140,6 +140,23 @@ export function createProgressService({
         }, debounceMs);
     }
 
+    function signedOut() {
+        if (userId === null && owner === null && pendingSignIn === null) {
+            return;
+        }
+
+        timers.clearTimeout(draftTimer);
+        draftTimer = null;
+        pendingLessons.clear();
+        pendingCurrent = false;
+        pendingSignIn = null;
+        userId = null;
+        owner = null;
+        progress = createEmptyProgress();
+        localStore.clear();
+        notify();
+    }
+
     return {
         getProgress: () => progress,
 
@@ -189,22 +206,7 @@ export function createProgressService({
 
         signedIn: id => enqueue(() => performSignIn(id)),
 
-        signedOut() {
-            if (userId === null && owner === null && pendingSignIn === null) {
-                return;
-            }
-
-            timers.clearTimeout(draftTimer);
-            draftTimer = null;
-            pendingLessons.clear();
-            pendingCurrent = false;
-            pendingSignIn = null;
-            userId = null;
-            owner = null;
-            progress = createEmptyProgress();
-            localStore.clear();
-            notify();
-        },
+        signedOut,
 
         /* Вызывается при старте: есть ли уже действующая сессия. */
         async restoreSession(id) {
@@ -213,7 +215,7 @@ export function createProgressService({
             }
 
             if (owner !== null || userId !== null) {
-                this.signedOut();
+                signedOut();
             }
         },
 

@@ -55,7 +55,7 @@ export function createAuthService(
         },
 
         async signOut() {
-            const { error } = await client.auth.signOut();
+            const { error } = await client.auth.signOut({ scope: "local" });
 
             if (error) {
                 throw new Error(error.message);

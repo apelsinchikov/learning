@@ -264,6 +264,16 @@ describe("progressService: выход", () => {
         expect(guest.service.getProgress().lessons.p1.solved).toBe(true);
     });
 
+    it("restoreSession можно вызвать отдельно от объекта сервиса", async () => {
+        const cacheOfA = markSolved(createEmptyProgress(), "p1");
+        const { service } = setup({ local: fakeLocalStore(cacheOfA, "userA") });
+        const { restoreSession } = service;
+
+        await restoreSession(null);
+
+        expect(service.getProgress()).toEqual(createEmptyProgress());
+    });
+
     it("restoreSession(userId) работает как signedIn", async () => {
         const { service } = setup({
             cloudProgress: markRead(createEmptyProgress(), "t1")

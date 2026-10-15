@@ -135,6 +135,15 @@ describe("authService.signOut", () => {
 
         expect(client.auth.signOut).toHaveBeenCalledTimes(1);
     });
+
+    it("выход только на этом устройстве, другие устройства остаются в системе", async () => {
+        const client = fakeClient();
+        const service = createAuthService(client, { redirectTo: REDIRECT });
+
+        await service.signOut();
+
+        expect(client.auth.signOut).toHaveBeenCalledWith({ scope: "local" });
+    });
 });
 
 
