@@ -263,3 +263,30 @@ components:
         expect(result.taskErrors).toEqual([]);
     });
 });
+
+describe("PUT и PATCH в курсе", () => {
+    const dump = lesson => JSON.stringify(lesson.theory);
+
+    it("в уроке про методы есть PATCH в таблице и объяснение разницы с PUT", () => {
+        const lesson = course.find(item => item.id === "theory-2");
+        const text = dump(lesson);
+
+        expect(text).toContain("PATCH /users/42");
+        expect(text).toContain("PUT и PATCH");
+    });
+
+    it("в практике про изменение объяснено, чем PUT отличается от PATCH и когда что брать", () => {
+        const lesson = course.find(item => item.id === "practice-7");
+        const text = dump(lesson);
+
+        expect(text).toContain("Чем отличаются");
+        expect(text).toContain("Какой метод выбрать");
+        expect(text).toContain("Только те поля, которые меняем");
+    });
+
+    it("практика про изменение по-прежнему рендерится", () => {
+        const lesson = course.find(item => item.id === "practice-7");
+
+        expect(() => Theory(lesson)).not.toThrow();
+    });
+});
