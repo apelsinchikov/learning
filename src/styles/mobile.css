@@ -105,3 +105,13 @@
         display: none;
     }
 }
+
+@media (max-width: 700px) {
+    .header__progress {
+        width: 70px;
+    }
+
+    .header__progress-text span {
+        display: none;
+    }
+}

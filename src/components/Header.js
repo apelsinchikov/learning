@@ -1,6 +1,7 @@
 import { renderAuthControls } from "../auth/authView.js";
+import { ProgressSummary } from "./ProgressSummary.js";
 
-export function Header({ user = null } = {}) {
+export function Header({ user = null, progress } = {}) {
     return `
         <header class="header">
             <div class="header__brand">
@@ -16,6 +17,8 @@ export function Header({ user = null } = {}) {
             </div>
 
             <div class="header__auth">
+                ${ProgressSummary(progress)}
+
                 ${renderAuthControls(user)}
             </div>
         </header>

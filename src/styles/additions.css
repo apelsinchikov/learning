@@ -410,3 +410,29 @@
 
     color: #b91c1c;
 }
+
+/* Прогресс в шапке */
+
+.header__progress {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    width: 110px;
+}
+
+.header__progress-text {
+    display: flex;
+    justify-content: space-between;
+
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.header__progress-text strong {
+    color: #e5e7eb;
+}
+
+.header__progress .progress-bar {
+    background: #374151;
+}

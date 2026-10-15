@@ -12,6 +12,7 @@ import { bindLessonList, initNavigation } from "./ui/navigation.js";
 import { showSwagger, showValidationErrors } from "./ui/swaggerPreview.js";
 
 import { Sidebar } from "./components/Sidebar.js";
+import { ProgressSummary } from "./components/ProgressSummary.js";
 import { ENABLED_PROVIDERS } from "./auth/config.js";
 import { createSupabaseClient } from "./auth/supabaseClient.js";
 import { createAuthService } from "./auth/authService.js";
@@ -100,6 +101,12 @@ function refreshSidebarIfNeeded() {
 
     sidebar.outerHTML = Sidebar(currentLessonIndex, progressService.getProgress());
     bindLessonList(goToLesson);
+
+    const summary = document.querySelector(".header__progress");
+
+    if (summary) {
+        summary.outerHTML = ProgressSummary(progressService.getProgress());
+    }
 }
 
 function showSyncNotice() {
