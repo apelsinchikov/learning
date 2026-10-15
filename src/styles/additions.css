@@ -404,3 +404,9 @@
 
     font-size: 13px;
 }
+
+.auth-modal__card p.auth-modal__error {
+    margin: 0 0 12px;
+
+    color: #b91c1c;
+}

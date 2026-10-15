@@ -39,6 +39,8 @@ export function renderLoginModal(providers) {
                     с другого устройства. Курс доступен и без входа.
                 </p>
 
+                <p class="auth-modal__error" role="alert" hidden></p>
+
                 <div class="auth-modal__providers">
                     ${providers.map(provider => `
                         <button
