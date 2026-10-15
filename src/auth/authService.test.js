@@ -181,9 +181,9 @@ describe("authService: Яндекс", () => {
 });
 
 describe("список провайдеров", () => {
-    it("Яндекс не показывается, пока не включён, а Google показывается", async () => {
+    it("в окне входа показываются Google и Яндекс", async () => {
         const { ENABLED_PROVIDERS } = await import("./config.js");
 
-        expect(ENABLED_PROVIDERS.map(provider => provider.id)).toEqual(["google"]);
+        expect(ENABLED_PROVIDERS.map(provider => provider.id)).toEqual(["google", "yandex"]);
     });
 });
