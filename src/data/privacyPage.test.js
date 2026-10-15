@@ -41,3 +41,16 @@ describe("политика конфиденциальности для пров�
         expect(text.length).toBeGreaterThan(2500);
     });
 });
+
+describe("подтверждение владения сайтом в Google Search Console", () => {
+    it("файл подтверждения лежит в public с точным содержимым", () => {
+        const file = readFileSync(
+            new URL("../../public/google6b14ffeb5266d7f6.html", import.meta.url),
+            "utf8"
+        );
+
+        expect(file.trim()).toBe(
+            "google-site-verification: google6b14ffeb5266d7f6.html"
+        );
+    });
+});
