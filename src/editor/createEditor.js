@@ -32,7 +32,17 @@ const tabHandler = EditorView.domEventHandlers({
 });
 
 
-export function createYamlEditor(parent, initialText) {
+/*
+ * onChange (необязательный) вызывается с полным текстом при каждой правке —
+ * по нему сохраняется черновик.
+ */
+export function createYamlEditor(parent, initialText, { onChange } = {}) {
+    const changeListener = EditorView.updateListener.of(update => {
+        if (update.docChanged && onChange) {
+            onChange(update.state.doc.toString());
+        }
+    });
+
     return new EditorView({
         state: EditorState.create({
             doc: initialText,
@@ -42,7 +52,8 @@ export function createYamlEditor(parent, initialText) {
                 yaml(),
                 multiLineSelection,
                 yamlEnter,
-                tabHandler
+                tabHandler,
+                changeListener
             ]
         }),
 
