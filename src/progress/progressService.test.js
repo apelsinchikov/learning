@@ -285,3 +285,39 @@ describe("progressService: выход", () => {
         expect(service.getProgress().lessons.t1.read).toBe(true);
     });
 });
+
+
+describe("progressService: таймеры по умолчанию", () => {
+    it("работает с настоящими setTimeout/clearTimeout браузера (они не терпят вызова как метод чужого объекта)", async () => {
+        const originalClear = globalThis.clearTimeout;
+        const originalSet = globalThis.setTimeout;
+        const strict = original => function (...args) {
+            if (this !== undefined && this !== globalThis) {
+                throw new TypeError("Can only call Window.clearTimeout on instances of Window");
+            }
+
+            return original(...args);
+        };
+
+        globalThis.clearTimeout = strict(originalClear);
+        globalThis.setTimeout = strict(originalSet);
+
+        try {
+            const service = createProgressService({
+                localStore: fakeLocalStore(),
+                cloudStore: fakeCloudStore()
+            });
+
+            await service.signedIn("u1");
+            service.saveDraft("p1", "text");
+
+            await service.flush();
+            service.signedOut();
+        } finally {
+            globalThis.clearTimeout = originalClear;
+            globalThis.setTimeout = originalSet;
+        }
+
+        expect(true).toBe(true);
+    });
+});

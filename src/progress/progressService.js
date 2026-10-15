@@ -21,7 +21,14 @@ export function createProgressService({
     localStore,
     cloudStore,
     debounceMs = 1500,
-    timers = { setTimeout, clearTimeout }
+    /*
+     * Обёртки нужны: браузерные setTimeout/clearTimeout нельзя вызывать
+     * как методы чужого объекта (timers.clearTimeout(...)).
+     */
+    timers = {
+        setTimeout: (...args) => setTimeout(...args),
+        clearTimeout: id => clearTimeout(id)
+    }
 }) {
     const loaded = localStore.load();
 
