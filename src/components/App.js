@@ -6,7 +6,7 @@ import { SwaggerPreview } from "./SwaggerPreview.js";
 import { course } from "../data/course.js";
 import { escapeHtml } from "../utils/textFormat.js";
 
-export function App(currentLessonIndex = 0) {
+export function App(currentLessonIndex = 0, { progress, user } = {}) {
     const currentLesson = course[currentLessonIndex];
     const hasPreviousLesson = currentLessonIndex > 0;
     const hasNextLesson = currentLessonIndex < course.length - 1;
@@ -43,7 +43,7 @@ export function App(currentLessonIndex = 0) {
             ${Header()}
 
             <div class="app-layout">
-                ${Sidebar(currentLessonIndex)}
+                ${Sidebar(currentLessonIndex, progress)}
 
                 <main class="main-content">
                     <div class="page-header">

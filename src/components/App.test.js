@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { App } from "./App.js";
 import { course } from "../data/course.js";
+import { createEmptyProgress, markRead } from "../progress/progressModel.js";
 
 const count = (html, className) =>
     html.split(className).length - 1;
@@ -36,5 +37,16 @@ describe("кнопки навигации по урокам", () => {
         expect(html.indexOf("lesson-navigation--top")).toBeLessThan(
             html.indexOf('class="workspace"')
         );
+    });
+});
+
+
+describe("прогресс в App", () => {
+    it("App передаёт прогресс в сайдбар", () => {
+        const first = course.find(lesson => lesson.type === "theory");
+        const progress = markRead(createEmptyProgress(), first.id);
+
+        expect(count(App(0, { progress }), "lesson--done")).toBe(1);
+        expect(count(App(0), "lesson--done")).toBe(0);
     });
 });
