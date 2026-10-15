@@ -68,14 +68,25 @@ export function createAuthService(
             return toAuthUser(data?.session?.user);
         },
 
-        /* callback получает AuthUser при входе и null при выходе */
+        /*
+         * callback получает AuthUser при входе и null при выходе.
+         *
+         * Важно: supabase-js вызывает этот обработчик, удерживая внутреннюю
+         * блокировку. Если внутри обработчика обратиться к Supabase (например,
+         * загрузить прогресс), клиент зависнет, а выход перестанет работать.
+         * Поэтому работу откладываем на следующий такт, когда блокировка снята.
+         */
         onAuthChange(callback) {
             const { data } = client.auth.onAuthStateChange((event, session) => {
                 if (event === "SIGNED_IN") {
-                    cleanUrl();
-                    callback(toAuthUser(session?.user));
+                    const user = toAuthUser(session?.user);
+
+                    setTimeout(() => {
+                        cleanUrl();
+                        callback(user);
+                    }, 0);
                 } else if (event === "SIGNED_OUT") {
-                    callback(null);
+                    setTimeout(() => callback(null), 0);
                 }
             });
 

@@ -89,8 +89,25 @@ describe("authService.getUser", () => {
     });
 });
 
+const nextTick = () => new Promise(resolve => setTimeout(resolve, 0));
+
 describe("authService.onAuthChange", () => {
-    it("сообщает о входе и выходе, остальные события игнорирует", () => {
+    it("обработчик вызывается после события, а не внутри него (иначе supabase-js зависает на своей блокировке)", async () => {
+        const client = fakeClient();
+        const service = createAuthService(client, { redirectTo: REDIRECT });
+        const listener = vi.fn();
+        service.onAuthChange(listener);
+
+        client.emit("SIGNED_IN", sessionOf({ id: "u1", user_metadata: {} }));
+
+        expect(listener).toHaveBeenCalledTimes(0);
+
+        await nextTick();
+
+        expect(listener).toHaveBeenCalledTimes(1);
+    });
+
+    it("сообщает о входе и выходе, остальные события игнорирует", async () => {
         const client = fakeClient();
         const service = createAuthService(client, { redirectTo: REDIRECT });
         const listener = vi.fn();
@@ -99,19 +116,21 @@ describe("authService.onAuthChange", () => {
         client.emit("TOKEN_REFRESHED", sessionOf({ id: "u1", user_metadata: {} }));
         client.emit("SIGNED_IN", sessionOf({ id: "u1", email: "a@b.c", user_metadata: { name: "A" } }));
         client.emit("SIGNED_OUT", null);
+        await nextTick();
 
         expect(listener).toHaveBeenCalledTimes(2);
         expect(listener.mock.calls[0][0]).toEqual({ id: "u1", email: "a@b.c", name: "A" });
         expect(listener.mock.calls[1][0]).toBeNull();
     });
 
-    it("после входа очищает адрес от параметров OAuth", () => {
+    it("после входа очищает адрес от параметров OAuth", async () => {
         const client = fakeClient();
         const cleanUrl = vi.fn();
         const service = createAuthService(client, { redirectTo: REDIRECT, cleanUrl });
         service.onAuthChange(() => {});
 
         client.emit("SIGNED_IN", sessionOf({ id: "u1", user_metadata: {} }));
+        await nextTick();
 
         expect(cleanUrl).toHaveBeenCalledTimes(1);
     });

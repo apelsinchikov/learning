@@ -128,8 +128,12 @@ initAuth({
     providers: ENABLED_PROVIDERS,
 
     async onLogout() {
-        await progressService.flush();
-        await authService.signOut();
+        try {
+            await progressService.flush();
+            await authService.signOut();
+        } catch (error) {
+            console.error(error);
+        }
     }
 });
 
