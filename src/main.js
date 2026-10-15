@@ -12,7 +12,7 @@ import { bindLessonList, initNavigation } from "./ui/navigation.js";
 import { showSwagger, showValidationErrors } from "./ui/swaggerPreview.js";
 
 import { Sidebar } from "./components/Sidebar.js";
-import { PROVIDERS } from "./auth/config.js";
+import { ENABLED_PROVIDERS } from "./auth/config.js";
 import { createSupabaseClient } from "./auth/supabaseClient.js";
 import { createAuthService } from "./auth/authService.js";
 import { initAuth } from "./auth/initAuth.js";
@@ -125,7 +125,7 @@ window.addEventListener("pagehide", () => {
 
 initAuth({
     authService,
-    providers: PROVIDERS,
+    providers: ENABLED_PROVIDERS,
 
     async onLogout() {
         await progressService.flush();

@@ -13,5 +13,23 @@ export const SUPABASE_PUBLISHABLE_KEY =
  * как провайдер называется в Supabase (если отличается от id).
  */
 export const PROVIDERS = [
-    { id: "google", label: "Google" }
+    { id: "google", label: "Google" },
+
+    /*
+     * Яндекс подключён как custom OAuth2-провайдер Supabase, имя вида
+     * custom:<идентификатор>. enabled: false — кнопки в интерфейсе нет, пока
+     * владелец не настроил провайдера и не проверил вход (см. docs/setup).
+     * После проверки поменять на true.
+     */
+    {
+        id: "yandex",
+        label: "Яндекс",
+        supabaseProvider: "custom:yandex",
+        enabled: false
+    }
 ];
+
+/* Только те способы входа, которые показываем людям. */
+export const ENABLED_PROVIDERS = PROVIDERS.filter(
+    provider => provider.enabled !== false
+);

@@ -136,3 +136,26 @@ describe("authService.signOut", () => {
         expect(client.auth.signOut).toHaveBeenCalledTimes(1);
     });
 });
+
+
+describe("authService: Яндекс", () => {
+    it("signIn(\"yandex\") использует идентификатор custom-провайдера Supabase", async () => {
+        const client = fakeClient();
+        const service = createAuthService(client, { redirectTo: REDIRECT });
+
+        await service.signIn("yandex");
+
+        expect(client.auth.signInWithOAuth).toHaveBeenCalledWith({
+            provider: "custom:yandex",
+            options: { redirectTo: REDIRECT }
+        });
+    });
+});
+
+describe("список провайдеров", () => {
+    it("Яндекс не показывается, пока не включён, а Google показывается", async () => {
+        const { ENABLED_PROVIDERS } = await import("./config.js");
+
+        expect(ENABLED_PROVIDERS.map(provider => provider.id)).toEqual(["google"]);
+    });
+});
