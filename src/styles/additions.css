@@ -436,3 +436,14 @@
 .header__progress .progress-bar {
     background: #374151;
 }
+
+.site-footer {
+    padding: 16px 24px;
+
+    font-size: 12px;
+    text-align: center;
+}
+
+.site-footer a {
+    color: #6b7280;
+}
