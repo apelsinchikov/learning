@@ -1,6 +1,10 @@
 import { course } from "../data/course.js";
+import {
+    createEmptyProgress,
+    isLessonDone
+} from "../progress/progressModel.js";
 
-export function Sidebar(currentLessonIndex = 0) {
+export function Sidebar(currentLessonIndex = 0, progress = createEmptyProgress()) {
     return `
         <aside class="sidebar">
             <div class="sidebar__section-title">Курс</div>
@@ -8,10 +12,11 @@ export function Sidebar(currentLessonIndex = 0) {
             <nav class="lesson-list">
                 ${course.map((lesson, index) => {
                     const isActive = index === currentLessonIndex;
+                    const isDone = isLessonDone(lesson, progress);
 
                     return `
                         <button
-                            class="lesson${isActive ? " lesson--active" : ""}"
+                            class="lesson${isActive ? " lesson--active" : ""}${isDone ? " lesson--done" : ""}"
                             data-lesson-index="${index}"
                         >
                             <span class="lesson__number">
@@ -22,21 +27,12 @@ export function Sidebar(currentLessonIndex = 0) {
                                 <strong>${lesson.title}</strong>
                                 <small>${lesson.sidebarDescription}</small>
                             </span>
+
+                            ${isDone ? `<span class="lesson__check" title="Пройдено">✓</span>` : ""}
                         </button>
                     `;
                 }).join("")}
             </nav>
-
-            <div class="sidebar__progress">
-                <div class="progress-header">
-                    <span>Прогресс</span>
-                    <strong>0 / ${course.length}</strong>
-                </div>
-
-                <div class="progress-bar">
-                    <div class="progress-bar__value"></div>
-                </div>
-            </div>
         </aside>
     `;
 }

@@ -127,3 +127,19 @@
 .swagger-panel .swagger-ui code {
     font-family: monospace;
 }
+
+/*
+ * Общее правило .panel-body code (светлый фон «инлайн-кода»)
+ * не должно попадать в блоки кода Swagger UI: curl, тело ответа.
+ */
+.swagger-panel .swagger-ui code {
+    padding: 0;
+
+    border-radius: 0;
+
+    background: none;
+
+    font-size: inherit;
+
+    color: inherit;
+}
