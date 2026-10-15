@@ -16,16 +16,14 @@ export const PROVIDERS = [
     { id: "google", label: "Google" },
 
     /*
-     * Яндекс подключён как custom OAuth2-провайдер Supabase, имя вида
-     * custom:<идентификатор>. enabled: false — кнопки в интерфейсе нет, пока
-     * владелец не настроил провайдера и не проверил вход (см. docs/setup).
-     * После проверки поменять на true.
+     * Яндекс подключён как custom OAuth2-провайдер Supabase (имя custom:yandex),
+     * вход проверен. Скрыть кнопку можно значением enabled: false.
      */
     {
         id: "yandex",
         label: "Яндекс",
         supabaseProvider: "custom:yandex",
-        enabled: false
+        enabled: true
     }
 ];
 
