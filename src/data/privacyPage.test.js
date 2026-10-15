@@ -8,6 +8,36 @@ describe("страница политики конфиденциальности
         expect(html).toContain("Политика конфиденциальности");
         expect(html).toContain("Google или Яндекс");
         expect(html).toContain("Supabase");
-        expect(html).toContain("Удаление данных");
+        expect(html).toContain("Ваши права");
+    });
+});
+
+describe("политика конфиденциальности для проверки Google", () => {
+    const html = readFileSync(new URL("../../public/privacy.html", import.meta.url), "utf8");
+    const index = readFileSync(new URL("../../index.html", import.meta.url), "utf8");
+
+    it("главная страница в статическом HTML ссылается на политику", () => {
+        expect(index).toContain('href="privacy.html"');
+    });
+
+    it.each([
+        "Какие данные мы получаем",
+        "Как мы используем данные",
+        "Кому мы передаём данные",
+        "Срок хранения",
+        "Ваши права",
+        "Файлы cookie и localStorage",
+        "Google API Services User Data Policy",
+        "Limited Use",
+        "Supabase",
+        "evgenyassylov@gmail.com"
+    ])("в политике есть раздел или упоминание: %s", text => {
+        expect(html).toContain(text);
+    });
+
+    it("политика достаточно подробная", () => {
+        const text = html.replace(/<[^>]+>/g, " ");
+
+        expect(text.length).toBeGreaterThan(2500);
     });
 });
