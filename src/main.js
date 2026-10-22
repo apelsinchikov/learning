@@ -21,10 +21,18 @@ import { createCloudStore } from "./progress/cloudStore.js";
 import { createLocalStore } from "./progress/localStore.js";
 import { getDraft, isLessonDone } from "./progress/progressModel.js";
 import { createProgressService } from "./progress/progressService.js";
+import { parseRoute, rememberReturnRoute, takeReturnRoute } from "./courses/router.js";
+import { isUnlocked } from "./sql/gate.js";
 
 
 let currentLessonIndex = 0;
 let currentUser = null;
+
+/* Какой курс открыт: "openapi" (по умолчанию) или "sql" (адрес #/sql...). */
+let activeCourse = parseRoute(window.location.hash).course;
+let sqlApp = null;
+let sqlLoading = null;
+let authReady = false;
 
 const app = document.querySelector("#app");
 
@@ -41,6 +49,32 @@ function getStorage() {
         return window.localStorage;
     } catch {
         return null;
+    }
+}
+
+/*
+ * Вход идёт через Google/Яндекс и возвращает на главную без хеша.
+ * Перед уходом запоминаем, где был человек (курс SQL живёт в хеше),
+ * а после возврата открываем ту же страницу.
+ */
+document.addEventListener(
+    "click",
+    event => {
+        if (event.target.closest("[data-provider]")) {
+            rememberReturnRoute(getStorage(), window.location.hash);
+        }
+    },
+    true
+);
+
+{
+    const url = new URL(window.location.href);
+    const returnedFromLogin = ["code", "error"].some(name => url.searchParams.has(name));
+    const savedRoute = takeReturnRoute(getStorage(), window.location.hash);
+
+    if (savedRoute && returnedFromLogin) {
+        window.location.hash = savedRoute;
+        activeCourse = parseRoute(savedRoute).course;
     }
 }
 
@@ -128,6 +162,10 @@ progressService.onSyncError(showSyncNotice);
 
 window.addEventListener("pagehide", () => {
     progressService.flush();
+
+    if (sqlApp) {
+        sqlApp.flush();
+    }
 });
 
 initAuth({
@@ -145,6 +183,13 @@ initAuth({
 });
 
 authService.onAuthChange(async user => {
+    authReady = true;
+
+    /* Курс SQL сам проверяет, тот ли это пользователь, и не дублирует работу. */
+    if (sqlApp) {
+        sqlApp.syncUser(user);
+    }
+
     if (user && user.id === progressService.getUserId()) {
         return;
     }
@@ -210,9 +255,15 @@ function initializePracticeLesson(lesson) {
    ========================================================= */
 
 async function renderApp({ scrollToTop = false } = {}) {
+    if (activeCourse === "sql") {
+        renderSql();
+        return;
+    }
+
     app.innerHTML = App(currentLessonIndex, {
         progress: progressService.getProgress(),
-        user: currentUser
+        user: currentUser,
+        sqlLocked: !isUnlocked(getStorage())
     });
 
     renderedDoneKey = doneKey();
@@ -245,6 +296,81 @@ async function renderApp({ scrollToTop = false } = {}) {
 }
 
 
+/* =========================================================
+   Курс SQL
+   =========================================================
+
+   Код курса грузится отдельным куском и только когда его открывают,
+   поэтому тем, кто учит OpenAPI, он ничего не стоит.
+*/
+
+async function renderSql() {
+    activeCourse = "sql";
+
+    try {
+        if (!sqlApp) {
+            sqlLoading = sqlLoading || import("./sql/sqlApp.js");
+
+            const { createSqlCourseApp } = await sqlLoading;
+
+            if (!sqlApp) {
+                sqlApp = createSqlCourseApp({
+                    root: app,
+                    storage: getStorage(),
+                    supabaseClient: supabase
+                });
+
+                if (authReady) {
+                    sqlApp.syncUser(currentUser);
+                }
+            }
+        }
+
+        /* Пока грузился код, человек мог уйти обратно к OpenAPI. */
+        if (activeCourse !== "sql") {
+            return;
+        }
+
+        sqlApp.render({
+            lessonId: parseRoute(window.location.hash).lessonId,
+            user: currentUser,
+            authReady
+        });
+    } catch (error) {
+        console.error(error);
+
+        sqlLoading = null;
+
+        app.innerHTML = `
+            <div class="app">
+                <main class="main-content">
+                    <h1>Не удалось открыть курс SQL</h1>
+                    <p>Обновите страницу и попробуйте ещё раз.</p>
+                    <p><a href="#/">Вернуться к курсу OpenAPI</a></p>
+                </main>
+            </div>
+        `;
+    }
+}
+
+window.addEventListener("hashchange", () => {
+    if (parseRoute(window.location.hash).course === "sql") {
+        renderSql();
+        return;
+    }
+
+    if (activeCourse === "sql") {
+        activeCourse = "openapi";
+
+        if (sqlApp) {
+            sqlApp.leave();
+        }
+
+        renderApp({ scrollToTop: true });
+    }
+});
+
+
 /* Сначала показываем курс сразу (с локальным прогрессом), потом проверяем вход. */
 goToSavedLesson();
 renderApp();
@@ -259,6 +385,12 @@ renderApp();
     } catch (error) {
         console.error(error);
         return;
+    }
+
+    authReady = true;
+
+    if (sqlApp) {
+        sqlApp.syncUser(currentUser);
     }
 
     goToSavedLesson();

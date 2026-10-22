@@ -28,6 +28,11 @@ export function createCloudStore(client) {
             const progress = createEmptyProgress();
 
             for (const row of lessonResult.data || []) {
+                /* Уроки курса SQL (sql-...) хранятся в той же таблице, но это другой курс. */
+                if (String(row.lesson_id).startsWith("sql-")) {
+                    continue;
+                }
+
                 progress.lessons[row.lesson_id] = {
                     read: Boolean(row.read),
                     solved: Boolean(row.solved),

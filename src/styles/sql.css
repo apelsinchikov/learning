@@ -1,0 +1,1320 @@
+/* =========================================================
+   Курс SQL: «Тайна отеля „Перевал“»
+   Акцент — янтарный, чтобы курс отличался от фиолетового OpenAPI.
+   ========================================================= */
+
+.sql-app {
+    --sql-accent: #f59e0b;
+    --sql-accent-dark: #b45309;
+    --sql-accent-soft: #fffbeb;
+    --sql-ink: #20242c;
+    --sql-muted: #6b7280;
+    --sql-line: #e5e7eb;
+    --sql-card: #ffffff;
+    --sql-good: #166534;
+    --sql-good-bg: #f0fdf4;
+    --sql-bad: #b91c1c;
+    --sql-bad-bg: #fef2f2;
+}
+
+/* ---------- Вкладки курсов в шапке ---------- */
+
+.course-tabs {
+    display: flex;
+    gap: 4px;
+
+    margin-left: 32px;
+    padding: 4px;
+
+    border-radius: 10px;
+    background: #262a33;
+}
+
+.course-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 6px 14px;
+
+    border-radius: 7px;
+
+    color: #cbd5e1;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.course-tab:hover {
+    color: #ffffff;
+}
+
+.course-tab--active {
+    background: #635bff;
+    color: #ffffff;
+}
+
+.course-tab--sql.course-tab--active {
+    background: #f59e0b;
+    color: #1c1917;
+}
+
+.course-tab__lock {
+    font-size: 12px;
+}
+
+.header--sql .header__logo {
+    background: #f59e0b;
+    color: #1c1917;
+}
+
+.header--sql .header__progress .progress-bar__value {
+    background: #f59e0b;
+}
+
+/* ---------- Раскладка ---------- */
+
+.sql-layout {
+    display: grid;
+    grid-template-columns: 270px minmax(0, 1fr) 330px;
+    align-items: start;
+
+    min-height: calc(100vh - 64px);
+}
+
+.sql-sidebar {
+    position: sticky;
+    top: 0;
+
+    max-height: 100vh;
+    overflow-y: auto;
+
+    padding: 20px 12px;
+
+    background: var(--sql-card);
+    border-right: 1px solid var(--sql-line);
+}
+
+.sql-main {
+    min-width: 0;
+    padding: 28px 36px 64px;
+}
+
+.sql-main--wide {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+/* ---------- Список уроков ---------- */
+
+.sql-chapter h3 {
+    margin: 18px 10px 6px;
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #9ca3af;
+}
+
+.sql-chapter:first-child h3 {
+    margin-top: 0;
+}
+
+.sql-lesson {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    padding: 8px 10px;
+
+    border-radius: 8px;
+
+    color: #4b5563;
+    text-decoration: none;
+}
+
+.sql-lesson:hover {
+    background: #f5f6fa;
+}
+
+.sql-lesson.is-active {
+    background: var(--sql-accent-soft);
+    box-shadow: inset 3px 0 0 var(--sql-accent);
+    color: var(--sql-ink);
+}
+
+.sql-lesson__num {
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: #f3f4f6;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.sql-lesson.is-done .sql-lesson__num {
+    background: #dcfce7;
+    color: var(--sql-good);
+}
+
+.sql-lesson__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.sql-lesson__text strong {
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+.sql-lesson__text small {
+    font-size: 12px;
+    line-height: 1.3;
+    color: var(--sql-muted);
+}
+
+/* ---------- Заголовок урока и сюжет ---------- */
+
+.sql-page-header__label {
+    margin-bottom: 6px;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sql-accent-dark);
+}
+
+.sql-page-header h1 {
+    margin: 0 0 20px;
+    font-size: 30px;
+    line-height: 1.2;
+}
+
+.sql-story {
+    margin-bottom: 24px;
+    padding: 20px 24px;
+
+    border-left: 4px solid var(--sql-accent);
+    border-radius: 4px 12px 12px 4px;
+    background: var(--sql-accent-soft);
+
+    font-family: "Iowan Old Style", "Source Serif 4", Georgia, "Times New Roman", serif;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.sql-story p {
+    margin: 0 0 10px;
+}
+
+.sql-story p:last-child {
+    margin-bottom: 0;
+}
+
+.sql-story__label {
+    margin-bottom: 8px;
+
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sql-accent-dark);
+}
+
+/* ---------- Теория ---------- */
+
+.sql-theory {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    margin-bottom: 28px;
+    padding: 24px;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 14px;
+    background: var(--sql-card);
+}
+
+.sql-text p,
+.sql-why p,
+.sql-trap p {
+    margin: 0 0 10px;
+    line-height: 1.6;
+}
+
+.sql-text p:last-child,
+.sql-why p:last-child,
+.sql-trap p:last-child {
+    margin-bottom: 0;
+}
+
+.sql-list {
+    margin: 0 0 10px;
+    padding-left: 22px;
+    line-height: 1.6;
+}
+
+code,
+.inline-code {
+    font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+.sql-text code,
+.sql-why code,
+.sql-trap code,
+.sql-list code,
+.sql-notice code {
+    padding: 1px 6px;
+
+    border-radius: 5px;
+    background: #f3f4f6;
+
+    font-size: 0.9em;
+}
+
+.sql-why,
+.sql-trap {
+    padding: 14px 18px;
+    border-radius: 10px;
+}
+
+.sql-why {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+
+.sql-trap {
+    background: var(--sql-bad-bg);
+    border: 1px solid #fecaca;
+}
+
+.sql-why__title,
+.sql-trap__title {
+    margin-bottom: 6px;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.sql-why__title {
+    color: #1d4ed8;
+}
+
+.sql-trap__title {
+    color: var(--sql-bad);
+}
+
+/* ---------- Код и примеры ---------- */
+
+.sql-code {
+    margin: 0;
+    padding: 14px 16px;
+
+    overflow-x: auto;
+
+    border-radius: 10px;
+    background: #171a21;
+    color: #e5e7eb;
+
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.sql-tok-keyword {
+    color: #fbbf24;
+    font-weight: 600;
+}
+
+.sql-tok-function {
+    color: #7dd3fc;
+}
+
+.sql-tok-string {
+    color: #86efac;
+}
+
+.sql-tok-number {
+    color: #fda4af;
+}
+
+.sql-tok-comment {
+    color: #6b7280;
+    font-style: italic;
+}
+
+.sql-example__note {
+    margin: 8px 0 0;
+    font-size: 14px;
+    color: var(--sql-muted);
+}
+
+.sql-example__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.sql-example__result {
+    margin-top: 10px;
+}
+
+/* ---------- Кнопки ---------- */
+
+.sql-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 9px 18px;
+
+    border: 1px solid #1f2937;
+    border-radius: 8px;
+    background: #1f2937;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+.sql-button:hover {
+    background: #111827;
+}
+
+.sql-button--accent {
+    border-color: var(--sql-accent);
+    background: var(--sql-accent);
+    color: #1c1917;
+}
+
+.sql-button--accent:hover {
+    background: #d98a06;
+}
+
+.sql-button--ghost {
+    border-color: #d1d5db;
+    background: transparent;
+    color: #374151;
+}
+
+.sql-button--ghost:hover {
+    background: #f3f4f6;
+}
+
+.sql-button--small {
+    padding: 5px 12px;
+    font-size: 13px;
+}
+
+.sql-link-button {
+    padding: 4px 0;
+
+    background: none;
+    color: var(--sql-accent-dark);
+
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: underline;
+
+    cursor: pointer;
+}
+
+/* ---------- Задача ---------- */
+
+.sql-task {
+    padding: 24px;
+
+    border: 2px solid var(--sql-accent);
+    border-radius: 14px;
+    background: var(--sql-card);
+}
+
+.sql-task__label {
+    margin-bottom: 8px;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sql-accent-dark);
+}
+
+.sql-task .sql-text {
+    margin-bottom: 14px;
+    font-size: 16px;
+}
+
+.sql-predict {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    margin-bottom: 10px;
+
+    font-size: 14px;
+    color: #374151;
+}
+
+.sql-predict input {
+    width: 130px;
+    padding: 6px 10px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+}
+
+.sql-editor {
+    overflow: hidden;
+
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.sql-editor .cm-editor {
+    min-height: 140px;
+    font-size: 15px;
+}
+
+.sql-editor .cm-editor.cm-focused {
+    outline: 2px solid var(--sql-accent);
+}
+
+.sql-editor .cm-scroller {
+    font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+
+.sql-task__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 12px;
+}
+
+.sql-task__keys {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--sql-muted);
+}
+
+.sql-hints,
+.sql-output,
+.sql-feedback {
+    margin-top: 14px;
+}
+
+.sql-hints:empty,
+.sql-output:empty,
+.sql-feedback:empty {
+    display: none;
+}
+
+.sql-hint {
+    margin-bottom: 8px;
+    padding: 10px 14px;
+
+    border-radius: 8px;
+    background: #fef9c3;
+    border: 1px solid #fde68a;
+}
+
+.sql-hint p {
+    margin: 4px 0 0;
+}
+
+/* ---------- Варианты ответа ---------- */
+
+.sql-choices,
+.sql-verdict__list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sql-choice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    padding: 10px 14px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+
+    cursor: pointer;
+}
+
+.sql-choice:hover {
+    background: #f9fafb;
+}
+
+.sql-choice.is-chosen {
+    border-color: var(--sql-accent);
+    background: var(--sql-accent-soft);
+}
+
+.sql-choice small {
+    display: block;
+    margin-top: 2px;
+    color: var(--sql-muted);
+}
+
+/* ---------- Результаты ---------- */
+
+.sql-result__caption {
+    margin-bottom: 6px;
+
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.sql-result__scroll {
+    max-height: 340px;
+    overflow: auto;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 10px;
+}
+
+.sql-result__more {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--sql-muted);
+}
+
+.sql-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.sql-table th,
+.sql-table td {
+    padding: 7px 12px;
+
+    border-bottom: 1px solid #f1f5f9;
+
+    text-align: left;
+    white-space: nowrap;
+}
+
+.sql-table th {
+    position: sticky;
+    top: 0;
+
+    background: #f8fafc;
+
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.sql-table td.sql-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.sql-null,
+td.sql-null {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.sql-empty {
+    padding: 18px;
+    text-align: center;
+    color: var(--sql-muted);
+}
+
+/* ---------- Сообщения ---------- */
+
+.sql-notice,
+.sql-error {
+    margin-top: 10px;
+    padding: 12px 16px;
+
+    border-radius: 10px;
+    border: 1px solid;
+}
+
+.sql-notice p,
+.sql-error p {
+    margin: 4px 0 0;
+    line-height: 1.5;
+}
+
+.sql-notice--success {
+    border-color: #bbf7d0;
+    background: var(--sql-good-bg);
+    color: var(--sql-good);
+}
+
+.sql-notice--warning {
+    border-color: #fde68a;
+    background: #fffbeb;
+    color: #92400e;
+}
+
+.sql-notice--info {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+    color: #1e40af;
+}
+
+.sql-error {
+    border-color: #fecaca;
+    background: var(--sql-bad-bg);
+    color: var(--sql-bad);
+}
+
+.sql-solved {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.sql-clue-card {
+    width: 100%;
+    padding: 14px 18px;
+
+    border: 1px dashed var(--sql-accent);
+    border-radius: 10px;
+    background: var(--sql-accent-soft);
+}
+
+.sql-clue-card__label {
+    margin-bottom: 4px;
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sql-accent-dark);
+}
+
+.sql-clue-card p {
+    margin: 4px 0 0;
+}
+
+.sql-verdict {
+    width: 100%;
+    padding: 18px;
+
+    border: 2px solid #1f2937;
+    border-radius: 12px;
+}
+
+.sql-verdict h3 {
+    margin: 0 0 6px;
+}
+
+.sql-epilogue {
+    font-family: "Iowan Old Style", Georgia, serif;
+    font-style: italic;
+    font-size: 17px;
+    line-height: 1.6;
+}
+
+.sql-pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+
+    margin-top: 28px;
+}
+
+.sql-pager a {
+    color: var(--sql-accent-dark);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* ---------- Правая панель ---------- */
+
+.sql-aside {
+    position: sticky;
+    top: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    max-height: 100vh;
+
+    border-left: 1px solid var(--sql-line);
+    background: var(--sql-card);
+}
+
+.sql-tabs {
+    display: flex;
+    gap: 2px;
+    padding: 10px 10px 0;
+
+    border-bottom: 1px solid var(--sql-line);
+}
+
+.sql-tab {
+    padding: 8px 12px;
+
+    border-radius: 8px 8px 0 0;
+    background: none;
+    color: var(--sql-muted);
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.sql-tab.is-active {
+    background: var(--sql-accent-soft);
+    color: var(--sql-accent-dark);
+    box-shadow: inset 0 -2px 0 var(--sql-accent);
+}
+
+.sql-badge {
+    display: inline-block;
+    min-width: 18px;
+    padding: 0 5px;
+
+    border-radius: 9px;
+    background: var(--sql-accent);
+    color: #1c1917;
+
+    font-size: 11px;
+    text-align: center;
+}
+
+.sql-aside__body {
+    overflow-y: auto;
+    padding: 14px;
+}
+
+.sql-table-card {
+    margin-bottom: 12px;
+    padding: 12px;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 10px;
+}
+
+.sql-table-card.is-mentioned {
+    border-color: var(--sql-accent);
+    background: var(--sql-accent-soft);
+}
+
+.sql-table-card header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.sql-table-card header span {
+    font-size: 12px;
+    color: var(--sql-muted);
+}
+
+.sql-table-card__title {
+    margin: 2px 0 8px;
+    font-size: 12px;
+    color: var(--sql-muted);
+}
+
+.sql-cols {
+    margin: 0 0 6px;
+    padding: 0;
+
+    list-style: none;
+    font-size: 13px;
+}
+
+.sql-cols li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+
+    padding: 2px 0;
+}
+
+.sql-col__name {
+    font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-weight: 600;
+}
+
+.sql-col__type,
+.sql-col__ref {
+    font-size: 11px;
+    color: var(--sql-muted);
+}
+
+.sql-key {
+    padding: 0 5px;
+
+    border-radius: 4px;
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.sql-key--pk {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.sql-key--fk {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.sql-table-card__peek {
+    margin-top: 8px;
+    overflow-x: auto;
+}
+
+.sql-clues {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.sql-clues li {
+    margin-bottom: 12px;
+    padding: 10px 12px;
+
+    border-left: 3px solid var(--sql-accent);
+    background: var(--sql-accent-soft);
+    border-radius: 0 8px 8px 0;
+}
+
+.sql-clues p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.sql-clue__title {
+    color: var(--sql-ink);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.sql-cheats h4 {
+    margin: 12px 0 6px;
+    font-size: 13px;
+}
+
+.sql-cheats dl {
+    margin: 0;
+    font-size: 13px;
+}
+
+.sql-cheats dt {
+    margin-top: 4px;
+}
+
+.sql-cheats dd {
+    margin: 0 0 4px;
+    color: var(--sql-muted);
+}
+
+.sql-empty-state {
+    padding: 20px 8px;
+    text-align: center;
+    color: var(--sql-muted);
+    font-size: 14px;
+}
+
+/* ---------- Связи таблиц ---------- */
+
+.fk-explorer {
+    padding: 16px;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.fk-explorer__title {
+    margin-bottom: 6px;
+
+    font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.fk-explorer__fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+
+    font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 15px;
+}
+
+.fk-link {
+    padding: 1px 10px;
+
+    border: 1px solid #93c5fd;
+    border-radius: 6px;
+    background: #dbeafe;
+    color: #1e40af;
+
+    font: inherit;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.fk-link:hover {
+    background: #bfdbfe;
+}
+
+.fk-explorer__tables {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+
+    margin-top: 14px;
+}
+
+.fk-explorer__table {
+    max-height: 190px;
+    overflow: auto;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.fk-explorer__table .fk-explorer__title {
+    position: sticky;
+    top: 0;
+    margin: 0;
+    padding: 6px 12px;
+    background: #ffffff;
+}
+
+.fk-explorer .sql-table th {
+    top: 28px;
+}
+
+.fk-explorer tr.is-hit td {
+    background: #fde68a;
+    font-weight: 700;
+}
+
+.fk-explorer__answer {
+    margin: 12px 0 0;
+    font-size: 14px;
+    color: #374151;
+}
+
+/* ---------- Порядок выполнения ---------- */
+
+.order-steps ol {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.order-steps li {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 2px 14px;
+
+    padding: 8px 12px;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 8px;
+    opacity: 0.55;
+}
+
+.order-steps li.is-done {
+    opacity: 0.8;
+}
+
+.order-steps li.is-active {
+    border-color: var(--sql-accent);
+    background: var(--sql-accent-soft);
+    opacity: 1;
+}
+
+.order-steps__name {
+    grid-row: span 2;
+
+    font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-weight: 700;
+}
+
+.order-steps__note {
+    display: none;
+    font-size: 13px;
+    color: var(--sql-accent-dark);
+}
+
+.order-steps li.is-active .order-steps__note {
+    display: block;
+}
+
+.order-steps__controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-top: 12px;
+}
+
+.order-steps__hint {
+    font-size: 13px;
+    color: var(--sql-muted);
+}
+
+/* ---------- Наглядное соединение ---------- */
+
+.join-visual {
+    margin: 0;
+    padding: 16px;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.join-visual__inputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.join-visual__title {
+    margin-bottom: 4px;
+
+    font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.join-visual__table {
+    border-collapse: collapse;
+    font-size: 14px;
+    background: #ffffff;
+}
+
+.join-visual__table th,
+.join-visual__table td {
+    padding: 4px 14px;
+    border: 1px solid var(--sql-line);
+    text-align: left;
+}
+
+.join-visual__table th {
+    background: #f1f5f9;
+    font-size: 12px;
+}
+
+.join-visual__arrow {
+    margin: 6px 0;
+    font-size: 18px;
+    color: #94a3b8;
+}
+
+.join-visual__row--match td {
+    background: #dcfce7;
+}
+
+.join-visual__row--left-only td {
+    background: #fef3c7;
+}
+
+.join-visual__row--right-only td {
+    background: #dbeafe;
+}
+
+.join-visual figcaption {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #374151;
+}
+
+/* ---------- Закрытый курс ---------- */
+
+.sql-gate {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+}
+
+.sql-gate__card {
+    width: 100%;
+    padding: 32px;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 16px;
+    background: var(--sql-card);
+    text-align: center;
+}
+
+.sql-gate__lock {
+    font-size: 40px;
+}
+
+.sql-gate__card h1 {
+    margin: 8px 0;
+    font-size: 24px;
+}
+
+.sql-gate__card p {
+    color: #4b5563;
+    line-height: 1.6;
+}
+
+.sql-gate__form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    margin: 20px 0;
+    text-align: left;
+}
+
+.sql-gate__form input {
+    padding: 10px 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    font-size: 16px;
+}
+
+.sql-gate__form .sql-gate__error {
+    margin: 0;
+    color: var(--sql-bad);
+}
+
+.sql-gate__back {
+    color: var(--sql-accent-dark);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* ---------- Узкие экраны ---------- */
+
+@media (max-width: 1200px) {
+    .sql-layout {
+        grid-template-columns: 250px minmax(0, 1fr);
+    }
+
+    .sql-aside {
+        position: static;
+        grid-column: 1 / -1;
+        max-height: none;
+
+        border-left: 0;
+        border-top: 1px solid var(--sql-line);
+    }
+}
+
+@media (max-width: 900px) {
+    .course-tabs {
+        margin-left: 12px;
+    }
+
+    .course-tab {
+        padding: 6px 10px;
+    }
+
+    .header--sql .header__title {
+        font-size: 14px;
+    }
+
+    .sql-layout {
+        display: block;
+    }
+
+    .sql-sidebar {
+        position: static;
+        max-height: 260px;
+
+        border-right: 0;
+        border-bottom: 1px solid var(--sql-line);
+    }
+
+    .sql-main {
+        padding: 16px;
+    }
+
+    .sql-page-header h1 {
+        font-size: 24px;
+    }
+
+    .sql-story {
+        padding: 16px;
+        font-size: 17px;
+    }
+
+    .sql-theory,
+    .sql-task {
+        padding: 16px;
+    }
+
+    .fk-explorer__tables {
+        grid-template-columns: 1fr;
+    }
+
+    .order-steps li {
+        grid-template-columns: 1fr;
+    }
+
+    .sql-task__keys {
+        display: none;
+    }
+}
+
+@media (max-width: 700px) {
+    .header__brand > div:last-child {
+        display: none;
+    }
+
+    .course-tabs {
+        margin-left: 8px;
+    }
+
+    .header__auth {
+        gap: 8px;
+    }
+
+    .auth-button {
+        padding: 6px 10px;
+    }
+}
