@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import {
+    courseHash,
+    diagramsHash,
+    isDiagramsRoute,
+    isHashCourseRoute,
     isSqlRoute,
     parseRoute,
     rememberReturnRoute,
@@ -78,5 +82,29 @@ describe("router", () => {
     it("без хранилища ничего не падает", () => {
         expect(() => rememberReturnRoute(null, "#/sql")).not.toThrow();
         expect(takeReturnRoute(null, "")).toBeNull();
+    });
+
+    it("#/diagrams — курс «Диаграммы», урок и песочница", () => {
+        expect(parseRoute("#/diagrams")).toEqual({ course: "diagrams", lessonId: null });
+        expect(parseRoute("#/diagrams/dg-er-keys")).toEqual({ course: "diagrams", lessonId: "dg-er-keys" });
+        expect(parseRoute(diagramsHash("sandbox")).lessonId).toBe("sandbox");
+        expect(courseHash("diagrams", "dg-x")).toBe("#/diagrams/dg-x");
+    });
+
+    it("isDiagramsRoute и isHashCourseRoute", () => {
+        expect(isDiagramsRoute("#/diagrams/x")).toBe(true);
+        expect(isDiagramsRoute("#/sql")).toBe(false);
+        expect(isHashCourseRoute("#/sql")).toBe(true);
+        expect(isHashCourseRoute("#/diagrams")).toBe(true);
+        expect(isHashCourseRoute("#/")).toBe(false);
+    });
+
+    it("возврат после входа работает и для «Диаграмм»", () => {
+        const storage = fakeStorage();
+
+        rememberReturnRoute(storage, "#/diagrams/dg-er-keys");
+
+        expect(takeReturnRoute(storage, "")).toBe("#/diagrams/dg-er-keys");
+        expect(takeReturnRoute(storage, "")).toBeNull();
     });
 });

@@ -23,14 +23,33 @@ import { getDraft, isLessonDone } from "./progress/progressModel.js";
 import { createProgressService } from "./progress/progressService.js";
 import { parseRoute, rememberReturnRoute, takeReturnRoute } from "./courses/router.js";
 
+/*
+ * Курсы, которые живут рядом с OpenAPI. Код каждого грузится отдельным куском и
+ * только когда курс открывают, поэтому остальным он ничего не стоит.
+ */
+const COURSE_APPS = {
+    sql: {
+        title: "курс SQL",
+        load: () => import("./sql/sqlApp.js"),
+        create: (module, options) => module.createSqlCourseApp(options)
+    },
+    diagrams: {
+        title: "курс «Диаграммы»",
+        load: () => import("./diagrams/diagramsApp.js"),
+        create: (module, options) => module.createDiagramsCourseApp(options)
+    }
+};
+
 
 let currentLessonIndex = 0;
 let currentUser = null;
 
-/* Какой курс открыт: "openapi" (по умолчанию) или "sql" (адрес #/sql...). */
+/* Какой курс открыт: "openapi" (по умолчанию), "sql" (#/sql...) или "diagrams" (#/diagrams...). */
 let activeCourse = parseRoute(window.location.hash).course;
-let sqlApp = null;
-let sqlLoading = null;
+const courseApps = {};
+const courseLoading = {};
+
+const loadedCourseApps = () => Object.values(courseApps);
 let authReady = false;
 
 const app = document.querySelector("#app");
@@ -162,9 +181,7 @@ progressService.onSyncError(showSyncNotice);
 window.addEventListener("pagehide", () => {
     progressService.flush();
 
-    if (sqlApp) {
-        sqlApp.flush();
-    }
+    loadedCourseApps().forEach(courseApp => courseApp.flush());
 });
 
 initAuth({
@@ -184,10 +201,8 @@ initAuth({
 authService.onAuthChange(async user => {
     authReady = true;
 
-    /* Курс SQL сам проверяет, тот ли это пользователь, и не дублирует работу. */
-    if (sqlApp) {
-        sqlApp.syncUser(user);
-    }
+    /* Курсы сами проверяют, тот ли это пользователь, и не дублируют работу. */
+    loadedCourseApps().forEach(courseApp => courseApp.syncUser(user));
 
     if (user && user.id === progressService.getUserId()) {
         return;
@@ -254,8 +269,8 @@ function initializePracticeLesson(lesson) {
    ========================================================= */
 
 async function renderApp({ scrollToTop = false } = {}) {
-    if (activeCourse === "sql") {
-        renderSql();
+    if (activeCourse !== "openapi") {
+        renderCourse(activeCourse);
         return;
     }
 
@@ -295,41 +310,43 @@ async function renderApp({ scrollToTop = false } = {}) {
 
 
 /* =========================================================
-   Курс SQL
+   Курсы SQL и «Диаграммы»
    =========================================================
 
    Код курса грузится отдельным куском и только когда его открывают,
    поэтому тем, кто учит OpenAPI, он ничего не стоит.
 */
 
-async function renderSql() {
-    activeCourse = "sql";
+async function renderCourse(name) {
+    const definition = COURSE_APPS[name];
+
+    activeCourse = name;
 
     try {
-        if (!sqlApp) {
-            sqlLoading = sqlLoading || import("./sql/sqlApp.js");
+        if (!courseApps[name]) {
+            courseLoading[name] = courseLoading[name] || definition.load();
 
-            const { createSqlCourseApp } = await sqlLoading;
+            const module = await courseLoading[name];
 
-            if (!sqlApp) {
-                sqlApp = createSqlCourseApp({
+            if (!courseApps[name]) {
+                courseApps[name] = definition.create(module, {
                     root: app,
                     storage: getStorage(),
                     supabaseClient: supabase
                 });
 
                 if (authReady) {
-                    sqlApp.syncUser(currentUser);
+                    courseApps[name].syncUser(currentUser);
                 }
             }
         }
 
-        /* Пока грузился код, человек мог уйти обратно к OpenAPI. */
-        if (activeCourse !== "sql") {
+        /* Пока грузился код, человек мог уйти на другой курс. */
+        if (activeCourse !== name) {
             return;
         }
 
-        sqlApp.render({
+        courseApps[name].render({
             lessonId: parseRoute(window.location.hash).lessonId,
             user: currentUser,
             authReady
@@ -337,12 +354,12 @@ async function renderSql() {
     } catch (error) {
         console.error(error);
 
-        sqlLoading = null;
+        courseLoading[name] = null;
 
         app.innerHTML = `
             <div class="app">
                 <main class="main-content">
-                    <h1>Не удалось открыть курс SQL</h1>
+                    <h1>Не удалось открыть ${definition.title}</h1>
                     <p>Обновите страницу и попробуйте ещё раз.</p>
                     <p><a href="#/">Вернуться к курсу OpenAPI</a></p>
                 </main>
@@ -352,16 +369,23 @@ async function renderSql() {
 }
 
 window.addEventListener("hashchange", () => {
-    if (parseRoute(window.location.hash).course === "sql") {
-        renderSql();
+    const { course: target } = parseRoute(window.location.hash);
+    const previous = activeCourse;
+
+    if (target !== "openapi") {
+        if (previous !== target && courseApps[previous]) {
+            courseApps[previous].leave();
+        }
+
+        renderCourse(target);
         return;
     }
 
-    if (activeCourse === "sql") {
+    if (previous !== "openapi") {
         activeCourse = "openapi";
 
-        if (sqlApp) {
-            sqlApp.leave();
+        if (courseApps[previous]) {
+            courseApps[previous].leave();
         }
 
         renderApp({ scrollToTop: true });
@@ -387,9 +411,7 @@ renderApp();
 
     authReady = true;
 
-    if (sqlApp) {
-        sqlApp.syncUser(currentUser);
-    }
+    loadedCourseApps().forEach(courseApp => courseApp.syncUser(currentUser));
 
     goToSavedLesson();
 

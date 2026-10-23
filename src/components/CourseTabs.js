@@ -1,12 +1,22 @@
 /*
- * Вкладки курсов в шапке. Адрес курса SQL — в хеше (#/sql),
+ * Вкладки курсов в шапке. Адреса курсов SQL и «Диаграммы» — в хеше (#/sql, #/diagrams),
  * поэтому это обычные ссылки, а переключение делает слушатель hashchange.
  */
+const TABS = [
+    { id: "openapi", href: "#/", label: "OpenAPI" },
+    { id: "sql", href: "#/sql", label: "SQL" },
+    { id: "diagrams", href: "#/diagrams", label: "Диаграммы" }
+];
+
 export function CourseTabs({ active = "openapi" } = {}) {
     return `
         <nav class="course-tabs" aria-label="Курсы">
-            <a class="course-tab${active === "openapi" ? " course-tab--active" : ""}" href="#/"${active === "openapi" ? ` aria-current="page"` : ""}>OpenAPI</a>
-            <a class="course-tab course-tab--sql${active === "sql" ? " course-tab--active" : ""}" href="#/sql"${active === "sql" ? ` aria-current="page"` : ""}>SQL</a>
+            ${TABS.map(tab => {
+                const isActive = active === tab.id;
+                const own = tab.id === "openapi" ? "" : ` course-tab--${tab.id}`;
+
+                return `<a class="course-tab${own}${isActive ? " course-tab--active" : ""}" href="${tab.href}"${isActive ? ` aria-current="page"` : ""}>${tab.label}</a>`;
+            }).join("")}
         </nav>
     `;
 }
