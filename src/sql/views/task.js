@@ -170,7 +170,7 @@ export function renderLessonPage(lesson, { solved, hintsShown, chosen, verdictCh
                         ? `<a href="#/sql/${encodeURIComponent(previous.id)}">← ${escapeHtml(previous.title)}</a>`
                         : "<span></span>"
                 }
-                ${next ? `<a href="#/sql/${encodeURIComponent(next.id)}">${escapeHtml(next.title)} →</a>` : ""}
+                ${next ? `<a href="#/sql/${encodeURIComponent(next.id)}" data-mark-read>${escapeHtml(next.title)} →</a>` : ""}
             </nav>
         </article>
     `;

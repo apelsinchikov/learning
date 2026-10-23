@@ -3,21 +3,20 @@ import { parseRoute, sqlHash } from "../courses/router.js";
 import { compareResults } from "./check.js";
 import { createEngine } from "./engine.js";
 import { humanizeError } from "./errors.js";
-import { checkPassword, isUnlocked, unlock } from "./gate.js";
 import { findRowById, peekTable } from "./hotel/peek.js";
 import { tablesMentioned } from "./hotel/schema.js";
 import { findSqlLesson, sqlLessons } from "./lessons/index.js";
 import { createSqlProgress } from "./progress.js";
 import { createSqlEditor } from "./sqlEditor.js";
 import { renderAside, renderCheatSheet, renderNotebook, renderSchemaPanel } from "./views/aside.js";
-import { renderGate } from "./views/gate.js";
-import { renderSqlProgress, renderSqlSidebar } from "./views/nav.js";
+import { renderSqlProgress, renderSqlSidebar, statusKey } from "./views/nav.js";
 import { renderErrorBox, renderNotice, renderResultTable } from "./views/resultTable.js";
 import { renderHints, renderLessonPage, renderSandboxPage, renderSolved } from "./views/task.js";
 import { ORDER_STEP_COUNT } from "./views/theory.js";
 
 const SANDBOX_KEY = "sql-sandbox-query-v1";
 const SANDBOX_DEFAULT = "SELECT * FROM guests;";
+const READ_DELAY_MS = 2500;
 
 /*
  * Курс SQL целиком: страница урока, редактор, запуск запросов, проверка,
@@ -35,13 +34,13 @@ export function createSqlCourseApp({
 }) {
     let active = false;
     let user = null;
-    let lastArgs = {};
     let editor = null;
     let pageId = null;
     let asideTab = "schema";
     let renderedKey = "";
+    let readObserver = null;
+    let readTimer = null;
     let pageToken = 0;
-    let gateError = "";
 
     const hintsShown = new Map();
     const chosen = new Map();
@@ -213,9 +212,7 @@ export function createSqlCourseApp({
 
     /* ------------------------------ боковые панели ------------------------------ */
 
-    function solvedKey() {
-        return sqlLessons.map(lesson => (progress.getProgress().lessons[lesson.id]?.solved ? "1" : "0")).join("");
-    }
+    const solvedKey = () => statusKey(progress.getProgress());
 
     function refreshChrome() {
         if (!active || !$(".sql-nav")) {
@@ -295,6 +292,48 @@ export function createSqlCourseApp({
                   : renderSchemaPanel(tablesMentioned(editorText()));
     }
 
+    /* ------------------------------ «прочитано» ------------------------------ */
+
+    function stopWatchingReading() {
+        if (readObserver) {
+            readObserver.disconnect();
+            readObserver = null;
+        }
+
+        clearTimeout(readTimer);
+        readTimer = null;
+    }
+
+    /*
+     * Урок считается прочитанным, когда читатель дошёл до задачи и побыл на ней
+     * пару секунд (а не просто пролистал). Ещё урок отмечается при нажатии
+     * «Следующий урок» внизу страницы.
+     */
+    function watchReading(lesson) {
+        stopWatchingReading();
+
+        const task = lesson && $(".sql-task");
+
+        if (!task || progress.getProgress().lessons[lesson.id]?.read || typeof IntersectionObserver === "undefined") {
+            return;
+        }
+
+        readObserver = new IntersectionObserver(entries => {
+            const visible = entries.some(entry => entry.isIntersecting);
+
+            clearTimeout(readTimer);
+
+            if (visible) {
+                readTimer = setTimeout(() => {
+                    progress.markRead(lesson.id);
+                    stopWatchingReading();
+                }, READ_DELAY_MS);
+            }
+        }, { threshold: 0.2 });
+
+        readObserver.observe(task);
+    }
+
     /* ------------------------------ отрисовка ------------------------------ */
 
     function chrome(content, { sidebar = true } = {}) {
@@ -360,20 +399,12 @@ export function createSqlCourseApp({
     }
 
     function render(args = {}) {
-        lastArgs = args;
         active = true;
         user = args.user ?? null;
 
         pageToken++;
         destroyEditor();
-
-        if (!isUnlocked(storage)) {
-            pageId = null;
-            root.innerHTML = chrome(renderGate({ error: gateError }), { sidebar: false });
-            gateError = "";
-            window.scrollTo({ top: 0, left: 0 });
-            return;
-        }
+        stopWatchingReading();
 
         const requested = args.lessonId ?? null;
 
@@ -408,6 +439,8 @@ export function createSqlCourseApp({
         if (lesson) {
             progress.setCurrentLesson(lesson.id);
         }
+
+        watchReading(lesson);
 
         window.scrollTo({ top: 0, left: 0 });
     }
@@ -555,36 +588,13 @@ export function createSqlCourseApp({
         $("[data-verdict]")?.scrollIntoView?.({ block: "nearest" });
     }
 
-    async function onGateSubmit(form) {
-        const input = form.querySelector("[data-gate-input]");
-        const error = form.querySelector("[data-gate-error]");
-
-        let ok = false;
-
-        try {
-            ok = await checkPassword(input.value);
-        } catch (e) {
-            console.error(e);
-        }
-
-        if (ok) {
-            unlock(storage);
-            render(lastArgs);
-            return;
-        }
-
-        error.textContent = "Пароль не подходит.";
-        error.hidden = false;
-        input.select();
-    }
-
     function onClick(event) {
         if (!active) {
             return;
         }
 
         const target = event.target.closest(
-            "[data-run],[data-check],[data-reset],[data-hint],[data-choice-submit],[data-verdict-submit],[data-example-run],[data-example-sandbox],[data-fk-table],[data-order-next],[data-aside-tab],[data-peek-toggle]"
+            "[data-run],[data-check],[data-reset],[data-hint],[data-choice-submit],[data-verdict-submit],[data-example-run],[data-example-sandbox],[data-fk-table],[data-order-next],[data-aside-tab],[data-peek-toggle],[data-mark-read]"
         );
 
         if (!target) {
@@ -620,16 +630,10 @@ export function createSqlCourseApp({
             switchAsideTab(data.asideTab);
         } else if ("peekToggle" in data) {
             onPeekToggle(target);
+        } else if ("markRead" in data && lesson) {
+            /* ссылка «Следующий урок» работает как обычно, мы только отмечаем прочитанное */
+            progress.markRead(lesson.id);
         }
-    }
-
-    function onSubmit(event) {
-        if (!active || !event.target.matches("[data-gate-form]")) {
-            return;
-        }
-
-        event.preventDefault();
-        onGateSubmit(event.target);
     }
 
     function onChange(event) {
@@ -642,7 +646,6 @@ export function createSqlCourseApp({
     }
 
     root.addEventListener("click", onClick);
-    root.addEventListener("submit", onSubmit);
     root.addEventListener("change", onChange);
 
     progress.onChange(refreshChrome);
@@ -656,6 +659,7 @@ export function createSqlCourseApp({
             active = false;
             pageToken++;
             destroyEditor();
+            stopWatchingReading();
         },
 
         flush: () => progress.flush(),
