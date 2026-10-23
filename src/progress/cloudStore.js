@@ -1,5 +1,8 @@
 import { createEmptyProgress } from "./progressModel.js";
 
+/* Префиксы уроков курсов, которые живут рядом с OpenAPI (SQL, «Диаграммы»). */
+const OTHER_COURSE_PREFIXES = ["sql-", "dg-"];
+
 function check({ error }) {
     if (error) {
         throw new Error(error.message || "Supabase error");
@@ -28,6 +31,11 @@ export function createCloudStore(client) {
             const progress = createEmptyProgress();
 
             for (const row of lessonResult.data || []) {
+                /* Уроки других курсов (sql-..., dg-...) лежат в той же таблице, но к OpenAPI не относятся. */
+                if (OTHER_COURSE_PREFIXES.some(prefix => String(row.lesson_id).startsWith(prefix))) {
+                    continue;
+                }
+
                 progress.lessons[row.lesson_id] = {
                     read: Boolean(row.read),
                     solved: Boolean(row.solved),

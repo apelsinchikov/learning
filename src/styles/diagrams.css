@@ -1,0 +1,438 @@
+/* =========================================================
+   Курс «Диаграммы: проект отеля „Перевал“»
+   Каркас, боковые панели и кнопки общие с курсом SQL (классы sql-*).
+   Здесь только то, чего там нет, и бирюзовый акцент вместо янтарного.
+   ========================================================= */
+
+.dg-app {
+    --sql-accent: #0d9488;
+    --sql-accent-dark: #0f766e;
+    --sql-accent-soft: #f0fdfa;
+}
+
+/* ---------- Шапка и вкладка ---------- */
+
+.course-tab--diagrams.course-tab--active {
+    background: #0d9488;
+    color: #ffffff;
+}
+
+.header--diagrams .header__logo {
+    background: #0d9488;
+    color: #ffffff;
+}
+
+.header--diagrams .header__progress .progress-bar__value {
+    background: #0d9488;
+}
+
+/* ---------- Редактор и картинка рядом ---------- */
+
+.dg-bench {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px;
+
+    margin: 16px 0;
+}
+
+.dg-bench__side {
+    min-width: 0;
+}
+
+.dg-bench__label {
+    margin-bottom: 6px;
+
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--sql-muted);
+}
+
+.dg-editor {
+    min-height: 220px;
+    max-height: 520px;
+    overflow: auto;
+}
+
+.dg-preview {
+    min-height: 220px;
+    max-height: 520px;
+    overflow: auto;
+
+    padding: 12px;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 8px;
+    background: #ffffff;
+
+    transition: opacity 0.15s;
+}
+
+.dg-preview svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+
+/* Последняя удавшаяся картинка при ошибке в тексте: видно, что она устарела. */
+.dg-preview.is-stale {
+    opacity: 0.45;
+}
+
+.dg-preview__empty {
+    margin: 0;
+    padding: 24px 8px;
+
+    text-align: center;
+    font-size: 14px;
+    color: var(--sql-muted);
+}
+
+.dg-bench__error {
+    margin-top: 10px;
+}
+
+.dg-error__details {
+    margin: 6px 0 0;
+
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    color: var(--sql-muted);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.dg-templates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    margin: 12px 0;
+}
+
+/* ---------- Готовая диаграмма в тексте урока: код и картинка ---------- */
+
+.dg-figure,
+.dg-codeblock,
+.dg-chen {
+    margin: 16px 0;
+}
+
+.dg-figure__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+}
+
+.dg-figure__picture {
+    min-width: 0;
+    overflow: auto;
+
+    padding: 12px;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.dg-figure__picture svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+
+.dg-figure__actions {
+    margin-top: 8px;
+}
+
+.dg-code {
+    margin: 0;
+    overflow: auto;
+    tab-size: 4;
+}
+
+.dg-tok-key {
+    color: #0f766e;
+    font-weight: 600;
+}
+
+.dg-tok-operator {
+    color: #9333ea;
+}
+
+/* ---------- Сравнение «до / после», «слева / справа» ---------- */
+
+.dg-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px;
+
+    margin: 16px 0;
+}
+
+.dg-split__side {
+    min-width: 0;
+}
+
+.dg-split__title {
+    margin-bottom: 6px;
+
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sql-accent-dark);
+}
+
+/* ---------- Таблица плюсов и минусов ---------- */
+
+.dg-table-wrap {
+    margin: 16px 0;
+    overflow-x: auto;
+}
+
+.dg-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.dg-table th,
+.dg-table td {
+    padding: 8px 10px;
+
+    border: 1px solid var(--sql-line);
+    text-align: left;
+    vertical-align: top;
+}
+
+.dg-table th {
+    background: var(--sql-accent-soft);
+    font-weight: 600;
+}
+
+/* ---------- Шаги ---------- */
+
+.dg-steps {
+    margin: 16px 0;
+    padding: 14px 16px;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 10px;
+    background: var(--sql-card);
+}
+
+.dg-steps__title {
+    margin-bottom: 8px;
+
+    font-weight: 600;
+}
+
+.dg-steps ol {
+    margin: 0;
+    padding-left: 22px;
+}
+
+.dg-steps li + li {
+    margin-top: 6px;
+}
+
+/* ---------- Нотация Чена ---------- */
+
+.dg-chen svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+
+.dg-chen__oval,
+.dg-chen__box,
+.dg-chen__diamond {
+    fill: #ffffff;
+    stroke: var(--sql-ink);
+    stroke-width: 1.5;
+}
+
+.dg-chen__diamond {
+    fill: var(--sql-accent-soft);
+}
+
+.dg-chen__line {
+    stroke: var(--sql-ink);
+    stroke-width: 1.5;
+}
+
+.dg-chen__card {
+    font-size: 14px;
+    font-weight: 700;
+    fill: var(--sql-accent-dark);
+}
+
+.dg-chen text {
+    font-size: 13px;
+    fill: var(--sql-ink);
+}
+
+/* ---------- Вопросы ---------- */
+
+.dg-quiz {
+    display: grid;
+    gap: 14px;
+}
+
+.dg-question {
+    margin: 0;
+    padding: 12px 14px;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 10px;
+    background: var(--sql-card);
+}
+
+.dg-question.is-right {
+    border-color: #86efac;
+    background: var(--sql-good-bg);
+}
+
+.dg-question.is-wrong {
+    border-color: #fca5a5;
+    background: var(--sql-bad-bg);
+}
+
+.dg-question legend {
+    padding: 0 6px;
+    font-weight: 600;
+}
+
+.dg-order {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style-position: inside;
+}
+
+.dg-order li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    padding: 6px 10px;
+    margin-top: 6px;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.dg-order__text {
+    flex: 1;
+    min-width: 0;
+}
+
+.dg-order__buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.dg-order__button {
+    width: 30px;
+    height: 30px;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 6px;
+    background: #ffffff;
+    color: var(--sql-ink);
+    cursor: pointer;
+}
+
+.dg-order__button:hover:not(:disabled) {
+    border-color: var(--sql-accent);
+    color: var(--sql-accent-dark);
+}
+
+.dg-order__button:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+/* ---------- Папка проекта ---------- */
+
+.dg-folder {
+    display: grid;
+    gap: 12px;
+}
+
+.dg-folder__card {
+    padding: 10px;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.dg-folder__picture {
+    overflow: auto;
+    margin: 8px 0;
+}
+
+.dg-folder__picture svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.dg-folder-note {
+    margin-top: 12px;
+}
+
+/* ---------- Узкие экраны ---------- */
+
+@media (max-width: 900px) {
+    .dg-bench,
+    .dg-figure__body,
+    .dg-split {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .dg-editor,
+    .dg-preview {
+        min-height: 160px;
+    }
+
+    .header--diagrams .header__title {
+        font-size: 14px;
+    }
+}
+
+/* Три вкладки курсов и кнопка входа должны помещаться в шапку телефона. */
+@media (max-width: 700px) {
+    .header {
+        padding: 0 12px;
+    }
+
+    .course-tabs {
+        gap: 2px;
+        margin-left: 6px;
+        padding: 3px;
+    }
+
+    .course-tab {
+        padding: 6px 7px;
+        font-size: 12.5px;
+    }
+
+    .header__auth {
+        gap: 6px;
+    }
+
+    .auth-button {
+        padding: 6px 6px;
+        font-size: 12px;
+    }
+}
