@@ -59,10 +59,6 @@
     color: #1c1917;
 }
 
-.course-tab__lock {
-    font-size: 12px;
-}
-
 .header--sql .header__logo {
     background: #f59e0b;
     color: #1c1917;
@@ -1167,67 +1163,6 @@ td.sql-null {
     color: #374151;
 }
 
-/* ---------- Закрытый курс ---------- */
-
-.sql-gate {
-    display: flex;
-    justify-content: center;
-    padding: 40px 0;
-}
-
-.sql-gate__card {
-    width: 100%;
-    padding: 32px;
-
-    border: 1px solid var(--sql-line);
-    border-radius: 16px;
-    background: var(--sql-card);
-    text-align: center;
-}
-
-.sql-gate__lock {
-    font-size: 40px;
-}
-
-.sql-gate__card h1 {
-    margin: 8px 0;
-    font-size: 24px;
-}
-
-.sql-gate__card p {
-    color: #4b5563;
-    line-height: 1.6;
-}
-
-.sql-gate__form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-
-    margin: 20px 0;
-    text-align: left;
-}
-
-.sql-gate__form input {
-    padding: 10px 12px;
-
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-
-    font-size: 16px;
-}
-
-.sql-gate__form .sql-gate__error {
-    margin: 0;
-    color: var(--sql-bad);
-}
-
-.sql-gate__back {
-    color: var(--sql-accent-dark);
-    font-weight: 600;
-    text-decoration: none;
-}
-
 /* ---------- Узкие экраны ---------- */
 
 @media (max-width: 1200px) {
@@ -1317,4 +1252,10 @@ td.sql-null {
     .auth-button {
         padding: 6px 10px;
     }
+}
+
+/* Прочитанный урок без решённой задачи: спокойная галочка, не зелёная */
+.sql-lesson.is-read .sql-lesson__num {
+    background: #e0e7ff;
+    color: #4338ca;
 }

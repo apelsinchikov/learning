@@ -1,17 +1,43 @@
 import { escapeHtml } from "../../utils/textFormat.js";
 import { CHAPTERS, sqlLessons } from "../lessons/index.js";
 
+/*
+ * Состояние урока: "solved" — задача решена, "read" — только прочитан
+ * (дошли до задачи или нажали «дальше»), null — ещё не открывали.
+ */
+export function lessonStatus(progress, lessonId) {
+    const entry = progress.lessons?.[lessonId];
+
+    if (entry?.solved) {
+        return "solved";
+    }
+
+    return entry?.read ? "read" : null;
+}
+
 export function countSolved(progress) {
-    return sqlLessons.filter(lesson => progress.lessons?.[lesson.id]?.solved).length;
+    return sqlLessons.filter(lesson => lessonStatus(progress, lesson.id) === "solved").length;
+}
+
+/* Пройденные уроки: прочитанные и решённые. Их показывает счётчик в шапке. */
+export function countDone(progress) {
+    return sqlLessons.filter(lesson => lessonStatus(progress, lesson.id) !== null).length;
+}
+
+/* По этой строке видно, изменились ли отметки и нужно ли перерисовать панели. */
+export function statusKey(progress) {
+    return sqlLessons
+        .map(lesson => ({ solved: "2", read: "1" })[lessonStatus(progress, lesson.id)] || "0")
+        .join("");
 }
 
 /* Прогресс для шапки. Классы те же, что у курса OpenAPI. */
 export function renderSqlProgress(progress) {
-    const done = countSolved(progress);
+    const done = countDone(progress);
     const percent = Math.round((done / sqlLessons.length) * 100);
 
     return `
-        <div class="header__progress" title="Решено задач">
+        <div class="header__progress" title="Пройдено уроков">
             <div class="header__progress-text">
                 <span>Прогресс</span>
                 <strong>${done} / ${sqlLessons.length}</strong>
@@ -32,12 +58,12 @@ export function renderSqlSidebar(currentId, progress) {
                 const items = chapter.lessons
                     .map(lesson => {
                         number++;
-                        const done = progress.lessons?.[lesson.id]?.solved;
+                        const status = lessonStatus(progress, lesson.id);
                         const active = lesson.id === currentId;
 
                         return `
-                        <a class="sql-lesson${active ? " is-active" : ""}${done ? " is-done" : ""}" href="#/sql/${encodeURIComponent(lesson.id)}"${active ? ` aria-current="page"` : ""}>
-                            <span class="sql-lesson__num">${done ? "✓" : number}</span>
+                        <a class="sql-lesson${active ? " is-active" : ""}${status === "solved" ? " is-done" : ""}${status === "read" ? " is-read" : ""}" href="#/sql/${encodeURIComponent(lesson.id)}"${active ? ` aria-current="page"` : ""}>
+                            <span class="sql-lesson__num"${status ? ` title="${status === "solved" ? "Задача решена" : "Прочитано"}"` : ""}>${status ? "✓" : number}</span>
                             <span class="sql-lesson__text">
                                 <strong>${escapeHtml(lesson.title)}</strong>
                                 <small>${escapeHtml(lesson.summary)}</small>

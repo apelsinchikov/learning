@@ -6,7 +6,7 @@ import { ProgressSummary } from "./ProgressSummary.js";
  * course — какой курс сейчас открыт ("openapi" или "sql").
  * summary — готовый HTML прогресса (для курса SQL свой), по умолчанию прогресс OpenAPI.
  */
-export function Header({ user = null, progress, course = "openapi", sqlLocked = false, summary = null } = {}) {
+export function Header({ user = null, progress, course = "openapi", summary = null } = {}) {
     const isSql = course === "sql";
 
     return `
@@ -23,7 +23,7 @@ export function Header({ user = null, progress, course = "openapi", sqlLocked = 
                 </div>
             </div>
 
-            ${CourseTabs({ active: course, sqlLocked })}
+            ${CourseTabs({ active: course })}
 
             <div class="header__auth">
                 ${summary ?? ProgressSummary(progress)}

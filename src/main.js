@@ -22,7 +22,6 @@ import { createLocalStore } from "./progress/localStore.js";
 import { getDraft, isLessonDone } from "./progress/progressModel.js";
 import { createProgressService } from "./progress/progressService.js";
 import { parseRoute, rememberReturnRoute, takeReturnRoute } from "./courses/router.js";
-import { isUnlocked } from "./sql/gate.js";
 
 
 let currentLessonIndex = 0;
@@ -262,8 +261,7 @@ async function renderApp({ scrollToTop = false } = {}) {
 
     app.innerHTML = App(currentLessonIndex, {
         progress: progressService.getProgress(),
-        user: currentUser,
-        sqlLocked: !isUnlocked(getStorage())
+        user: currentUser
     });
 
     renderedDoneKey = doneKey();

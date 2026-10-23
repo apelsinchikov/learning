@@ -4,10 +4,9 @@ import { highlightSqlHtml, tokenizeSql } from "./highlight.js";
 import { joinRows, renderJoinVisual } from "./joinVisual.js";
 import { renderRich } from "./richText.js";
 import { sqlLessons } from "./lessons/index.js";
-import { createEmptyProgress, markSolved } from "../progress/progressModel.js";
+import { createEmptyProgress, markRead, markSolved } from "../progress/progressModel.js";
 import { collectCheats, collectClues, renderAside, renderNotebook } from "./views/aside.js";
-import { renderGate } from "./views/gate.js";
-import { countSolved, neighbours, renderSqlProgress, renderSqlSidebar } from "./views/nav.js";
+import { countDone, countSolved, lessonStatus, neighbours, renderSqlProgress, renderSqlSidebar, statusKey } from "./views/nav.js";
 import { renderErrorBox, renderResultTable } from "./views/resultTable.js";
 import { renderLessonPage, renderSandboxPage, renderSolved, renderVerdict } from "./views/task.js";
 
@@ -137,6 +136,42 @@ describe("блокнот, шпаргалка, навигация", () => {
         expect(renderSqlSidebar("sandbox", progress)).toContain("Песочница");
     });
 
+    it("прочитанный урок: галочка есть, но улик и решённых нет", () => {
+        const progress = markRead(createEmptyProgress(), "sql-where");
+        const sidebar = renderSqlSidebar("sql-select-star", progress);
+
+        expect(lessonStatus(progress, "sql-where")).toBe("read");
+        expect(countSolved(progress)).toBe(0);
+        expect(countDone(progress)).toBe(1);
+        expect(collectClues(progress)).toEqual([]);
+        expect(renderSqlProgress(progress)).toContain("1 / 28");
+        expect(sidebar).toContain("is-read");
+        expect(sidebar).not.toContain("is-done");
+    });
+
+    it("решённый урок важнее прочитанного и считается один раз", () => {
+        let progress = markRead(createEmptyProgress(), "sql-where");
+        progress = markSolved(progress, "sql-where");
+
+        expect(lessonStatus(progress, "sql-where")).toBe("solved");
+        expect(countDone(progress)).toBe(1);
+        expect(lessonStatus(progress, "sql-final")).toBeNull();
+    });
+
+    it("ключ отметок меняется при чтении и при решении", () => {
+        const empty = createEmptyProgress();
+        const read = markRead(empty, "sql-where");
+        const solved = markSolved(read, "sql-where");
+
+        expect(new Set([statusKey(empty), statusKey(read), statusKey(solved)]).size).toBe(3);
+    });
+
+    it("ссылка «дальше» помечена для отметки прочитанного", () => {
+        const html = renderLessonPage(sqlLessons[0], { solved: false, hintsShown: 0, chosen: null, verdictChoice: null });
+
+        expect(html).toContain("data-mark-read");
+    });
+
     it("соседние уроки", () => {
         expect(neighbours(sqlLessons[0].id).previous).toBeNull();
         expect(neighbours(sqlLessons[0].id).next.id).toBe(sqlLessons[1].id);
@@ -179,10 +214,8 @@ describe("страницы уроков", () => {
         expect(renderVerdict(verdict, null)).not.toContain("Дело закрыто");
     });
 
-    it("песочница и экран пароля", () => {
+    it("песочница", () => {
         expect(renderSandboxPage()).toContain("data-editor");
-        expect(renderGate()).toContain("data-gate-form");
-        expect(renderGate({ error: "<b>" })).not.toContain("<b>");
     });
 
     it("урок с выбором не содержит редактор", () => {

@@ -16,9 +16,8 @@ describe("CourseTabs", () => {
         expect(CourseTabs({ active: "openapi" })).not.toContain("course-tab--sql course-tab--active");
     });
 
-    it("замок только пока курс закрыт", () => {
-        expect(CourseTabs({ sqlLocked: true })).toContain("course-tab__lock");
-        expect(CourseTabs({ sqlLocked: false })).not.toContain("course-tab__lock");
+    it("на вкладке SQL нет замка: курс открыт для всех", () => {
+        expect(CourseTabs()).not.toContain("course-tab__lock");
     });
 });
 
