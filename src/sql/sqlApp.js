@@ -398,7 +398,39 @@ export function createSqlCourseApp({
         updateMentioned(initial);
     }
 
+    /*
+     * Страница перерисовывается целиком, и список уроков вернулся бы к началу.
+     * Запоминаем, где он был прокручен, и после отрисовки возвращаем.
+     * Если выбранный урок остался за краем (или страницу только открыли), показываем его.
+     */
+    function restoreSidebarScroll(previousTop) {
+        const sidebar = root.querySelector(".sql-sidebar");
+
+        if (!sidebar) {
+            return;
+        }
+
+        if (previousTop !== null) {
+            sidebar.scrollTop = previousTop;
+        }
+
+        const current = sidebar.querySelector("[aria-current='page']");
+
+        if (!current) {
+            return;
+        }
+
+        const top = current.getBoundingClientRect().top - sidebar.getBoundingClientRect().top + sidebar.scrollTop;
+        const visible = top >= sidebar.scrollTop && top + current.offsetHeight <= sidebar.scrollTop + sidebar.clientHeight;
+
+        if (!visible) {
+            sidebar.scrollTop = Math.max(top - sidebar.clientHeight / 2, 0);
+        }
+    }
+
     function render(args = {}) {
+        const previousSidebarTop = root.querySelector(".sql-app:not(.dg-app) .sql-sidebar")?.scrollTop ?? null;
+
         active = true;
         user = args.user ?? null;
 
@@ -429,6 +461,7 @@ export function createSqlCourseApp({
 
         root.innerHTML = chrome(content);
         renderedKey = solvedKey();
+        restoreSidebarScroll(previousSidebarTop);
 
         if (lesson && lesson.task.kind !== "choice") {
             mountEditor(lesson);
