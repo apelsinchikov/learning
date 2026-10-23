@@ -15,6 +15,10 @@
     .sidebar {
             width: 100%;
             padding: 14px;
+
+            position: static;
+            max-height: none;
+            overflow: visible;
     
             border-right: 0;
             border-bottom: 1px solid #e5e7eb;

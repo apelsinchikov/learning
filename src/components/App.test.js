@@ -46,7 +46,7 @@ describe("прогресс в App", () => {
         const first = course.find(lesson => lesson.type === "theory");
         const progress = markRead(createEmptyProgress(), first.id);
 
-        expect(count(App(0, { progress }), "lesson--done")).toBe(1);
-        expect(count(App(0), "lesson--done")).toBe(0);
+        expect(count(App(0, { progress }), "lesson--read")).toBe(1);
+        expect(count(App(0), "lesson--read")).toBe(0);
     });
 });

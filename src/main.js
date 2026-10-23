@@ -22,6 +22,7 @@ import { createLocalStore } from "./progress/localStore.js";
 import { getDraft, isLessonDone } from "./progress/progressModel.js";
 import { createProgressService } from "./progress/progressService.js";
 import { parseRoute, rememberReturnRoute, takeReturnRoute } from "./courses/router.js";
+import { readSidebarScroll, restoreSidebarScroll } from "./ui/sidebarScroll.js";
 
 /*
  * Курсы, которые живут рядом с OpenAPI. Код каждого грузится отдельным куском и
@@ -141,6 +142,17 @@ function doneKey() {
 
 let renderedDoneKey = "";
 
+/* Список уроков прокручивается либо сам сайдбар (компьютер), либо .lesson-list (телефон). */
+const SIDEBAR_SCROLLERS = [".sidebar", ".lesson-list"];
+
+function rememberSidebarScroll() {
+    return SIDEBAR_SCROLLERS.map(selector => readSidebarScroll(document, selector));
+}
+
+function restoreSidebar(saved) {
+    SIDEBAR_SCROLLERS.forEach((selector, index) => restoreSidebarScroll(document, saved[index], { selector }));
+}
+
 function refreshSidebarIfNeeded() {
     const sidebar = document.querySelector(".sidebar");
     const key = doneKey();
@@ -151,8 +163,11 @@ function refreshSidebarIfNeeded() {
 
     renderedDoneKey = key;
 
+    const savedScroll = rememberSidebarScroll();
+
     sidebar.outerHTML = Sidebar(currentLessonIndex, progressService.getProgress());
     bindLessonList(goToLesson);
+    restoreSidebar(savedScroll);
 
     const summary = document.querySelector(".header__progress");
 
@@ -274,12 +289,15 @@ async function renderApp({ scrollToTop = false } = {}) {
         return;
     }
 
+    const savedScroll = document.querySelector(".app-layout") ? rememberSidebarScroll() : [null, null];
+
     app.innerHTML = App(currentLessonIndex, {
         progress: progressService.getProgress(),
         user: currentUser
     });
 
     renderedDoneKey = doneKey();
+    restoreSidebar(savedScroll);
 
     /*
      * Сначала HTML урока должен попасть в DOM.
