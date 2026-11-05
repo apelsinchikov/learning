@@ -1,6 +1,7 @@
 import { Header } from "../components/Header.js";
 import { parseRoute, sqlAdvancedHash } from "../courses/router.js";
 import { compareResults } from "../sql/check.js";
+import { createPeek } from "../peek/peek.js";
 import { createSqlEditor } from "../sql/sqlEditor.js";
 import { renderErrorBox, renderNotice, renderResultTable } from "../sql/views/resultTable.js";
 import { createEngine } from "./engine.js";
@@ -611,6 +612,7 @@ export function createSqaCourseApp({
     }
 
     function render(args = {}) {
+        peek.close({ restoreFocus: false });
         const previousSidebarTop = root.querySelector(".sqa-app .sql-sidebar")?.scrollTop ?? null;
 
         active = true;
@@ -717,7 +719,7 @@ export function createSqaCourseApp({
         }
 
         const target = event.target.closest(
-            "[data-run],[data-check],[data-reset],[data-hint],[data-quiz-submit],[data-example-run],[data-example-sandbox],[data-aside-tab],[data-peek-toggle],[data-mark-read],[data-table-ref],[data-schema-open],[data-schema-close],[data-schema-reset],[data-modal-table]"
+            "[data-run],[data-check],[data-reset],[data-hint],[data-quiz-submit],[data-example-run],[data-example-sandbox],[data-aside-tab],[data-peek],[data-peek-toggle],[data-mark-read],[data-table-ref],[data-schema-open],[data-schema-close],[data-schema-reset],[data-modal-table]"
         );
 
         if (!target) {
@@ -745,6 +747,8 @@ export function createSqaCourseApp({
             window.location.hash = sqlAdvancedHash("sandbox");
         } else if ("asideTab" in data) {
             switchAsideTab(data.asideTab);
+        } else if ("peek" in data) {
+            peek.open(data.peek, target);
         } else if ("peekToggle" in data) {
             onPeekToggle(target);
         } else if ("tableRef" in data) {
@@ -780,6 +784,8 @@ export function createSqaCourseApp({
         }
     }
 
+    const peek = createPeek({ root });
+
     root.addEventListener("click", onClick);
     root.addEventListener("change", onChange);
     document.addEventListener("keydown", onKey);
@@ -797,6 +803,7 @@ export function createSqaCourseApp({
             destroyEditor();
             stopWatchingReading();
             closeSchemaModal();
+            peek.close({ restoreFocus: false });
         },
 
         flush: () => progress.flush(),

@@ -1,0 +1,324 @@
+/* =========================================================
+   Панель «Повторить»: урок другого курса справа
+   ========================================================= */
+
+.peek {
+    position: sticky;
+    top: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    height: 100vh;
+    overflow: hidden;
+
+    border-left: 1px solid var(--sql-line, #e5e7eb);
+    background: #ffffff;
+
+    animation: peek-in 0.18s ease-out;
+}
+
+.peek::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+
+    width: 4px;
+    background: #f59e0b;
+}
+
+@keyframes peek-in {
+    from {
+        opacity: 0;
+        transform: translateX(24px);
+    }
+}
+
+.sql-layout--peek {
+    grid-template-columns: 270px minmax(0, 1fr) 460px;
+}
+
+.sql-layout--peek > .sql-aside {
+    display: none;
+}
+
+.peek-backdrop {
+    display: none;
+}
+
+.peek__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    padding: 16px 18px 12px 22px;
+
+    border-bottom: 1px solid var(--sql-line, #e5e7eb);
+}
+
+.peek__from {
+    color: #b45309;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.peek__title {
+    margin: 4px 0 0;
+
+    font-size: 20px;
+    line-height: 1.25;
+}
+
+.peek__close {
+    flex: none;
+
+    width: 32px;
+    height: 32px;
+    margin-left: auto;
+
+    border: 1px solid var(--sql-line, #e5e7eb);
+    border-radius: 8px;
+    background: #ffffff;
+
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.peek__close:hover {
+    background: #f3f4f6;
+}
+
+.peek__body {
+    flex: 1;
+    overflow: auto;
+
+    padding: 16px 18px 16px 22px;
+}
+
+.peek__label {
+    margin: 0 0 6px;
+
+    color: var(--sql-muted, #6b7280);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.peek__card {
+    margin-bottom: 14px;
+    padding: 12px 14px;
+
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    background: #fffbeb;
+}
+
+.peek__card p {
+    margin: 0 0 8px;
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.peek__card p:last-child {
+    margin: 0;
+}
+
+.peek__cheats {
+    margin-bottom: 14px;
+
+    border: 1px solid var(--sql-line, #e5e7eb);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.peek__cheats div {
+    display: flex;
+    gap: 12px;
+
+    padding: 8px 12px;
+
+    font-size: 13px;
+}
+
+.peek__cheats div + div {
+    border-top: 1px solid #f1f2f4;
+}
+
+.peek__cheats code {
+    flex: 0 0 170px;
+
+    color: #0f766e;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.peek__code {
+    margin: 8px 0;
+    padding: 10px 12px;
+
+    overflow: auto;
+
+    border-radius: 8px;
+    background: #1f2430;
+    color: #e5e7eb;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.peek__note {
+    margin: 0 0 12px;
+
+    color: var(--sql-muted, #6b7280);
+    font-size: 13px;
+}
+
+.peek__full {
+    margin-top: 18px;
+    padding-top: 14px;
+
+    border-top: 1px dashed var(--sql-line, #e5e7eb);
+}
+
+.peek__full[hidden] {
+    display: none;
+}
+
+.peek__text p,
+.peek__why p,
+.peek__trap p {
+    margin: 0 0 10px;
+
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.peek__why,
+.peek__trap {
+    margin: 0 0 12px;
+    padding: 10px 12px;
+
+    border-radius: 8px;
+}
+
+.peek__why {
+    background: #eff6ff;
+}
+
+.peek__trap {
+    background: #fef2f2;
+}
+
+.peek__why strong,
+.peek__trap strong {
+    display: block;
+    margin-bottom: 4px;
+
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.peek__table {
+    margin-bottom: 12px;
+}
+
+.peek__foot {
+    display: grid;
+    gap: 8px;
+
+    padding: 12px 18px 14px 22px;
+
+    border-top: 1px solid var(--sql-line, #e5e7eb);
+}
+
+.peek__btn {
+    padding: 9px 12px;
+
+    border: 1px solid var(--sql-line, #e5e7eb);
+    border-radius: 8px;
+    background: #ffffff;
+
+    color: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.peek__btn--main {
+    border-color: #f59e0b;
+    background: #f59e0b;
+    color: #1c1917;
+}
+
+/* Узкий экран: панель поверх страницы (справа, а на телефоне шторкой снизу). */
+@media (max-width: 1200px) {
+    .peek {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 60;
+
+        width: min(480px, 100vw);
+        height: auto;
+
+        box-shadow: -12px 0 32px rgba(15, 23, 42, 0.18);
+    }
+
+    .peek-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 55;
+
+        display: block;
+
+        background: rgba(15, 23, 42, 0.35);
+    }
+
+    .sql-layout--peek > .sql-aside {
+        display: flex;
+    }
+}
+
+@media (max-width: 900px) {
+    .peek {
+        top: 6vh;
+        left: 0;
+
+        width: auto;
+
+        border-radius: 16px 16px 0 0;
+
+        animation-name: peek-up;
+    }
+
+    .peek::before {
+        right: 0;
+        bottom: auto;
+
+        width: auto;
+        height: 4px;
+        border-radius: 16px 16px 0 0;
+    }
+
+    @keyframes peek-up {
+        from {
+            opacity: 0;
+            transform: translateY(32px);
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .peek {
+        animation: none;
+    }
+}
