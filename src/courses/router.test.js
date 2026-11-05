@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
     courseHash,
     diagramsHash,
+    gitHash,
     isDiagramsRoute,
     isHashCourseRoute,
     isSqlRoute,
@@ -107,6 +108,23 @@ describe("router", () => {
         expect(sqlAdvancedHash("sandbox")).toBe("#/sql-advanced/sandbox");
         expect(isSqlRoute("#/sql-advanced")).toBe(false);
         expect(isHashCourseRoute("#/sql-advanced/sqa-cte")).toBe(true);
+    });
+
+    it("#/git — курс «Git и проект»", () => {
+        expect(parseRoute("#/git")).toEqual({ course: "git", lessonId: null });
+        expect(parseRoute("#/git/git-clone")).toEqual({ course: "git", lessonId: "git-clone" });
+        expect(gitHash()).toBe("#/git");
+        expect(gitHash("git-pr")).toBe("#/git/git-pr");
+        expect(isHashCourseRoute("#/git/git-pr")).toBe(true);
+        expect(isSqlRoute("#/git")).toBe(false);
+    });
+
+    it("возврат после входа работает и для курса Git", () => {
+        const storage = fakeStorage();
+
+        rememberReturnRoute(storage, "#/git/git-clone");
+
+        expect(takeReturnRoute(storage, "")).toBe("#/git/git-clone");
     });
 
     it("возврат после входа работает и для «Диаграмм»", () => {

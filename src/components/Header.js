@@ -6,11 +6,12 @@ const BRANDS = {
     openapi: { logo: "O", title: "OpenAPI Course", subtitle: "Интерактивный курс по REST API" },
     sql: { logo: "S", title: "SQL: тайна отеля «Перевал»", subtitle: "Детективный курс по Postgres" },
     diagrams: { logo: "D", title: "Диаграммы: проект отеля «Перевал»", subtitle: "ER и sequence на Mermaid" },
-    "sql-advanced": { logo: "A", title: "SQL Advanced: сезон в «Перевале»", subtitle: "Запросы, таблицы и хранилища для системного аналитика" }
+    "sql-advanced": { logo: "A", title: "SQL Advanced: сезон в «Перевале»", subtitle: "Запросы, таблицы и хранилища для системного аналитика" },
+    git: { logo: "G", title: "Git и проект: работаем с GitHub", subtitle: "Репозиторий, ветки и pull request на реальном проекте" }
 };
 
 /*
- * course — какой курс сейчас открыт ("openapi", "sql", "diagrams" или "sql-advanced").
+ * course — какой курс сейчас открыт ("openapi", "sql", "diagrams", "sql-advanced" или "git").
  * summary — готовый HTML прогресса (у курсов SQL и «Диаграммы» свой), по умолчанию прогресс OpenAPI.
  */
 export function Header({ user = null, progress, course = "openapi", summary = null } = {}) {

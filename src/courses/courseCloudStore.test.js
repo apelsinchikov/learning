@@ -64,6 +64,19 @@ describe("три курса в одной таблице", () => {
         expect(Object.keys((await createSqlCloudStore(client).load("u1")).lessons)).toEqual(["sql-where"]);
     });
 
+    it("Git и проект берёт только git-, а остальные курсы его не видят", async () => {
+        const mixed = [row("lesson-1"), row("sql-where"), row("sqa-cte"), row("git-clone")];
+        const client = fakeClient({
+            lessonRows: mixed,
+            stateRows: [{ course_id: "git", current_lesson: "git-clone", updated_at: AT }]
+        });
+        const progress = await createCourseCloudStore(client, { courseId: "git", prefix: "git-" }).load("u1");
+
+        expect(Object.keys(progress.lessons)).toEqual(["git-clone"]);
+        expect(progress.currentLesson).toEqual({ id: "git-clone", updatedAt: AT });
+        expect(Object.keys((await createCloudStore(client).load("u1")).lessons)).toEqual(["lesson-1"]);
+    });
+
     it("сохранение: чужие уроки не отправляются, course_id = diagrams", async () => {
         const client = fakeClient();
         let progress = createEmptyProgress();

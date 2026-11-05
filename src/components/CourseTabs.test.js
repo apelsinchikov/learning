@@ -31,6 +31,15 @@ describe("CourseTabs", () => {
         expect(Header({ course: "sql-advanced", summary: "" })).toContain("header--sql-advanced");
     });
 
+    it("пятая вкладка Git ведёт на свой адрес и подсвечивается", () => {
+        expect(CourseTabs()).toContain('href="#/git"');
+        expect(CourseTabs()).toContain(">Git</a>");
+        expect(CourseTabs({ active: "git" })).toContain("course-tab--git course-tab--active");
+        expect(CourseTabs({ active: "sql" })).not.toContain("course-tab--git course-tab--active");
+        expect(Header({ course: "git", summary: "" })).toContain("header--git");
+        expect(Header({ course: "git", summary: "" })).toContain("Git и проект");
+    });
+
     it("на вкладке SQL нет замка: курс открыт для всех", () => {
         expect(CourseTabs()).not.toContain("course-tab__lock");
     });

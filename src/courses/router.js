@@ -1,6 +1,6 @@
 /*
- * Маршруты сайта. Курсов четыре: OpenAPI (по умолчанию, как раньше), SQL, «Диаграммы» и SQL Advanced.
- * Адрес курса — в хеше: #/sql, #/sql/<id урока>, #/sql/sandbox, #/diagrams/..., #/sql-advanced/...
+ * Маршруты сайта. Курсов пять: OpenAPI (по умолчанию, как раньше), SQL, «Диаграммы», SQL Advanced и «Git и проект».
+ * Адрес курса — в хеше: #/sql, #/sql/<id урока>, #/sql/sandbox, #/diagrams/..., #/sql-advanced/..., #/git/...
  * Хеш не требует настроек сервера, поэтому работает на GitHub Pages.
  */
 
@@ -8,9 +8,10 @@ export const OPENAPI_HASH = "#/";
 export const SQL_HASH = "#/sql";
 export const DIAGRAMS_HASH = "#/diagrams";
 export const SQL_ADVANCED_HASH = "#/sql-advanced";
+export const GIT_HASH = "#/git";
 
 /* Курсы, которые живут в хеше (OpenAPI — всё остальное). */
-export const HASH_COURSES = ["sql", "diagrams", "sql-advanced"];
+export const HASH_COURSES = ["sql", "diagrams", "sql-advanced", "git"];
 
 const RETURN_KEY = "learning-return-route";
 
@@ -51,6 +52,10 @@ export function diagramsHash(lessonId = null) {
 
 export function sqlAdvancedHash(lessonId = null) {
     return courseHash("sql-advanced", lessonId);
+}
+
+export function gitHash(lessonId = null) {
+    return courseHash("git", lessonId);
 }
 
 export function isSqlRoute(hash = "") {

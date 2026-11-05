@@ -1,0 +1,568 @@
+/* =========================================================
+   Курс «Git и проект»
+   Каркас, панели и кнопки общие с курсом SQL (классы sql-*).
+   Здесь только то, чего там нет, и оранжево-красный акцент.
+   ========================================================= */
+
+.git-app {
+    --sql-accent: #c2410c;
+    --sql-accent-dark: #9a3412;
+    --sql-accent-soft: #fff7ed;
+}
+
+/* ---------- Шапка и вкладка ---------- */
+
+.course-tab--git.course-tab--active {
+    background: #c2410c;
+    color: #ffffff;
+}
+
+.header--git .header__logo {
+    background: #c2410c;
+    color: #ffffff;
+}
+
+.header--git .header__progress .progress-bar__value {
+    background: #c2410c;
+}
+
+/* ---------- Mac / Windows и Терминал / VS Code ---------- */
+
+.git-app[data-os="mac"] .git-os--windows,
+.git-app[data-os="windows"] .git-os--mac,
+.git-app[data-os="mac"] [data-os-variant="windows"],
+.git-app[data-os="windows"] [data-os-variant="mac"],
+.git-app[data-mode="terminal"] [data-variant="vscode"],
+.git-app[data-mode="vscode"] [data-variant="terminal"] {
+    display: none;
+}
+
+.git-how,
+.git-osblock {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    margin: 16px 0;
+}
+
+.git-how__variant,
+.git-osblock__variant {
+    padding: 12px 14px;
+
+    border: 1px solid var(--sql-line);
+    border-left: 4px solid var(--sql-accent);
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.git-how__variant > h4,
+.git-osblock__variant > h4 {
+    margin: 0 0 8px;
+
+    color: var(--sql-accent-dark);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.git-how__variant > :last-child,
+.git-osblock__variant > :last-child {
+    margin-bottom: 0;
+}
+
+.git-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+
+    margin: 0 0 16px;
+    padding: 10px 12px;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.git-toolbar__profile {
+    padding: 6px 10px;
+
+    border: 1px dashed var(--sql-accent);
+    border-radius: 8px;
+    background: var(--sql-accent-soft);
+    color: var(--sql-accent-dark);
+
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.git-toggles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+}
+
+.git-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.git-toggle__label {
+    color: var(--sql-muted);
+    font-size: 13px;
+}
+
+.git-toggle__btn {
+    padding: 5px 11px;
+
+    border: 1px solid var(--sql-line);
+    background: #ffffff;
+    color: var(--sql-ink);
+
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.git-toggle__btn:first-of-type {
+    border-radius: 8px 0 0 8px;
+}
+
+.git-toggle__btn:last-of-type {
+    margin-left: -1px;
+    border-radius: 0 8px 8px 0;
+}
+
+.git-toggle__btn.is-on {
+    border-color: var(--sql-accent);
+    background: var(--sql-accent);
+    color: #ffffff;
+}
+
+/* ---------- Подставленные значения и клавиши ---------- */
+
+.git-val {
+    font-weight: 600;
+}
+
+.git-val--empty {
+    padding: 0 3px;
+
+    border-radius: 4px;
+    background: #fef3c7;
+    color: #92400e;
+    font-style: italic;
+}
+
+.git-cmd .git-val {
+    color: #fdba74;
+}
+
+.git-cmd .git-val--empty {
+    background: rgba(251, 191, 36, 0.18);
+    color: #fcd34d;
+}
+
+.git-out .git-val {
+    color: #fdba74;
+}
+
+.git-key {
+    display: inline-block;
+    padding: 1px 6px;
+
+    border: 1px solid #d1d5db;
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    background: #f9fafb;
+    color: var(--sql-ink);
+
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.88em;
+    white-space: nowrap;
+}
+
+/* ---------- Команды ---------- */
+
+.git-cmd {
+    margin: 16px 0;
+
+    border-radius: 10px;
+    background: #171a21;
+    overflow: hidden;
+}
+
+.git-cmd__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    padding: 8px 12px;
+
+    border-bottom: 1px solid #2b303b;
+    color: #9ca3af;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+}
+
+.git-cmd .sql-button--small {
+    border-color: #3b4252;
+    background: #262a33;
+    color: #e5e7eb;
+}
+
+.git-cmd__code,
+.git-out__code {
+    margin: 0;
+    padding: 12px 14px;
+
+    overflow-x: auto;
+
+    color: #e5e7eb;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.git-line {
+    display: block;
+}
+
+.git-line:not(.git-line--comment)::before {
+    content: "$ ";
+    color: #6b7280;
+    user-select: none;
+}
+
+.git-line--comment {
+    color: #86efac;
+}
+
+.git-out {
+    border-top: 1px dashed #2b303b;
+    background: #12141a;
+}
+
+.git-out__label {
+    padding: 8px 14px 0;
+
+    color: #9ca3af;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+}
+
+.git-out__code {
+    color: #cbd5e1;
+}
+
+.git-out__note,
+.git-cmd .sql-example__note {
+    margin: 0;
+    padding: 0 14px 12px;
+
+    color: #cbd5e1;
+    font-size: 14px;
+}
+
+.git-cmd .sql-example__note {
+    padding-top: 10px;
+}
+
+.git-out__note code,
+.git-cmd .sql-example__note code,
+.git-cmd .inline-code {
+    border: 0;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fdba74;
+}
+
+/* ---------- Шаги в браузере на GitHub ---------- */
+
+.git-web {
+    margin: 16px 0;
+    padding: 12px 16px;
+
+    border: 1px solid #c7d2fe;
+    border-radius: 10px;
+    background: #eef2ff;
+}
+
+.git-web__label {
+    margin-bottom: 6px;
+
+    color: #3730a3;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.git-web ol {
+    margin: 0;
+    padding-left: 22px;
+}
+
+.git-web li {
+    margin: 4px 0;
+}
+
+/* ---------- «Очень важно» ---------- */
+
+.git-important {
+    margin: 16px 0;
+    padding: 14px 18px;
+
+    border: 1px solid #fdba74;
+    border-left: 5px solid #ea580c;
+    border-radius: 10px;
+    background: #fff7ed;
+}
+
+.git-important__title {
+    margin-bottom: 6px;
+
+    color: #9a3412;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.git-important p,
+.git-important ul {
+    margin: 0 0 8px;
+}
+
+.git-important > :last-child {
+    margin-bottom: 0;
+}
+
+/* ---------- Шаги задания ---------- */
+
+.git-steps__count {
+    margin-bottom: 10px;
+
+    color: var(--sql-muted);
+    font-size: 14px;
+}
+
+.git-steps ol {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.git-step {
+    padding: 12px 14px;
+
+    border: 1px solid var(--sql-line);
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.git-step.is-done {
+    border-color: #86efac;
+    background: var(--sql-good-bg);
+}
+
+.git-step__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.git-step__mark {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+
+    width: 24px;
+    height: 24px;
+
+    border-radius: 50%;
+    background: #e5e7eb;
+    color: #374151;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.git-step.is-done .git-step__mark {
+    background: #16a34a;
+    color: #ffffff;
+}
+
+.git-step__check {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    margin: 2px 2px 0;
+
+    accent-color: #16a34a;
+}
+
+.git-step__text {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    line-height: 1.5;
+}
+
+.git-step__check-box,
+.git-step .git-field {
+    margin: 10px 0 0 34px;
+}
+
+.git-step__prompt {
+    display: block;
+    margin-bottom: 6px;
+
+    font-size: 14px;
+}
+
+.git-step__paste {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 8px 10px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: var(--sql-ink);
+
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+    resize: vertical;
+}
+
+.git-step__manual {
+    margin: 6px 0 0;
+
+    color: var(--sql-muted);
+    font-size: 13px;
+}
+
+/* ---------- Мой проект ---------- */
+
+.git-profile {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.git-profile__lead {
+    margin: 0;
+
+    color: var(--sql-muted);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.git-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.git-field__label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.git-field__input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 8px 10px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--sql-ink);
+
+    font: inherit;
+    font-size: 14px;
+}
+
+.git-field__input:focus {
+    outline: 2px solid var(--sql-accent);
+    outline-offset: 1px;
+}
+
+.git-field__input[aria-invalid="true"] {
+    border-color: #dc2626;
+    background: #fef2f2;
+}
+
+.git-field__hint {
+    color: var(--sql-muted);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.git-profile .git-toggles {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* ---------- Телефон ---------- */
+
+/*
+ * Пять вкладок курсов не помещаются в шапку телефона: вкладки прокручиваются вбок,
+ * а страница вбок не едет.
+ */
+@media (max-width: 700px) {
+    .header--git .header__title {
+        font-size: 14px;
+    }
+
+    .header {
+        min-width: 0;
+    }
+
+    .course-tabs {
+        flex: 1 1 0;
+        min-width: 0;
+
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .course-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .course-tab {
+        flex: 0 0 auto;
+    }
+
+    .git-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .git-step__check-box,
+    .git-step .git-field {
+        margin-left: 0;
+    }
+}
+
+/* Длинные адреса и значения переносятся, страница вбок не едет */
+.git-app .sql-main p,
+.git-app .sql-main li,
+.git-app .sql-main .inline-code,
+.git-app .git-val {
+    overflow-wrap: anywhere;
+}
