@@ -7,7 +7,7 @@ import { renderLessonPage } from "../views/page.js";
 import { CHAPTERS, findGitLesson, gitLessons, lessonNumber } from "./index.js";
 
 const profile = { login: "anna-ivanova", repo: "git-practice", name: "Анна Иванова", email: "anna@example.com", os: "windows", mode: "vscode" };
-const BLOCK_TYPES = ["text", "why", "trap", "important", "cmd", "web", "how", "os"];
+const BLOCK_TYPES = ["text", "why", "trap", "important", "cmd", "code", "table", "web", "how", "os"];
 
 function everyBlock(blocks, visit) {
     for (const block of blocks) {
@@ -29,7 +29,7 @@ function allText(lesson) {
     const parts = [lesson.story, lesson.task.prompt, lesson.task.afterwards];
 
     everyBlock(lesson.theory, block => {
-        parts.push(block.text, block.note, block.output, block.outputNote, ...(block.lines || []), ...(block.steps || []));
+        parts.push(block.text, block.note, block.output, block.outputNote, ...(block.lines || []), ...(block.steps || []), ...(block.head || []), ...(block.rows || []).flat());
     });
 
     for (const item of lesson.task.items || []) {
@@ -44,10 +44,10 @@ function allText(lesson) {
 }
 
 describe("курс «Git и проект»: состав", () => {
-    it("12 уроков в 4 главах", () => {
-        expect(CHAPTERS).toHaveLength(4);
-        expect(gitLessons).toHaveLength(12);
-        expect(CHAPTERS.map(chapter => chapter.lessons.length)).toEqual([3, 3, 3, 3]);
+    it("13 уроков в 5 главах", () => {
+        expect(CHAPTERS).toHaveLength(5);
+        expect(gitLessons).toHaveLength(13);
+        expect(CHAPTERS.map(chapter => chapter.lessons.length)).toEqual([3, 3, 3, 2, 2]);
     });
 
     it("идентификаторы уникальны и начинаются с git-", () => {
@@ -61,7 +61,8 @@ describe("курс «Git и проект»: состав", () => {
         expect(findGitLesson("git-why").title).toBeTruthy();
         expect(findGitLesson("нет")).toBeNull();
         expect(lessonNumber("git-why")).toBe(1);
-        expect(lessonNumber("git-final")).toBe(12);
+        expect(lessonNumber("git-openspec")).toBe(12);
+        expect(lessonNumber("git-final")).toBe(13);
         expect(lessonNumber("нет")).toBeNull();
     });
 });
@@ -86,6 +87,16 @@ describe.each(gitLessons.map(lesson => [lesson.id, lesson]))("урок %s", (_id
 
             if (block.type === "cmd") {
                 expect(block.lines.length).toBeGreaterThan(0);
+            }
+
+            if (block.type === "table") {
+                expect(block.head.length).toBeGreaterThan(1);
+                expect(block.rows.length).toBeGreaterThan(0);
+                expect(block.rows.every(row => row.length === block.head.length)).toBe(true);
+            }
+
+            if (block.type === "code") {
+                expect(block.text.trim().length).toBeGreaterThan(0);
             }
 
             if (block.type === "web") {

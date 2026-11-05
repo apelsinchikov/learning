@@ -86,6 +86,38 @@ function renderBlock(block, profile) {
         case "cmd":
             return renderCmd(block, profile);
 
+        case "code":
+            return `
+                <div class="git-cmd git-cmd--plain">
+                    ${block.title ? `<div class="git-cmd__bar"><span>${escapeHtml(block.title)}</span></div>` : ""}
+                    <pre class="git-cmd__code"><code>${escapeHtml(block.text)}</code></pre>
+                    ${block.note ? `<p class="sql-example__note">${renderGitInline(block.note, profile)}</p>` : ""}
+                </div>`;
+
+        case "table":
+            /* Таблица из четырёх колонок не помещается в узкую колонку урока: каждая строка — карточка, столбцы — подписанные пункты. */
+            return `
+                <div class="git-table-block">
+                    ${block.title ? `<div class="git-table-block__title">${escapeHtml(block.title)}</div>` : ""}
+                    <div class="git-roles">
+                        ${block.rows
+                            .map(
+                                row => `
+                            <section class="git-role">
+                                <h4>${renderGitInline(row[0], profile)}</h4>
+                                <dl>
+                                    ${row
+                                        .slice(1)
+                                        .map((cell, index) => `<div class="git-role__row"><dt>${renderGitInline(block.head[index + 1], profile)}</dt><dd>${renderGitInline(cell, profile)}</dd></div>`)
+                                        .join("")}
+                                </dl>
+                            </section>`
+                            )
+                            .join("")}
+                    </div>
+                    ${block.note ? `<p class="git-table-block__note">${renderGitInline(block.note, profile)}</p>` : ""}
+                </div>`;
+
         case "web":
             return `
                 <div class="git-web">
