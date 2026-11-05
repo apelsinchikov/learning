@@ -65,8 +65,9 @@
   владельца, включается «Do not allow bypassing the above settings».
 - GitHub умеет требовать pull request для `main`, но не умеет требовать, чтобы он
   шёл именно из `develop`. Это соглашение команды.
-- Вход из терминала: GitHub CLI, `gh auth login` (GitHub.com → HTTPS → Yes →
-  браузер). VS Code предлагает войти сам.
+- Вход без GitHub CLI: при первом `git push` по HTTPS. Windows: Git Credential
+  Manager (идёт с Git for Windows) открывает браузер. Mac: git спрашивает логин и
+  токен (classic, права `repo`), связка ключей запоминает. VS Code предлагает войти сам.
 - Команда `git push origin develop:main` отклоняется защищённой веткой: так
   проверяем защиту, не создавая лишних коммитов в `main`.
 
