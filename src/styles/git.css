@@ -282,6 +282,87 @@
     color: #fdba74;
 }
 
+.git-cmd--plain .git-cmd__code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* ---------- Таблица ролей ---------- */
+
+.git-table-block {
+    margin: 18px 0;
+}
+
+.git-table-block__title {
+    margin-bottom: 8px;
+
+    font-weight: 700;
+}
+
+.git-roles {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.git-role {
+    padding: 12px 14px;
+
+    border: 1px solid var(--sql-line);
+    border-left: 4px solid var(--sql-accent);
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.git-role h4 {
+    margin: 0 0 8px;
+
+    font-size: 15px;
+}
+
+.git-role dl {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    margin: 0;
+}
+
+.git-role__row {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 10px;
+}
+
+.git-role dt {
+    color: var(--sql-accent-dark);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.git-role dd {
+    margin: 0;
+
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+@media (max-width: 560px) {
+    .git-role__row {
+        grid-template-columns: 1fr;
+        gap: 2px;
+    }
+}
+
+.git-table-block__note {
+    margin: 8px 0 0;
+
+    color: var(--sql-muted);
+    font-size: 14px;
+}
+
 /* ---------- Шаги в браузере на GitHub ---------- */
 
 .git-web {

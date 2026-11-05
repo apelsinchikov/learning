@@ -33,12 +33,14 @@ import { chapter1 } from "./ch1.js";
 import { chapter2 } from "./ch2.js";
 import { chapter3 } from "./ch3.js";
 import { chapter4 } from "./ch4.js";
+import { chapter5 } from "./ch5.js";
 
 export const CHAPTERS = [
     { id: 1, title: "Подготовка", subtitle: "Аккаунт, git и ваши данные", lessons: chapter1 },
     { id: 2, title: "Проект на GitHub", subtitle: "Репозиторий, ветки и защита main", lessons: chapter2 },
     { id: 3, title: "Работа на компьютере", subtitle: "Клонируем, правим, отправляем", lessons: chapter3 },
-    { id: 4, title: "Pull request", subtitle: "Предлагаем изменения и вливаем", lessons: chapter4 }
+    { id: 4, title: "Pull request", subtitle: "Предлагаем изменения и вливаем", lessons: chapter4 },
+    { id: 5, title: "OpenSpec в проекте", subtitle: "Описываем изменения до кода", lessons: chapter5 }
 ];
 
 export const gitLessons = CHAPTERS.flatMap(chapter => chapter.lessons.map(lesson => ({ ...lesson, chapter: chapter.id })));
