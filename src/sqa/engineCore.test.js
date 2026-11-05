@@ -146,6 +146,16 @@ describe("проверочные запросы (probes)", () => {
     });
 });
 
+describe("схема после запроса", () => {
+    it("withSchema возвращает таблицы, созданные запросом", async () => {
+        const result = await engine.run({ sql: "CREATE TABLE made (id int PRIMARY KEY)", withSchema: true });
+        const names = result.schema.map(table => table.name);
+
+        expect(names).toContain("made");
+        expect(names).toContain("guests");
+    });
+});
+
 describe("планы", () => {
     const plan = async sql => (await engine.run({ sql })).rows.map(row => row[0]).join("\n");
 

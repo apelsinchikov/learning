@@ -1,15 +1,17 @@
 import { checkSql } from "./guard.js";
+import { SCHEMA_SQL } from "./schema.js";
 
 /*
  * Ядро движка SQL Advanced: Postgres (PGlite) с записью, но без последствий.
  *
- *   run({ before, sql, probes })
+ *   run({ before, sql, probes, withSchema })
  *
  * Всё идёт внутри одной транзакции, которая в конце ВСЕГДА откатывается:
  *   1. before — подготовка состояния урока (создать таблицу, добавить строки);
  *   2. sql    — запрос ученика;
  *   3. probes — проверочные запросы после запроса ученика (каждый в своей точке
  *               сохранения, чтобы ошибка одного не ломала остальные).
+ *   withSchema — вернуть и схему базы после запроса ученика (в поле schema).
  * Результат запроса ученика — последняя команда, которая вернула колонки.
  * Ядро работает в воркере (engineWorker.js), в тестах — напрямую.
  */
@@ -105,7 +107,7 @@ export function createEngineCore({ loadPglite, seedSql }) {
         }
     }
 
-    async function run({ before = "", sql, probes = [] }) {
+    async function run({ before = "", sql, probes = [], withSchema = false }) {
         const allowed = checkSql(sql);
 
         if (!allowed.ok) {
@@ -132,7 +134,15 @@ export function createEngineCore({ loadPglite, seedSql }) {
                 probeResults.push(await runProbe(probes[index], index));
             }
 
-            return { ok: true, ...table, probes: probeResults };
+            const result = { ok: true, ...table, probes: probeResults };
+
+            if (withSchema) {
+                const schema = await runProbe(SCHEMA_SQL, "schema");
+
+                result.schema = schema.ok ? schema.rows[0][0] : null;
+            }
+
+            return result;
         } catch (error) {
             return failure(error);
         } finally {

@@ -429,7 +429,7 @@ export function createSqlCourseApp({
     }
 
     function render(args = {}) {
-        const previousSidebarTop = root.querySelector(".sql-app:not(.dg-app) .sql-sidebar")?.scrollTop ?? null;
+        const previousSidebarTop = root.querySelector(".sql-app:not(.dg-app):not(.sqa-app) .sql-sidebar")?.scrollTop ?? null;
 
         active = true;
         user = args.user ?? null;
