@@ -43,6 +43,11 @@ const COURSE_APPS = {
         title: "курс SQL Advanced",
         load: () => import("./sqa/sqaApp.js"),
         create: (module, options) => module.createSqaCourseApp(options)
+    },
+    git: {
+        title: "курс «Git и проект»",
+        load: () => import("./git/gitApp.js"),
+        create: (module, options) => module.createGitCourseApp(options)
     }
 };
 
@@ -50,7 +55,7 @@ const COURSE_APPS = {
 let currentLessonIndex = 0;
 let currentUser = null;
 
-/* Какой курс открыт: "openapi" (по умолчанию), "sql" (#/sql...), "diagrams" (#/diagrams...) или "sql-advanced" (#/sql-advanced...). */
+/* Какой курс открыт: "openapi" (по умолчанию), "sql" (#/sql...), "diagrams" (#/diagrams...), "sql-advanced" (#/sql-advanced...) или "git" (#/git...). */
 let activeCourse = parseRoute(window.location.hash).course;
 const courseApps = {};
 const courseLoading = {};

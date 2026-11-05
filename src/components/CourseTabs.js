@@ -6,7 +6,8 @@ const TABS = [
     { id: "openapi", href: "#/", label: "OpenAPI" },
     { id: "sql", href: "#/sql", label: "SQL" },
     { id: "diagrams", href: "#/diagrams", label: "Диаграммы" },
-    { id: "sql-advanced", href: "#/sql-advanced", label: "SQL Advanced" }
+    { id: "sql-advanced", href: "#/sql-advanced", label: "SQL Advanced" },
+    { id: "git", href: "#/git", label: "Git" }
 ];
 
 export function CourseTabs({ active = "openapi" } = {}) {
