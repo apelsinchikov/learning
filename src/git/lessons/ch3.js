@@ -373,6 +373,109 @@ export const chapter3 = [
                 ]
             },
             {
+                type: "os",
+                only: "terminal",
+                mac: [
+                    {
+                        type: "important",
+                        title: "Первый push: вход в GitHub",
+                        text: `
+При первом \`git push\` git спросит логин и пароль. Вместо пароля от аккаунта вводится **токен доступа**: GitHub не принимает пароли в git. Токен создаётся один раз.
+
+Токен — тот же пароль. Никому его не показывайте, не пишите в файлы проекта и в чаты. Если он утёк, откройте тот же список токенов и нажмите **Delete**.
+`
+                    },
+                    {
+                        type: "web",
+                        title: "Создаём токен",
+                        steps: [
+                            "Нажмите на аватар справа вверху → **Settings**.",
+                            "Слева внизу откройте **Developer settings** → **Personal access tokens** → **Tokens (classic)**.",
+                            "Нажмите **Generate new token** → **Generate new token (classic)**.",
+                            "В **Note** впишите `git-practice`. В **Expiration** выберите срок покороче, например 30 days. Отметьте галочку **repo**.",
+                            "Нажмите **Generate token** и сразу скопируйте токен: потом GitHub его не покажет."
+                        ]
+                    },
+                    {
+                        type: "cmd",
+                        title: "Что спросит git при push",
+                        lines: ["git push"],
+                        output: "Username for 'https://github.com': {{login}}\nPassword for 'https://{{login}}@github.com': ",
+                        note: "В **Username** впишите логин, в **Password** вставьте токен. При вводе пароля символы не видны: это нормально. После успешного входа macOS запомнит токен в связке ключей, и вводить его снова не придётся."
+                    }
+                ],
+                windows: [
+                    {
+                        type: "important",
+                        title: "Первый push: вход в GitHub",
+                        text: `
+При первом \`git push\` откроется окно **Git Credential Manager** (он ставится вместе с git). Нажмите **Sign in with your browser**, в браузере войдите в GitHub и подтвердите вход (**Authorize**). Окно закроется, push продолжится. Больше входить не придётся: Windows запомнит вход.
+`
+                    }
+                ]
+            },
+            {
+                type: "trap",
+                only: "terminal",
+                title: "«Authentication failed»",
+                text: `
+Если push отвечает \`Authentication failed\` или \`Support for password authentication was removed\`, вы ввели пароль от аккаунта. Нужен токен (Mac) или вход через браузер (Windows). Повторите \`git push\`.
+`
+            },
+            {
+                type: "os",
+                only: "terminal",
+                mac: [
+                    {
+                        type: "important",
+                        title: "Потерялся токен",
+                        text: `
+GitHub показывает токен один раз, потом его не вытащить. Если git снова просит пароль, а токена нет, не страшно: выпускаем новый и стираем старый.
+
+- Если git при push **спрашивает пароль**, а токена у вас нет: сделайте новый токен (шаги ниже) и вставьте его.
+- Если git **молча отвечает «Authentication failed»**: он подставляет старый, сохранённый токен, который уже не работает (удалён или истёк). Сначала сотрите сохранённый вход, потом сделайте новый токен.
+`
+                    },
+                    {
+                        type: "web",
+                        title: "Выпускаем новый токен",
+                        steps: [
+                            "Откройте **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)**.",
+                            "Старый токен найдите в списке и нажмите **Delete**: пока он существует, он действует, хоть вы его и потеряли.",
+                            "Нажмите **Generate new token** → **Generate new token (classic)**, снова отметьте **repo**, выберите срок и нажмите **Generate token**.",
+                            "Скопируйте новый токен сразу: второй раз GitHub его не покажет."
+                        ],
+                        note: "Если старый токен ещё не удалён и не истёк, можно открыть его в списке и нажать **Regenerate token**: GitHub выпустит новое значение с теми же правами."
+                    },
+                    {
+                        type: "cmd",
+                        title: "Стираем сохранённый вход и входим заново",
+                        lines: ['printf "protocol=https\\nhost=github.com\\n\\n" | git credential reject', "git push"],
+                        output: "Username for 'https://github.com': {{login}}\nPassword for 'https://{{login}}@github.com': ",
+                        note: "Первая команда ничего не выводит: она просто удаляет сохранённый вход для github.com из связки ключей. После `git push` введите логин и **новый токен**. Его снова запомнит связка ключей."
+                    },
+                    {
+                        type: "text",
+                        text: "Вместо команды можно открыть программу **Keychain Access**, найти запись `github.com` и удалить её."
+                    }
+                ],
+                windows: [
+                    {
+                        type: "important",
+                        title: "Вход не получился или сломался",
+                        text: `
+Токен на Windows вводить не нужно, но сохранённый вход тоже может устареть. Сотрите его и войдите заново: выполните команду ниже, потом \`git push\`, и снова откроется окно входа через браузер. То же можно сделать в **Credential Manager** (Диспетчер учётных данных) → **Windows Credentials**: найдите \`git:https://github.com\` и нажмите **Remove**.
+`
+                    },
+                    {
+                        type: "cmd",
+                        title: "Стираем сохранённый вход",
+                        lines: ['printf "protocol=https\\nhost=github.com\\n\\n" | git credential reject', "git push"],
+                        note: "Первая команда ничего не выводит. Выполняйте её в Git Bash."
+                    }
+                ]
+            },
+            {
                 type: "how",
                 terminal: [
                     {
@@ -465,7 +568,7 @@ export const chapter3 = [
                     }
                 },
                 {
-                    text: "Отправьте изменения на GitHub: `git push`.",
+                    text: "Отправьте изменения на GitHub: `git push`. При первом push git попросит войти.",
                     check: {
                         prompt: "Вставьте вывод `git push` (в VS Code отметьте вручную):",
                         patterns: [
@@ -499,7 +602,8 @@ export const chapter3 = [
             ["git commit -m \"текст\"", "сохранить отмеченное в историю"],
             ["git diff", "что изменилось в файлах"],
             ["git push", "отправить коммиты на GitHub"],
-            ["git push origin develop:main", "проверка защиты: должен быть отказ"]
+            ["git push origin develop:main", "проверка защиты: должен быть отказ"],
+            ["git credential reject", "забыть сохранённый вход (если токен потерян или устарел)"]
         ]
     }
 ];

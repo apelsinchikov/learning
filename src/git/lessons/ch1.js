@@ -292,15 +292,8 @@ Git надо поставить на компьютер и один раз ск�
                     {
                         type: "text",
                         text: `
-**Вход в GitHub.** Чтобы отправлять изменения на GitHub, git должен знать, что вы это вы. Проще всего поставить GitHub CLI (команда \`gh\`): скачайте установщик для своей системы на **cli.github.com**. Затем выполните вход.
+**Вход в GitHub.** Отдельно входить сейчас не нужно. Git попросит войти в самый первый раз, когда вы отправите изменения на GitHub (команда \`git push\`, урок 9). Там мы разберём вход подробно.
 `
-                    },
-                    {
-                        type: "cmd",
-                        title: "Входим в GitHub",
-                        lines: ["gh auth login", "gh auth status"],
-                        output: "github.com\n  ✓ Logged in to github.com account {{login}} (keyring)",
-                        note: "На вопросы отвечайте так: **GitHub.com** → **HTTPS** → **Yes** (Authenticate Git with your GitHub credentials) → **Login with a web browser**. Курс покажет код: введите его в браузере и подтвердите вход."
                     }
                 ],
                 vscode: [
@@ -335,19 +328,6 @@ Git надо поставить на компьютер и один раз ск�
                             { re: "user\\.email={{email}}", hint: "Не вижу user.email с вашей почтой.", samples: ["user.name={{name}}\nuser.email={{email}}"] }
                         ]
                     }
-                },
-                {
-                    text: "Войдите в GitHub: в терминале `gh auth login`, в VS Code войдите, когда он предложит.",
-                    check: {
-                        prompt: "Через терминал: вставьте вывод `gh auth status`. Через VS Code отметьте шаг вручную.",
-                        patterns: [
-                            {
-                                re: "logged in to github\\.com\\W+(account|as)\\s+{{login}}",
-                                hint: "Не вижу строку «Logged in to github.com account ваш-логин».",
-                                samples: ["github.com\n  ✓ Logged in to github.com account {{login}} (keyring)", "✓ Logged in to github.com as {{login}} (oauth_token)"]
-                            }
-                        ]
-                    }
                 }
             ],
             afterwards: "Git установлен и знает, кто вы. Теперь создадим сам проект."
@@ -356,8 +336,7 @@ Git надо поставить на компьютер и один раз ск�
             ["git --version", "проверить, что git установлен"],
             ["git config --global user.name 'Имя'", "ваше имя в коммитах"],
             ["git config --global user.email 'почта'", "ваша почта в коммитах"],
-            ["git config --global --list", "показать настройки"],
-            ["gh auth login", "войти в GitHub из терминала"]
+            ["git config --global --list", "показать настройки"]
         ]
     }
 ];
