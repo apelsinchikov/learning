@@ -27,10 +27,12 @@
 
 import { chapter1 } from "./ch1.js";
 import { chapter2 } from "./ch2.js";
+import { chapter3 } from "./ch3.js";
 
 export const CHAPTERS = [
     { id: 1, title: "Сложные запросы", subtitle: "Читать схему и писать шагами", lessons: chapter1 },
-    { id: 2, title: "Отчёты и параметры метода", subtitle: "Пустые значения, даты, фильтры, страницы", lessons: chapter2 }
+    { id: 2, title: "Отчёты и параметры метода", subtitle: "Пустые значения, даты, фильтры, страницы", lessons: chapter2 },
+    { id: 3, title: "Таблицы, представления и ключи", subtitle: "Создаём структуры и защищаем данные", lessons: chapter3 }
 ];
 
 export const sqaLessons = CHAPTERS.flatMap(chapter => chapter.lessons.map(lesson => ({ ...lesson, chapter: chapter.id })));

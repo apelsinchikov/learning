@@ -5,6 +5,7 @@ import { sqlLessons } from "../../sql/lessons/index.js";
 import { compareResults } from "../../sql/check.js";
 import { buildSeasonSeedSql } from "../db/seed.js";
 import { createEngineCore } from "../engineCore.js";
+import { attachModel } from "../schema.js";
 import { CHAPTERS, findSqaLesson, sqaLessons } from "./index.js";
 
 let engine;
@@ -90,6 +91,19 @@ describe.each(sqaLessons.map(lesson => [lesson.id, lesson]))("урок %s", (_id
         }
     });
 
+    it("в примерах и решениях нет того, что вне курса", () => {
+        const code = [
+            ...lesson.theory.filter(item => item.type === "example").map(item => item.sql),
+            lesson.task.solution,
+            lesson.task.wrong,
+            lesson.task.starter
+        ].filter(Boolean);
+
+        for (const sql of code) {
+            expect(sql, sql).not.toMatch(/\bOVER\s*\(|\bUPDATE\b|\bDELETE\b|\bBEGIN\b|\bgenerate_series\b|~\*?\s*'|jsonb/i);
+        }
+    });
+
     it("задача устроена правильно", async () => {
         const { task } = lesson;
 
@@ -129,10 +143,28 @@ describe.each(sqaLessons.map(lesson => [lesson.id, lesson]))("урок %s", (_id
             expect(task.solution).toBeTruthy();
 
             /* Эталонный ответ обязан проходить собственную проверку. */
-            const run = await engine.run({ before: lesson.before, sql: task.solution, probes: task.probes });
+            const run = await engine.run({ before: lesson.before, sql: task.solution, probes: task.probes, withSchema: true });
 
             expect(run.ok, run.error).toBe(true);
-            expect(task.verify(run).ok, JSON.stringify(task.verify(run))).toBe(true);
+
+            const verdict = task.verify(attachModel(run));
+
+            expect(verdict.ok, JSON.stringify(verdict)).toBe(true);
+
+            /* Типичная ошибка должна отклоняться. */
+            expect(task.wrong, "у задачи нет примера ошибки").toBeTruthy();
+
+            const bad = await engine.run({ before: lesson.before, sql: task.wrong, probes: task.probes, withSchema: true });
+
+            expect(bad.ok, bad.error).toBe(true);
+            expect(task.verify(attachModel(bad)).ok).toBe(false);
+
+            /* Заготовка не должна сразу решать задачу. */
+            const start = await engine.run({ before: lesson.before, sql: task.starter, probes: task.probes, withSchema: true });
+
+            if (start.ok) {
+                expect(task.verify(attachModel(start)).ok).toBe(false);
+            }
         }
     });
 });
