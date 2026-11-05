@@ -28,3 +28,14 @@ describe("humanizeRunError", () => {
         expect(result.text).toBeTruthy();
     });
 });
+
+import { errorRefs } from "./errors.js";
+
+describe("повторить после ошибки", () => {
+    it("ограничения и синтаксис ведут на нужные темы", () => {
+        expect(errorRefs({ code: "23505" })[0][1]).toBe("dg-er-keys");
+        expect(errorRefs({ code: "23502" })[0][1]).toBe("sql-null");
+        expect(errorRefs({ code: "42601" })).toHaveLength(1);
+        expect(errorRefs({ code: "XX000" })).toEqual([]);
+    });
+});

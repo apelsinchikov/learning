@@ -44,3 +44,28 @@ export function humanizeRunError(result, schema = null) {
         }
     }
 }
+
+/* Какую тему повторить после ошибки: [[курс, id урока, подпись]]. */
+export function errorRefs(result) {
+    switch (result.code) {
+        case "23505":
+        case "23503":
+            return [["diagrams", "dg-er-keys", "Ключи в ER"]];
+
+        case "23514":
+            return [["sql", "sql-where", "Условия WHERE"]];
+
+        case "23502":
+            return [["sql", "sql-null", "NULL"]];
+
+        case "42601":
+            return [["sql", "sql-columns", "Как устроен запрос"]];
+
+        case "42703":
+        case "42P01":
+            return [["sql", "sql-read-db", "Как читать базу"]];
+
+        default:
+            return [];
+    }
+}

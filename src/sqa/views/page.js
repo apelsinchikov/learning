@@ -6,7 +6,25 @@ import { renderSqaRich } from "../markup.js";
 import { CHAPTERS, lessonNumber } from "../lessons/index.js";
 import { HASH, neighbours } from "./nav.js";
 
-export { renderHints };
+/* Ссылки «Повторить» под подсказкой и ошибкой: открывают урок-повторение в панели. */
+export function renderPeekLinks(refs = []) {
+    if (!refs.length) {
+        return "";
+    }
+
+    return `
+        <p class="sqa-refs">
+            <span class="sqa-refs__label">Повторить:</span>
+            ${refs
+                .map(([course, id, label]) => `<button type="button" class="sqa-ref" data-peek="${escapeHtml(course)}:${escapeHtml(id)}">${escapeHtml(label)}</button>`)
+                .join("")}
+        </p>`;
+}
+
+/* Подсказки урока; со второй подсказки добавляем ссылки «Повторить» на темы урока. */
+export function renderHintsWithRefs(lesson, shown) {
+    return renderHints(lesson, shown) + (shown >= 2 ? renderPeekLinks(lesson.refs || []) : "");
+}
 
 function renderBlock(block, index) {
     switch (block.type) {
@@ -52,17 +70,7 @@ function renderBlock(block, index) {
 }
 
 function renderRefs(lesson) {
-    if (!lesson.refs?.length) {
-        return "";
-    }
-
-    return `
-        <p class="sqa-refs">
-            <span class="sqa-refs__label">Повторить:</span>
-            ${lesson.refs
-                .map(([course, id, label]) => `<button type="button" class="sqa-ref" data-peek="${escapeHtml(course)}:${escapeHtml(id)}">${escapeHtml(label)}</button>`)
-                .join("")}
-        </p>`;
+    return renderPeekLinks(lesson.refs || []);
 }
 
 /* Что показываем после верного ответа: разбор и переход дальше. */
@@ -173,7 +181,7 @@ export function renderLessonPage(lesson, { solved = false, hintsShown = 0, answe
 
                 ${lesson.task.kind === "quiz" ? renderQuiz(lesson, { answers, checked }) : renderCodeTask(lesson)}
 
-                ${lesson.task.hints ? `<div class="sql-hints" data-hints>${renderHints(lesson, hintsShown)}</div>` : ""}
+                ${lesson.task.hints ? `<div class="sql-hints" data-hints>${renderHintsWithRefs(lesson, hintsShown)}</div>` : ""}
                 <div class="sql-output" data-output aria-live="polite"></div>
                 <div class="sql-feedback" data-feedback aria-live="polite">${solved ? renderSolved(lesson) : ""}</div>
             </section>

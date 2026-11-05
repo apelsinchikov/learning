@@ -5,13 +5,13 @@ import { createPeek } from "../peek/peek.js";
 import { createSqlEditor } from "../sql/sqlEditor.js";
 import { renderErrorBox, renderNotice, renderResultTable } from "../sql/views/resultTable.js";
 import { createEngine } from "./engine.js";
-import { humanizeRunError } from "./errors.js";
+import { errorRefs, humanizeRunError } from "./errors.js";
 import { findSqaLesson, sqaLessons } from "./lessons/index.js";
 import { createSqaProgress } from "./progress.js";
 import { SCHEMA_SQL, attachModel, buildSchema, countRowsSql, schemaToEr } from "./schema.js";
 import { renderAside, renderAsideBody } from "./views/aside.js";
 import { renderProgress, renderSidebar, statusKey } from "./views/nav.js";
-import { renderLessonPage, renderQuiz, renderHints, renderSandboxPage, renderSolved } from "./views/page.js";
+import { renderLessonPage, renderPeekLinks, renderQuiz, renderHintsWithRefs, renderSandboxPage, renderSolved } from "./views/page.js";
 import { renderSchemaModal } from "./views/schemaPanel.js";
 
 const SANDBOX_KEY = "sql-advanced-sandbox-v1";
@@ -306,7 +306,7 @@ export function createSqaCourseApp({
             return renderNotice("warning", "Эта команда в песочнице не нужна", result.error);
         }
 
-        return renderErrorBox(humanizeRunError(result, baseSchema));
+        return renderErrorBox(humanizeRunError(result, baseSchema)) + renderPeekLinks(errorRefs(result));
     }
 
     function showPending() {
@@ -710,7 +710,7 @@ export function createSqaCourseApp({
         const next = Math.min((hintsShown.get(lesson.id) ?? 0) + 1, lesson.task.hints.length);
 
         hintsShown.set(lesson.id, next);
-        $("[data-hints]").innerHTML = renderHints(lesson, next);
+        $("[data-hints]").innerHTML = renderHintsWithRefs(lesson, next);
     }
 
     function onClick(event) {
