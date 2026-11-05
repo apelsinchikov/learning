@@ -38,6 +38,11 @@ const COURSE_APPS = {
         title: "курс «Диаграммы»",
         load: () => import("./diagrams/diagramsApp.js"),
         create: (module, options) => module.createDiagramsCourseApp(options)
+    },
+    "sql-advanced": {
+        title: "курс SQL Advanced",
+        load: () => import("./sqa/sqaApp.js"),
+        create: (module, options) => module.createSqaCourseApp(options)
     }
 };
 
@@ -45,7 +50,7 @@ const COURSE_APPS = {
 let currentLessonIndex = 0;
 let currentUser = null;
 
-/* Какой курс открыт: "openapi" (по умолчанию), "sql" (#/sql...) или "diagrams" (#/diagrams...). */
+/* Какой курс открыт: "openapi" (по умолчанию), "sql" (#/sql...), "diagrams" (#/diagrams...) или "sql-advanced" (#/sql-advanced...). */
 let activeCourse = parseRoute(window.location.hash).course;
 const courseApps = {};
 const courseLoading = {};

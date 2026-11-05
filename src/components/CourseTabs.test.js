@@ -23,6 +23,14 @@ describe("CourseTabs", () => {
         expect(CourseTabs({ active: "sql" })).not.toContain("course-tab--diagrams course-tab--active");
     });
 
+    it("четвёртая вкладка SQL Advanced ведёт на свой адрес и подсвечивается", () => {
+        expect(CourseTabs()).toContain('href="#/sql-advanced"');
+        expect(CourseTabs()).toContain(">SQL Advanced</a>");
+        expect(CourseTabs({ active: "sql-advanced" })).toContain("course-tab--sql-advanced course-tab--active");
+        expect(CourseTabs({ active: "sql" })).not.toContain("course-tab--sql-advanced course-tab--active");
+        expect(Header({ course: "sql-advanced", summary: "" })).toContain("header--sql-advanced");
+    });
+
     it("на вкладке SQL нет замка: курс открыт для всех", () => {
         expect(CourseTabs()).not.toContain("course-tab__lock");
     });
