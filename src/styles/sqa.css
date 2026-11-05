@@ -275,3 +275,48 @@
         font-size: 14px;
     }
 }
+
+/* Четыре вкладки курсов в шапке телефона: без переноса строк и без горизонтальной прокрутки */
+@media (max-width: 700px) {
+    .course-tab {
+        padding: 6px 6px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .course-tabs {
+        gap: 1px;
+        margin-left: 4px;
+        padding: 3px;
+    }
+}
+
+/* Совсем узкий экран: прогресс в шапке не помещается рядом с четырьмя вкладками, он есть в списке уроков */
+@media (max-width: 560px) {
+    .header__progress {
+        display: none;
+    }
+}
+
+@media (max-width: 420px) {
+    .header__brand {
+        display: none;
+    }
+
+    .header {
+        padding: 0 8px;
+    }
+
+    .course-tabs {
+        margin-left: 0;
+    }
+
+    .course-tab {
+        padding: 6px 5px;
+        font-size: 11.5px;
+    }
+
+    .auth-button {
+        padding: 6px 8px;
+    }
+}
