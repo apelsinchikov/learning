@@ -60,10 +60,10 @@ export function closest(word, candidates, maxDistance = 3) {
     return bestDistance <= limit ? best : null;
 }
 
-function allColumns() {
+function allColumns(catalog) {
     const names = new Set();
 
-    for (const table of TABLES) {
+    for (const table of catalog) {
         for (const column of table.columns) {
             names.add(column.name);
         }
@@ -72,16 +72,16 @@ function allColumns() {
     return [...names];
 }
 
-function tableOf(columnName) {
-    return TABLES.filter(table => table.columns.some(column => column.name === columnName))
+function tableOf(columnName, catalog) {
+    return catalog.filter(table => table.columns.some(column => column.name === columnName))
         .map(table => table.name);
 }
 
-const tableList = () => TABLES.map(table => table.name).join(", ");
+const tableList = catalog => catalog.map(table => table.name).join(", ");
 
 const SQL_WORDS = ["from", "select", "where", "group", "order", "having", "limit", "distinct", "join"];
 
-function columnError(message) {
+function columnError(message, catalog) {
     const match = message.match(/column "?([\w.]+)"? does not exist/i);
 
     if (!match) {
@@ -90,12 +90,12 @@ function columnError(message) {
 
     const written = match[1];
     const bare = written.includes(".") ? written.split(".").pop() : written;
-    const guess = closest(bare, allColumns());
+    const guess = closest(bare, allColumns(catalog));
 
     if (guess) {
         return {
             title: `Не нашёл колонку ${bare}`,
-            text: `Возможно, ты имел в виду ${guess} (есть в таблицах: ${tableOf(guess).join(", ")}). Проверь написание: регистр не важен, но каждая буква и нижнее подчёркивание должны совпадать.`
+            text: `Возможно, ты имел в виду ${guess} (есть в таблицах: ${tableOf(guess, catalog).join(", ")}). Проверь написание: регистр не важен, но каждая буква и нижнее подчёркивание должны совпадать.`
         };
     }
 
@@ -114,7 +114,7 @@ function columnError(message) {
     };
 }
 
-function relationError(message) {
+function relationError(message, catalog) {
     const match = message.match(/relation "([^"]+)" does not exist/i);
 
     if (!match) {
@@ -122,13 +122,13 @@ function relationError(message) {
     }
 
     const written = match[1];
-    const guess = closest(written, TABLES.map(table => table.name));
+    const guess = closest(written, catalog.map(table => table.name));
 
     return {
         title: `Не нашёл таблицу ${written}`,
         text: guess
-            ? `Возможно, ты имел в виду ${guess}. Все таблицы: ${tableList()}.`
-            : `Такой таблицы нет. Все таблицы: ${tableList()}.`
+            ? `Возможно, ты имел в виду ${guess}. Все таблицы: ${tableList(catalog)}.`
+            : `Такой таблицы нет. Все таблицы: ${tableList(catalog)}.`
     };
 }
 
@@ -269,11 +269,15 @@ const RULES = [
     },
     {
         test: /does not exist/i,
-        make: message => columnError(message) || relationError(message)
+        make: (message, catalog) => columnError(message, catalog) || relationError(message, catalog)
     }
 ];
 
-export function humanizeError(rawMessage) {
+/*
+ * catalog — какие таблицы и колонки считать существующими при подсказке
+ * «возможно, вы имели в виду». По умолчанию это база базового курса SQL.
+ */
+export function humanizeError(rawMessage, catalog = TABLES) {
     const message = String(rawMessage || "").replace(/^error:\s*/i, "").trim();
 
     if (!message) {
@@ -282,7 +286,7 @@ export function humanizeError(rawMessage) {
 
     for (const rule of RULES) {
         if (rule.test.test(message)) {
-            const result = rule.make(message);
+            const result = rule.make(message, catalog);
 
             if (result) {
                 return result;

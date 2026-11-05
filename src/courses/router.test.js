@@ -8,6 +8,7 @@ import {
     isSqlRoute,
     parseRoute,
     rememberReturnRoute,
+    sqlAdvancedHash,
     sqlHash,
     takeReturnRoute
 } from "./router.js";
@@ -97,6 +98,15 @@ describe("router", () => {
         expect(isHashCourseRoute("#/sql")).toBe(true);
         expect(isHashCourseRoute("#/diagrams")).toBe(true);
         expect(isHashCourseRoute("#/")).toBe(false);
+    });
+
+    it("#/sql-advanced — курс SQL Advanced, отличается от #/sql", () => {
+        expect(parseRoute("#/sql-advanced")).toEqual({ course: "sql-advanced", lessonId: null });
+        expect(parseRoute("#/sql-advanced/sqa-cte")).toEqual({ course: "sql-advanced", lessonId: "sqa-cte" });
+        expect(parseRoute("#/sql/sql-where").course).toBe("sql");
+        expect(sqlAdvancedHash("sandbox")).toBe("#/sql-advanced/sandbox");
+        expect(isSqlRoute("#/sql-advanced")).toBe(false);
+        expect(isHashCourseRoute("#/sql-advanced/sqa-cte")).toBe(true);
     });
 
     it("возврат после входа работает и для «Диаграмм»", () => {

@@ -50,6 +50,20 @@ describe("три курса в одной таблице", () => {
         expect(Object.keys((await createCloudStore(client).load("u1")).lessons)).toEqual(["lesson-1"]);
     });
 
+    it("SQL Advanced берёт только sqa-, а остальные курсы его не видят", async () => {
+        const advanced = [row("lesson-1"), row("sql-where"), row("dg-er-keys"), row("sqa-cte")];
+        const client = fakeClient({
+            lessonRows: advanced,
+            stateRows: [{ course_id: "sql-advanced", current_lesson: "sqa-cte", updated_at: AT }]
+        });
+        const progress = await createCourseCloudStore(client, { courseId: "sql-advanced", prefix: "sqa-" }).load("u1");
+
+        expect(Object.keys(progress.lessons)).toEqual(["sqa-cte"]);
+        expect(progress.currentLesson).toEqual({ id: "sqa-cte", updatedAt: AT });
+        expect(Object.keys((await createCloudStore(client).load("u1")).lessons)).toEqual(["lesson-1"]);
+        expect(Object.keys((await createSqlCloudStore(client).load("u1")).lessons)).toEqual(["sql-where"]);
+    });
+
     it("сохранение: чужие уроки не отправляются, course_id = diagrams", async () => {
         const client = fakeClient();
         let progress = createEmptyProgress();
