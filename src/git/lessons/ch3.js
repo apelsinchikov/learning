@@ -308,6 +308,38 @@ export const chapter3 = [
                         lines: ['echo "# My first note" > notes.md', "git status"],
                         output: "On branch develop\nYour branch is ahead of 'origin/develop' by 1 commit.\n\nUntracked files:\n  (use \"git add <file>...\" to include in what will be committed)\n\tnotes.md\n\nnothing added to commit but untracked files present (use \"git add\" to track)",
                         note: "`echo \"...\" > notes.md` создаёт файл `notes.md` с одной строкой. Git пока не следит за этим файлом: он «Untracked»."
+                    },
+                    {
+                        type: "text",
+                        text: `
+**Или в обычном редакторе.** Писать в файл командой необязательно: его можно создать и править в любом текстовом редакторе. Файл должен лежать в папке проекта (\`~/projects/{{repo}}\`), называться \`notes.md\` и сохраняться как простой текст. Проще всего открыть файл прямо из терминала, находясь в папке проекта.
+`
+                    },
+                    {
+                        type: "os",
+                        mac: [
+                            {
+                                type: "cmd",
+                                title: "Создаём и открываем в TextEdit",
+                                lines: ["touch notes.md", "open -e notes.md", "git status"],
+                                note: "`touch` создаёт пустой файл, `open -e` открывает его в TextEdit. Впишите строку `# My first note`, сохраните ([[key:mod+s]]) и закройте окно. Папку проекта в Finder можно открыть командой `open .`."
+                            }
+                        ],
+                        windows: [
+                            {
+                                type: "cmd",
+                                title: "Создаём и открываем в Блокноте",
+                                lines: ["notepad notes.md", "git status"],
+                                note: "Блокнот спросит, создать ли новый файл: нажмите **Yes** (**Да**). Впишите строку `# My first note`, сохраните ([[key:mod+s]]) и закройте окно. Папку проекта в Проводнике можно открыть командой `explorer .`."
+                            }
+                        ]
+                    },
+                    {
+                        type: "trap",
+                        title: "Файл сохранился не так",
+                        text: `
+Если вы создали файл через меню редактора, проверьте имя и формат. В Блокноте имя должно быть \`notes.md\`, а не \`notes.md.txt\` (в окне сохранения выберите тип **All files**). В TextEdit перед сохранением выберите **Format → Make Plain Text**, иначе получится файл \`.rtf\`. Проверьте командой \`ls\`: в списке должен быть \`notes.md\`.
+`
                     }
                 ],
                 vscode: [
@@ -360,6 +392,10 @@ export const chapter3 = [
                         lines: ['echo "Second line" >> notes.md', "git diff"],
                         output: "diff --git a/notes.md b/notes.md\nindex 1234567..89abcde 100644\n--- a/notes.md\n+++ b/notes.md\n@@ -1 +1,2 @@\n # My first note\n+Second line",
                         note: "`>>` дописывает строку в конец файла. В diff строка с `+` добавлена, строка с `-` удалена, строка без знака не менялась. Если вывод не помещается, git откроет его постранично: листайте пробелом, выйдите клавишей `q`."
+                    },
+                    {
+                        type: "text",
+                        text: "Вместо `echo` строку можно дописать в редакторе: откройте файл тем же способом (`open -e notes.md` на Mac, `notepad notes.md` на Windows), допишите `Second line`, сохраните и выполните `git diff`."
                     }
                 ],
                 vscode: [
