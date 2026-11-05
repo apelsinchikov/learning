@@ -1,7 +1,7 @@
 ## MODIFIED Requirements
 
 ### Requirement: Вкладки курсов
-В шапке SHALL быть вкладки всех курсов: OpenAPI, SQL, «SQL Pro» и «Диаграммы».
+В шапке SHALL быть вкладки всех курсов: OpenAPI, SQL, «SQL Advanced» и «Диаграммы».
 Активный курс SHALL быть подсвечен своим цветом, переход между курсами
 SHALL NOT сбрасывать прогресс.
 
