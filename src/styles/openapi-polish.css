@@ -1,0 +1,399 @@
+/* =========================================================
+   Курс OpenAPI: единый вид с курсами SQL и «Диаграммы»
+
+   Было: текст мельче (9–13px), углы острее (6–9px), кнопка проверки
+   крошечная, схема в Swagger сжата в узкое окошко.
+   Стало: тот же масштаб текста и скругления, что у SQL.
+   Все правила начинаются с .app, чтобы не задевать другие курсы
+   и перекрывать старые правила без !important.
+   Файл подключён до mobile.css, поэтому телефон по-прежнему главнее.
+   ========================================================= */
+
+/* ---------- Скругления ---------- */
+
+.app .panel {
+    border-radius: 14px;
+}
+
+.app .theory-intro,
+.app .theory-definition,
+.app .theory-highlight,
+.app .theory-warning,
+.app .theory-table-card,
+.app .theory-code,
+.app .theory-code-explanation,
+.app .theory-steps,
+.app .theory-endpoint,
+.app .theory-list-block,
+.app .info-card,
+.app .practice-task,
+.app .response-card,
+.app .schema-card,
+.app .task-warning,
+.app .task-goal,
+.app .task-checklist,
+.app .success-banner,
+.app .theory-recall {
+    border-radius: 14px;
+}
+
+.app .theory-code pre,
+.app .practice-code pre,
+.app .info-card pre,
+.app .swagger-panel .swagger-ui pre {
+    border-radius: 10px;
+}
+
+.app .nav-button,
+.app .check-button,
+.app .auth-button {
+    border-radius: 10px;
+}
+
+.app .lesson,
+.app .theory-table-card__header {
+    border-radius: 10px;
+}
+
+/* ---------- Масштаб текста: как в SQL (основной текст 16px, интервал 1.6) ---------- */
+
+.app .page-header h1 {
+    font-size: 30px;
+    line-height: 36px;
+}
+
+.app .page-header p {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.app .page-header__label,
+.app .panel-header__label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+}
+
+.app .panel-header h2 {
+    font-size: 16px;
+}
+
+.app .theory-paragraph,
+.app .theory-intro .theory-paragraph,
+.app .panel-body p {
+    font-size: 16px;
+    line-height: 1.65;
+}
+
+.app .theory-list li {
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+.app .theory-highlight__title,
+.app .theory-warning__title,
+.app .theory-list-block__title,
+.app .theory-code-explanation__title,
+.app .theory-steps__title,
+.app .theory-step__title,
+.app .theory-table-card__header,
+.app .task-section > h4 {
+    font-size: 15px;
+}
+
+.app .theory-step__content .theory-paragraph,
+.app .theory-endpoint__description,
+.app .theory-code-explanation__text {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.app .theory-endpoint__part {
+    font-size: 13px;
+}
+
+.app .theory-table td {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.app .theory-table th,
+.app .schema-table th,
+.app .comparison-table th {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+}
+
+.app .schema-table,
+.app .comparison-table {
+    font-size: 13px;
+}
+
+.app .theory-code__header {
+    font-size: 12px;
+}
+
+.app .theory-code__language {
+    font-size: 11px;
+}
+
+.app .info-card__title {
+    font-size: 13px;
+}
+
+.app .info-card p {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.app .practice-task__label,
+.app .schema-card__label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+}
+
+.app .practice-task__intro p,
+.app .task-checklist__item,
+.app .practice-task__body li {
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+.app .check-button {
+    padding: 8px 14px;
+
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.app .live-indicator {
+    font-size: 11px;
+}
+
+.app .nav-button,
+.app .lesson-navigation--top .nav-button {
+    font-size: 14px;
+}
+
+/* ---------- Практика: три колонки, Swagger шире ---------- */
+
+@media (min-width: 1251px) {
+    .app .workspace:has(.editor-panel) {
+        grid-template-columns:
+            minmax(280px, 1fr)
+            minmax(300px, 1fr)
+            minmax(380px, 1.3fr);
+    }
+}
+
+/* В тесной практике текст чуть компактнее, но всё равно крупнее прежнего. */
+.app .workspace:has(.editor-panel) .theory-paragraph,
+.app .workspace:has(.editor-panel) .panel-body p {
+    font-size: 15px;
+}
+
+.app .workspace:has(.editor-panel) .theory-list li,
+.app .workspace:has(.editor-panel) .practice-task__intro p,
+.app .workspace:has(.editor-panel) .practice-task__body li {
+    font-size: 14px;
+}
+
+/* ---------- Баннер результата проверки задания ---------- */
+
+.app .task-result:empty {
+    display: none;
+}
+
+.app .task-result .success-banner,
+.app .task-result .validation-section {
+    margin: 16px;
+}
+
+.app .success-banner__text .theory-paragraph {
+    font-size: 14px;
+}
+
+.app .validation-section {
+    padding: 14px 16px;
+
+    border: 1px solid #fecaca;
+    border-radius: 14px;
+    background: #fef2f2;
+}
+
+.app .validation-section--openapi {
+    margin-bottom: 12px;
+}
+
+.app .validation-section__title {
+    margin-bottom: 8px;
+
+    color: #b91c1c;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.app .validation-section .swagger-error__messages {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.app .validation-section .swagger-error__message {
+    padding: 8px 10px;
+
+    border-radius: 8px;
+    background: #ffffff;
+
+    color: #7f1d1d;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* ---------- Блок «Напоминание из теории» ---------- */
+
+.app .theory-recall {
+    margin: 0 0 16px;
+
+    border: 1px solid #e0e7ff;
+    background: #f5f6ff;
+    overflow: hidden;
+}
+
+.app .theory-recall__summary {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    padding: 12px 16px;
+
+    cursor: pointer;
+    list-style: none;
+}
+
+.app .theory-recall__summary::-webkit-details-marker {
+    display: none;
+}
+
+.app .theory-recall__summary::after {
+    content: "Показать ▾";
+
+    color: #4f46e5;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.app .theory-recall[open] .theory-recall__summary::after {
+    content: "Скрыть ▴";
+}
+
+.app .theory-recall__label {
+    color: #3730a3;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.app .theory-recall__source {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.app .theory-recall__body {
+    padding: 4px 16px 16px;
+
+    border-top: 1px solid #e0e7ff;
+    background: #ffffff;
+}
+
+/* ---------- Swagger: схема во всю ширину ---------- */
+
+.app .swagger-panel .swagger-ui .wrapper {
+    padding: 0 12px;
+    max-width: none;
+}
+
+.app .swagger-panel .swagger-ui .information-container {
+    padding: 0;
+}
+
+.app .swagger-panel .swagger-ui .info {
+    margin: 20px 0;
+}
+
+.app .swagger-panel .swagger-ui .info .title {
+    font-size: 26px;
+}
+
+.app .swagger-panel .swagger-ui .scheme-container {
+    margin: 0 0 12px;
+    padding: 12px 0;
+    box-shadow: none;
+}
+
+.app .swagger-panel .swagger-ui .opblock {
+    border-radius: 10px;
+}
+
+.app .swagger-panel .swagger-ui .opblock .opblock-summary {
+    border-radius: 10px;
+}
+
+.app .swagger-panel .swagger-ui .opblock-body {
+    overflow-x: auto;
+}
+
+/* Блоки Schema / Example Value: на всю ширину панели, без «окошка». */
+.app .swagger-panel .swagger-ui .model-example,
+.app .swagger-panel .swagger-ui .model-box,
+.app .swagger-panel .swagger-ui .model-container,
+.app .swagger-panel .swagger-ui .model-box-control,
+.app .swagger-panel .swagger-ui section.models {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.app .swagger-panel .swagger-ui .model-example .model-box {
+    padding: 12px;
+    overflow-x: auto;
+}
+
+.app .swagger-panel .swagger-ui .model {
+    font-size: 13px;
+}
+
+.app .swagger-panel .swagger-ui .highlight-code > .microlight {
+    max-height: none;
+}
+
+/*
+ * Таблица ответов: код слева узкой колонкой, всё остальное (описание, тип
+ * данных, схема) на оставшуюся ширину; колонку «Links» убираем: ссылок у нас нет.
+ */
+.app .swagger-panel .swagger-ui table.responses-table {
+    table-layout: auto;
+    width: 100%;
+}
+
+.app .swagger-panel .swagger-ui .responses-table .response-col_links,
+.app .swagger-panel .swagger-ui .responses-table thead th:last-child {
+    display: none;
+}
+
+.app .swagger-panel .swagger-ui .responses-table .response-col_status {
+    width: 56px;
+    white-space: nowrap;
+}
+
+.app .swagger-panel .swagger-ui .responses-table .response-col_description {
+    width: auto;
+    min-width: 0;
+}
+
+.app .swagger-panel .swagger-ui .responses-table .response-col_description__inner,
+.app .swagger-panel .swagger-ui .responses-table .response-col_description .model-example {
+    width: 100%;
+}

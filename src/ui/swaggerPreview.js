@@ -86,9 +86,10 @@ export function showValidationErrors(container, result) {
 
 /*
  * Показывает Swagger UI для спецификации студента.
- * Если передан successMessage — выводит его над документацией.
+ * Над Swagger есть отдельное место для баннера результата проверки задания
+ * (см. showTaskResult): баннер можно менять, не перерисовывая сам Swagger.
  */
-export function showSwagger(container, yamlText, successMessage = "") {
+export function showSwagger(container, yamlText) {
     let specification;
 
     try {
@@ -112,18 +113,7 @@ export function showSwagger(container, yamlText, successMessage = "") {
     };
 
     container.innerHTML = `
-        ${
-            successMessage
-                ? `
-                    <div class="success-banner">
-                        <div class="success-banner__icon">✓</div>
-                        <div class="success-banner__text">
-                            ${renderText(successMessage)}
-                        </div>
-                    </div>
-                `
-                : ""
-        }
+        <div class="task-result"></div>
 
         <div class="swagger-mount"></div>
     `;
@@ -132,4 +122,43 @@ export function showSwagger(container, yamlText, successMessage = "") {
         domNode: container.querySelector(".swagger-mount"),
         spec: swaggerSpecification
     });
+}
+
+
+/*
+ * Баннер результата проверки задания над Swagger.
+ * { ok: true, successMessage } — задание выполнено;
+ * { ok: false, errors } — список невыполненных условий.
+ * Swagger под баннером не трогаем.
+ */
+export function showTaskResult(container, { ok, errors = [], successMessage = "" }) {
+    const slot = container.querySelector(".task-result");
+
+    if (!slot) {
+        return;
+    }
+
+    slot.innerHTML = ok
+        ? `
+            <div class="success-banner">
+                <div class="success-banner__icon">✓</div>
+                <div class="success-banner__text">
+                    ${renderText(successMessage || "Задание выполнено!")}
+                </div>
+            </div>
+        `
+        : validationSection("Условия задания", "task", errors);
+
+    /* Показываем баннер: прокручиваем только панель Swagger, не всю страницу. */
+    container.closest(".panel-body")?.scrollTo?.({ top: 0, behavior: "smooth" });
+}
+
+
+/* Убирает баннер результата (например, когда ученик снова правит текст). */
+export function clearTaskResult(container) {
+    const slot = container.querySelector(".task-result");
+
+    if (slot) {
+        slot.innerHTML = "";
+    }
 }

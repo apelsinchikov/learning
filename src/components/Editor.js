@@ -13,7 +13,7 @@ export function Editor() {
                 </div>
 
                 <button class="check-button" id="check-button">
-                    ✓ Проверить
+                    ✓ Проверить задание
                 </button>
 
             </div>

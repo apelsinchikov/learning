@@ -1,4 +1,5 @@
 import { DatabaseDiagram } from "./DatabaseDiagram.js";
+import { course } from "../data/course.js";
 import { format } from "sql-formatter";
 import {
     escapeHtml,
@@ -926,6 +927,48 @@ export function Theory(lesson) {
         `;
     }
 
+    /*
+     * «Напоминание из теории»: нужные куски прошлых уроков прямо в практике,
+     * чтобы не искать их по курсу. Каждый блок подписан номером и названием урока.
+     */
+    function renderRecall(recall) {
+        if (!recall || recall.length === 0) {
+            return "";
+        }
+
+        return recall
+            .map(item => {
+                const index = course.findIndex(candidate => candidate.id === item.lessonId);
+
+                if (index < 0) {
+                    return "";
+                }
+
+                return `
+                    <details class="theory-recall">
+
+                        <summary class="theory-recall__summary">
+
+                            <span class="theory-recall__label">
+                                📚 Напоминание из теории
+                            </span>
+
+                            <span class="theory-recall__source">
+                                Урок ${index + 1} · ${escapeHtml(course[index].title)}
+                            </span>
+
+                        </summary>
+
+                        <div class="theory-recall__body">
+                            ${item.sections.map(renderTheorySection).join("")}
+                        </div>
+
+                    </details>
+                `;
+            })
+            .join("");
+    }
+
     const hasDatabaseDiagramSection =
         theory.sections?.some(
             section => section.type === "database-diagram"
@@ -1081,6 +1124,8 @@ export function Theory(lesson) {
                         `
                         : ""
                 }
+
+                ${renderRecall(theory.recall)}
 
                 ${
                     theory.task
