@@ -290,3 +290,53 @@ describe("PUT и PATCH в курсе", () => {
         expect(() => Theory(lesson)).not.toThrow();
     });
 });
+
+
+describe("напоминание из теории в практике", () => {
+    const withRecall = practiceLessons.filter(lesson => lesson.theory?.recall);
+
+    it("у практики «Create User» есть напоминание из теории", () => {
+        const createUser = course.find(lesson => lesson.id === "practice-4");
+
+        expect(createUser.theory.recall?.length).toBeGreaterThan(0);
+    });
+
+    it.each(withRecall.map(lesson => [lesson.id, lesson]))(
+        "практика %s: каждое напоминание указывает на существующий теоретический урок и содержит материал",
+        (_, lesson) => {
+            for (const item of lesson.theory.recall) {
+                const source = course.find(candidate => candidate.id === item.lessonId);
+
+                expect(source, `урок ${item.lessonId}`).toBeTruthy();
+                expect(source.type).toBe("theory");
+                expect(item.sections.length).toBeGreaterThan(0);
+            }
+        }
+    );
+
+    it("напоминание показывается в разметке: номер и название урока-источника и его материал", () => {
+        const createUser = course.find(lesson => lesson.id === "practice-4");
+        const html = Theory(createUser);
+
+        expect(html).toContain("Напоминание из теории");
+        expect(html).toContain("Урок 7");
+        expect(html).toContain("Схемы и свойства");
+        expect(html).toContain("Урок 9");
+        expect(html).toContain("Запрос, ответ и JSON");
+    });
+
+    it("«Структура» практики «Create User» показывает, как выглядит схема в components", () => {
+        const createUser = course.find(lesson => lesson.id === "practice-4");
+
+        expect(createUser.theory.structure).toContain("components:");
+        expect(createUser.theory.structure).toContain("schemas:");
+        expect(createUser.theory.structure).toContain("required:");
+        expect(createUser.theory.structure).toContain("properties:");
+    });
+
+    it("в пояснении нет туманной отсылки «по прошлому уроку» без названия урока", () => {
+        const createUser = course.find(lesson => lesson.id === "practice-4");
+
+        expect(createUser.theory.explanation).not.toMatch(/по прошлому уроку/);
+    });
+});

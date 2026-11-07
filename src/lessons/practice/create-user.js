@@ -69,15 +69,147 @@ export const createUser = {
                       application/json:
                         schema:
                           $ref: '#/components/schemas/Order'
+
+            components:
+              schemas:
+
+                OrderCreateRequest:
+                  type: object
+                  required:
+                    - customerName
+                    - total
+                  properties:
+                    customerName:
+                      type: string
+                    total:
+                      type: number
+
+                Order:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    customerName:
+                      type: string
+                    total:
+                      type: number
         `,
 
         explanation: `
             Это пример для заказов (/orders). Тебе нужно сделать то же самое
             для пользователей: свои схемы, свой summary и свои описания.
 
-            Схемы OrderCreateRequest и Order тоже нужно описать в components → schemas.
-            Как это делать, ты уже знаешь по прошлому уроку.
+            Верхняя часть (paths) показывает, КАК схемы подключаются:
+            requestBody и ответ 201 ссылаются на них через $ref.
+
+            Нижняя часть (components → schemas) показывает, КАК выглядят
+            сами схемы. У OrderCreateRequest поля customerName и total
+            обязательные, а у Order есть ещё id, который назначает сервер.
+            Схему User в components ты уже написал в практике «Схема User».
+
+            Если что-то забыл, открой блок «Напоминание из теории» ниже:
+            там нужные куски из урока 7 «Схемы и свойства»
+            и урока 9 «Запрос, ответ и JSON».
         `,
+
+        recall: [
+            {
+                lessonId: "theory-3",
+
+                sections: [
+                    {
+                        type: "text",
+
+                        text: `
+                            Схема лежит в components → schemas.
+                            Поля описываем в properties, а какие из них обязательные —
+                            в required. required стоит рядом с properties,
+                            внутри самой схемы.
+                        `
+                    },
+
+                    {
+                        type: "code",
+
+                        title: "Схема с обязательными полями и format",
+
+                        language: "yaml",
+
+                        code: `
+Product:
+  type: object
+  required:
+    - id
+    - name
+  properties:
+    id:
+      type: integer
+    name:
+      type: string
+    contactEmail:
+      type: string
+      format: email
+                        `.trim()
+                    },
+
+                    {
+                        type: "highlight",
+
+                        icon: "👀",
+
+                        title: "Не путай properties и required",
+
+                        text: `
+                            properties — какие поля бывают.
+                            required — какие из них обязательны.
+                            Элементы required — это список: каждое имя с «- ».
+                        `
+                    }
+                ]
+            },
+
+            {
+                lessonId: "theory-5",
+
+                sections: [
+                    {
+                        type: "text",
+
+                        text: `
+                            Тело запроса описывается в requestBody, тело ответа —
+                            в content. Формат данных — application/json,
+                            а схему подключаем ссылкой $ref.
+                        `
+                    },
+
+                    {
+                        type: "code",
+
+                        title: "Ссылка на схему",
+
+                        language: "yaml",
+
+                        code: `
+schema:
+  $ref: '#/components/schemas/User'
+                        `.trim()
+                    },
+
+                    {
+                        type: "highlight",
+
+                        icon: "🧩",
+
+                        title: "Две схемы",
+
+                        text: `
+                            Для запроса — одна схема (без id), для ответа — другая
+                            (с id, его назначает сервер).
+                        `
+                    }
+                ]
+            }
+        ],
 
         task: `
             Добавь полноценное создание пользователя.

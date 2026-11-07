@@ -2,14 +2,15 @@ import "./styles/main.css";
 
 import { App } from "./components/App.js";
 import { course } from "./data/course.js";
-import { validateLesson } from "./utils/validator.js";
+import { validateOpenApi, validateTask } from "./utils/validator.js";
 import { startMockApi } from "./mock/mockApi.js";
 
 import { createYamlEditor } from "./editor/createEditor.js";
 import { renderMermaid } from "./ui/mermaid.js";
 import { initCopyGuard } from "./ui/copyGuard.js";
 import { bindLessonList, initNavigation } from "./ui/navigation.js";
-import { showSwagger, showValidationErrors } from "./ui/swaggerPreview.js";
+import { clearTaskResult, showSwagger, showTaskResult, showValidationErrors } from "./ui/swaggerPreview.js";
+import { createPracticeFlow } from "./ui/practiceFlow.js";
 
 import { Sidebar } from "./components/Sidebar.js";
 import { ProgressSummary } from "./components/ProgressSummary.js";
@@ -261,30 +262,42 @@ function initializePracticeLesson(lesson) {
     }
 
     const savedDraft = getDraft(progressService.getProgress(), lesson.id);
+    const startText = savedDraft ?? lesson.initialYaml;
+
+    /*
+     * Swagger строится по ходу письма, пока OpenAPI верный.
+     * Кнопка «Проверить задание» проверяет только условия урока
+     * и показывает результат баннером над Swagger.
+     */
+    const flow = createPracticeFlow({
+        lesson,
+        validateOpenApi,
+        validateTask,
+        onSolved: () => progressService.markSolved(lesson.id),
+        view: {
+            showSwagger: text => showSwagger(swaggerPreview, text),
+            showOpenApiErrors: errors =>
+                showValidationErrors(swaggerPreview, { openapiErrors: errors, taskErrors: [] }),
+            showTaskResult: result => showTaskResult(swaggerPreview, result),
+            clearTaskResult: () => clearTaskResult(swaggerPreview)
+        }
+    });
 
     const yamlEditor = createYamlEditor(
         editorElement,
-        savedDraft ?? lesson.initialYaml,
-        { onChange: text => progressService.saveDraft(lesson.id, text) }
+        startText,
+        {
+            onChange: text => {
+                progressService.saveDraft(lesson.id, text);
+                flow.change(text);
+            }
+        }
     );
 
-    checkButton.addEventListener("click", async () => {
-        const yamlText = yamlEditor.state.doc.toString();
+    flow.refresh(startText);
 
-        const result = await validateLesson(lesson, yamlText);
-
-        const hasErrors =
-            result.openapiErrors.length > 0 ||
-            result.taskErrors.length > 0;
-
-        if (hasErrors) {
-            showValidationErrors(swaggerPreview, result);
-            return;
-        }
-
-        progressService.markSolved(lesson.id);
-
-        showSwagger(swaggerPreview, yamlText, lesson.successMessage);
+    checkButton.addEventListener("click", () => {
+        flow.check(yamlEditor.state.doc.toString());
     });
 }
 

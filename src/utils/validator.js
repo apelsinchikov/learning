@@ -2,14 +2,16 @@
 import { parse } from "yaml";
 import { validate } from "@scalar/openapi-parser";
 
-export async function validateLesson(
+/*
+ * Проверка самой спецификации как OpenAPI: синтаксис YAML, корень — объект,
+ * непустой paths, парсер Scalar. Условия задания здесь НЕ проверяются.
+ * Нужна, чтобы Swagger строился по ходу письма, пока OpenAPI написан верно.
+ */
+export async function validateOpenApi(
     lesson,
     yamlText
 ) {
-    const result = {
-        openapiErrors: [],
-        taskErrors: []
-    };
+    const openapiErrors = [];
 
     let specification;
 
@@ -17,11 +19,11 @@ export async function validateLesson(
     try {
         specification = parse(yamlText);
     } catch (error) {
-        result.openapiErrors.push(
+        openapiErrors.push(
             `Ошибка YAML: ${error.message}`
         );
 
-        return result;
+        return { openapiErrors, specification: null };
     }
 
     // 2. Проверяем, что YAML содержит объект
@@ -30,11 +32,11 @@ export async function validateLesson(
         typeof specification !== "object" ||
         Array.isArray(specification)
     ) {
-        result.openapiErrors.push(
+        openapiErrors.push(
             "OpenAPI-спецификация должна быть YAML-объектом."
         );
 
-        return result;
+        return { openapiErrors, specification: null };
     }
 
     // Пустой раздел paths: понятное сообщение вместо технической ошибки
@@ -45,12 +47,12 @@ export async function validateLesson(
             specification.paths === undefined
         )
     ) {
-        result.openapiErrors.push(
+        openapiErrors.push(
             "Раздел paths пока пустой. Добавь в него адрес, " +
             "например /users (с отступом в 2 пробела)."
         );
 
-        return result;
+        return { openapiErrors, specification };
     }
 
     /*
@@ -67,7 +69,7 @@ export async function validateLesson(
                 await validate(specification);
 
             if (!scalarResult.valid) {
-                result.openapiErrors.push(
+                openapiErrors.push(
                     ...(scalarResult.errors || []).map(
                         error =>
                             `Ошибка OpenAPI: ${
@@ -77,28 +79,59 @@ export async function validateLesson(
                 );
             }
         } catch (error) {
-            result.openapiErrors.push(
+            openapiErrors.push(
                 `Ошибка OpenAPI: ${error.message}`
             );
         }
     }
 
-    /*
-     * Если сама OpenAPI-спецификация некорректна,
-     * условия конкретного задания пока не проверяем.
-     */
-    if (result.openapiErrors.length > 0) {
-        return result;
-    }
+    return { openapiErrors, specification };
+}
 
-    // 4. Проверяем условия конкретного урока
-    if (lesson.validation) {
+
+/*
+ * Условия конкретного урока. Вызывать только для спецификации,
+ * которая прошла validateOpenApi без ошибок.
+ */
+export function validateTask(
+    lesson,
+    specification
+) {
+    const taskErrors = [];
+
+    if (lesson.validation && specification) {
         validatePracticeLesson(
             specification,
             lesson.validation,
-            result.taskErrors
+            taskErrors
         );
     }
+
+    return taskErrors;
+}
+
+
+/*
+ * Полная проверка (OpenAPI, затем условия задания).
+ * Если сама спецификация некорректна, условия задания не проверяем.
+ */
+export async function validateLesson(
+    lesson,
+    yamlText
+) {
+    const { openapiErrors, specification } =
+        await validateOpenApi(lesson, yamlText);
+
+    const result = {
+        openapiErrors,
+        taskErrors: []
+    };
+
+    if (openapiErrors.length > 0) {
+        return result;
+    }
+
+    result.taskErrors = validateTask(lesson, specification);
 
     return result;
 }
